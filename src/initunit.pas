@@ -29,7 +29,7 @@ interface
 implementation
 uses
   SysUtils, CastleWindow, CastleApplicationProperties,
-  //MainUnit,
+  Game,
   DecoTime, WindowUnit, DecoLog, Global;
 
 function GetApplicationName: String;
@@ -40,7 +40,7 @@ end;
 procedure ApplicationInitialize;
 begin
   Log(CurrentRoutine, 'Init sequence started.');
-  //InitMain;
+  InitGame;
 
   Log(CurrentRoutine, 'Init sequence finished.');
 end;
@@ -61,7 +61,7 @@ ApplicationProperties(true).ApplicationName := GetApplicationName;
 Window.Caption := GetApplicationName;
 
 finalization
-//FreeMain;
+FreeGame;
 FreeLog;
 FreeGlobal;
 FreeTime;
