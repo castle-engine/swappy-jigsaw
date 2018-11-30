@@ -20,7 +20,7 @@
 program SwappyJigsaw;
 
 uses
-  cthreads,
+  CThreads,
   InitUnit, WindowUnit;
 
 begin
