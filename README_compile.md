@@ -4,7 +4,7 @@ You can compile the source simply by opening *.lpi in Lazarus IDE (version 1.9 a
 
 # Requirements
 
-This version requires at least 6.5 Castle Game Engine version to compile (at least 29.08.2018 GIT version). You can download it here https://github.com/castle-engine/castle-engine and follow installation instructions here https://castle-engine.io/documentation.php#section_installation
+This version requires at least 6.5 Castle Game Engine version to compile (at least 20.11.2018 GIT version). You can download it here https://github.com/castle-engine/castle-engine and follow installation instructions here https://castle-engine.io/documentation.php#section_installation
 
 FreePascal compiler at least version 3.1.1 is required.
 

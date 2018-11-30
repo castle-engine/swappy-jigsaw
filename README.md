@@ -1,6 +1,12 @@
-# SemitaInferius
+# Swappy Jigsaw
 
-A try to revive ProjectHelena as a dungeon crawler using Castle Game Engine
+Swappy Jigsaw is a very simple game, where you have to unravel a jigsaw puzzle by swapping image parts
+
+# Installation
+
+# Windows
+
+No installation is required, just extract all files into a single folder and play.
 
 # Linux
 
@@ -18,6 +24,6 @@ Libraries required for the game (Linux: Debian/Ubuntu package reference):
 
 # Links
 
-Source code repository: https://gitlab.com/EugeneLoza/semitainferius
+Source code repository: https://gitlab.com/EugeneLoza/swappy-jigsaw
 
-Please, report any bugs, issues and ideas to: https://gitlab.com/EugeneLoza/semitainferius/issues
+Please, report any bugs, issues and ideas to: https://gitlab.com/EugeneLoza/swappy-jigsaw/issues
