@@ -38,6 +38,7 @@ procedure InitWindow;
 begin
   Log(CurrentRoutine, 'Initializing window');
   Window := TCastleWindowCustom.Create(Application);
+  Window.ResizeAllowed := raOnlyAtOpen;
 end;
 
 end.
