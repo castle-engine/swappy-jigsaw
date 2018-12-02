@@ -75,6 +75,15 @@ begin
   JigsawRects[GetLinearCoord(B)] := R;
 end;
 
+procedure SwapTiles(const A, B: Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := JigsawRects[A];
+  JigsawRects[A] := JigsawRects[B];
+  JigsawRects[B] := R;
+end;
+
 function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
   Result := (JigsawRects[ScreenLinearCoordinates].Bottom <> ImageRects[ScreenLinearCoordinates].Bottom) or
@@ -179,10 +188,8 @@ begin
     end;
 
   //shuffle the jigsaw pieces
-  for i := 0 to 100 do
-  begin
-    SwapTiles(Vector2Integer(RND.Random(SlicesX), RND.Random(SlicesY)), Vector2Integer(RND.Random(SlicesX), RND.Random(SlicesY)));
-  end;
+  for i := Pred(JigCount) downto 1 do
+    SwapTiles(i, RND.Random(i));
 
   Selected := Vector2Integer(-1, -1);
 end;
