@@ -36,7 +36,8 @@ uses
   CastleFilesUtils, CastleWindow, CastleKeysMouse,
   CastleVectors,
   CastleRectangles, CastleImages, CastleGLImages,
-  Global;
+  Global,
+  DecoLog;
 
 type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
@@ -83,6 +84,15 @@ end;
 function IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
 begin
   Result := IsTileWrong(GetLinearCoord(ScreenCoordinates));
+end;
+
+function IsGameOver: Boolean;
+var
+  i: Integer;
+begin
+  Result := true;
+  for i := 0 to Pred(JigCount) do
+    Result := Result and (not IsTileWrong(i));
 end;
 
 procedure GameRender(Container: TUIContainer);
@@ -135,6 +145,8 @@ begin
       begin
         SwapTiles(Selected, Pos);
         Selected := Vector2Integer(-1, -1);
+        if isGameOver then
+          Log(CurrentRoutine, 'HOOORAY!');
       end;
     end;
   end;
