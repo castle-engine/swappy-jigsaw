@@ -34,6 +34,7 @@ implementation
 uses
   SysUtils,
   CastleFilesUtils, CastleWindow,
+  CastleVectors,
   CastleRectangles, CastleImages, CastleGLImages,
   Global;
 
@@ -58,28 +59,43 @@ var
 procedure GameRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
-  Count: Integer;
-  WrongRects, BorderRects: TMyFloatRectangleArray;
+  //Count: Integer;
+  //WrongRects, BorderRects: TMyFloatRectangleArray;
 begin
   Image.Draw(@JigsawRects[0], @ImageRects[0], JigCount);
 
-  Count := 0;
+  //Count := 0;
   i := 0;
-  SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
-  SetLength(BorderRects, JigCount); //we don't care about it's current length, Count will do its job
+  {SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
+  SetLength(BorderRects, JigCount); //we don't care about it's current length, Count will do its job}
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
       if (JigsawRects[i].Bottom <> ImageRects[i].Bottom) or
          (JigsawRects[i].Left <> ImageRects[i].Left) then
       begin
-        WrongRects[Count] := JigsawRects[i];
-        BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!
-        inc(Count);
+        {WrongRects[Count] := JigsawRects[i];
+        BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!}
+        BlackBorder.Draw3x3(JigsawRects[i], Vector4Integer(15, 15, 15, 15));
+        //inc(Count);
       end;
       inc(i);
     end;
-  BlackBorder.Draw(@WrongRects[0], @BorderRects[0], Count);
+  //BlackBorder.Draw(@WrongRects[0], @BorderRects[0], Count);
+end;
+
+function GetLinearCoord(A: TVector2Integer): Integer;
+begin
+  Result := A[0] + A[1] * SlicesX;
+end;
+
+procedure SwapTiles(A, B: TVector2Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := ImageRects[GetLinearCoord(A)];
+  ImageRects[GetLinearCoord(A)] := ImageRects[GetLinearCoord(B)];
+  ImageRects[GetLinearCoord(B)] := R;
 end;
 
 procedure NewGame;
@@ -89,7 +105,6 @@ procedure NewGame;
   end;
 var
   i, ix, iy: Integer;
-  R: TFloatRectangle;
 begin
   BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
   WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
@@ -112,11 +127,7 @@ begin
   //shuffle the jigsaw pieces
   for i := 0 to 100 do
   begin
-    iy := RND.Random(JigCount);
-    ix := RND.Random(JigCount);
-    R := ImageRects[iy];
-    ImageRects[iy] := ImageRects[ix];
-    ImageRects[ix] := R;
+    SwapTiles(Vector2Integer(RND.Random(SlicesX), RND.Random(SlicesY)), Vector2Integer(RND.Random(SlicesX), RND.Random(SlicesY)));
   end;
 end;
 
