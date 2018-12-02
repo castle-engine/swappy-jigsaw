@@ -74,6 +74,17 @@ begin
   JigsawRects[GetLinearCoord(B)] := R;
 end;
 
+function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
+begin
+  Result := (JigsawRects[ScreenLinearCoordinates].Bottom <> ImageRects[ScreenLinearCoordinates].Bottom) or
+            (JigsawRects[ScreenLinearCoordinates].Left <> ImageRects[ScreenLinearCoordinates].Left);
+end;
+
+function IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
+begin
+  Result := IsTileWrong(GetLinearCoord(ScreenCoordinates));
+end;
+
 procedure GameRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
@@ -93,8 +104,7 @@ begin
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
-      if (JigsawRects[i].Bottom <> ImageRects[i].Bottom) or
-         (JigsawRects[i].Left <> ImageRects[i].Left) then
+      if IsTileWrong(i) then
       begin
         {
         WrongRects[Count] := JigsawRects[i];
@@ -117,12 +127,15 @@ begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
     Pos := Vector2Integer(Trunc(Event.Position[0] / ImageWidth * SlicesX), Trunc(Event.Position[1] / ImageHeight * SlicesY));
-    if Selected[0] = -1 then
-      Selected := Pos
-    else
+    if IsTileWrong(Pos) then
     begin
-      SwapTiles(Selected, Pos);
-      Selected := Vector2Integer(-1, -1);
+      if Selected[0] = -1 then
+        Selected := Pos
+      else
+      begin
+        SwapTiles(Selected, Pos);
+        Selected := Vector2Integer(-1, -1);
+      end;
     end;
   end;
 end;
