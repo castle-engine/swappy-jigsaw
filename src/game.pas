@@ -37,14 +37,16 @@ uses
   CastleRectangles, CastleImages, CastleGLImages,
   Global;
 
+{$DEFINE DynamicArray}
+
 const
   MaxSlices = 16 * 16;
 type
-  TMyFloatRectangleArray = packed array [0 .. MaxSlices] of TFloatRectangle;
+  TMyFloatRectangleArray = packed array {$IFNDEF DynamicArray}[0 .. MaxSlices]{$ENDIF} of TFloatRectangle;
 
 var
-  SlicesX: Integer = 5;
-  SlicesY: Integer = 4;
+  SlicesX: Integer = 8;
+  SlicesY: Integer = 5;
 
 var
   Image: TGLImage;
@@ -53,20 +55,26 @@ var
 
 procedure GameRender(Container: TUIContainer);
 begin
-  Image.Draw(@JigsawRects, @ImageRects, JigCount);
+  Image.Draw(@JigsawRects[0], @ImageRects[0], JigCount);
 end;
 
 procedure NewGame;
+  function Img(const aURL: String): String;
+  begin
+    Result := ApplicationData('img/' + aURL);
+  end;
 var
   i, ix, iy: Integer;
   R: TFloatRectangle;
 begin
   //Image := TGLImage.Create(ApplicationData('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), true);
-  Image := TGLImage.Create(ApplicationData('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], Window.Width, Window.Height, riBilinear);
+  Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], Window.Width, Window.Height, riBilinear);
 
   JigCount := 0;
-  //SetLength(JigsawRects, SlicesX * SlicesY);
-  //SetLength(ImageRects, SlicesX * SlicesY);
+  {$IFDEF DynamicArray}
+  SetLength(JigsawRects, SlicesX * SlicesY);
+  SetLength(ImageRects, SlicesX * SlicesY);
+  {$ENDIF}
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
@@ -75,6 +83,7 @@ begin
       inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
     end;
 
+  //shuffle the jigsaw pieces
   for i := 0 to 100 do
   begin
     iy := RND.Random(JigCount);
