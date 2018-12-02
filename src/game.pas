@@ -38,21 +38,24 @@ uses
   CastleRectangles, CastleImages, CastleGLImages,
   Global;
 
-const
-  MaxSlices = 16 * 16;
 type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
 
 var
+  {}
   SlicesX: Integer = 8;
   SlicesY: Integer = 5;
 
 var
+  {}
   Image: TGLImage;
+  {}
+  ImageWidth, ImageHeight: Integer;
+  {}
   WhiteBorder, BlackBorder: TGlImage;
-
+  {}
   Selected: TVector2Integer;
-
+  {}
   JigCount: Integer;
   JigsawRects, ImageRects: TMyFloatRectangleArray; //TFloatRectangleArray;
 
@@ -113,7 +116,7 @@ var
 begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
-    Pos := Vector2Integer(Trunc(Event.Position[0] / Window.Width * SlicesX), Trunc(Event.Position[1] / Window.Height * SlicesY));
+    Pos := Vector2Integer(Trunc(Event.Position[0] / ImageWidth * SlicesX), Trunc(Event.Position[1] / ImageHeight * SlicesY));
     if Selected[0] = -1 then
       Selected := Pos
     else
@@ -137,7 +140,7 @@ begin
   WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
   WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
 
-  Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], Window.Width, Window.Height, riBilinear);
+  Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
 
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
@@ -163,6 +166,10 @@ procedure InitGame;
 begin
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
+
+  ImageWidth := Window.Width;
+  ImageHeight := Window.Height;
+
   NewGame;
 end;
 
