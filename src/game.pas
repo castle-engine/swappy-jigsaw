@@ -38,12 +38,10 @@ uses
   CastleRectangles, CastleImages, CastleGLImages,
   Global;
 
-{$DEFINE DynamicArray}
-
 const
   MaxSlices = 16 * 16;
 type
-  TMyFloatRectangleArray = packed array {$IFNDEF DynamicArray}[0 .. MaxSlices]{$ENDIF} of TFloatRectangle;
+  TMyFloatRectangleArray = packed array of TFloatRectangle;
 
 var
   SlicesX: Integer = 8;
@@ -81,7 +79,7 @@ begin
       end;
       inc(i);
     end;
-  //BlackBorder.Draw(@WrongRects[0], @BorderRects[0], Count);
+  //BlackBorder.Draw3x3(@WrongRects[0], @BorderRects[0], Count);
 end;
 
 function GetLinearCoord(A: TVector2Integer): Integer;
@@ -112,10 +110,8 @@ begin
   Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], Window.Width, Window.Height, riBilinear);
 
   JigCount := 0;
-  {$IFDEF DynamicArray}
   SetLength(JigsawRects, SlicesX * SlicesY);
   SetLength(ImageRects, SlicesX * SlicesY);
-  {$ENDIF}
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
