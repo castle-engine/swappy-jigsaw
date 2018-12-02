@@ -57,29 +57,35 @@ var
 procedure GameRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
-  //Count: Integer;
-  //WrongRects, BorderRects: TMyFloatRectangleArray;
+  {
+  Count: Integer;
+  WrongRects, BorderRects: TMyFloatRectangleArray;
+  }
 begin
   Image.Draw(@JigsawRects[0], @ImageRects[0], JigCount);
 
-  //Count := 0;
   i := 0;
-  {SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
-  SetLength(BorderRects, JigCount); //we don't care about it's current length, Count will do its job}
+  {
+  Count := 0;
+  SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
+  SetLength(BorderRects, JigCount); //we don't care about it's current length, Count will do its job
+  }
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
       if (JigsawRects[i].Bottom <> ImageRects[i].Bottom) or
          (JigsawRects[i].Left <> ImageRects[i].Left) then
       begin
-        {WrongRects[Count] := JigsawRects[i];
-        BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!}
+        {
+        WrongRects[Count] := JigsawRects[i];
+        BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!
+        inc(Count);
+        }
         BlackBorder.Draw3x3(JigsawRects[i], Vector4Integer(15, 15, 15, 15));
-        //inc(Count);
       end;
       inc(i);
     end;
-  //BlackBorder.Draw3x3(@WrongRects[0], @BorderRects[0], Count);
+  //BlackBorder.Draw(@WrongRects[0], @BorderRects[0], Count);
 end;
 
 function GetLinearCoord(A: TVector2Integer): Integer;
@@ -105,7 +111,9 @@ var
   i, ix, iy: Integer;
 begin
   BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
+  BlackBorder.Color := Vector4(1, 1, 1, 0.8);
   WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
+  WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
 
   Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], Window.Width, Window.Height, riBilinear);
 
