@@ -33,7 +33,7 @@ procedure FreeGame;
 implementation
 uses
   SysUtils,
-  CastleFilesUtils, CastleWindow,
+  CastleFilesUtils, CastleWindow, CastleKeysMouse,
   CastleVectors,
   CastleRectangles, CastleImages, CastleGLImages,
   Global;
@@ -51,8 +51,25 @@ var
   Image: TGLImage;
   WhiteBorder, BlackBorder: TGlImage;
 
+  Selected: TVector2Integer;
+
   JigCount: Integer;
   JigsawRects, ImageRects: TMyFloatRectangleArray; //TFloatRectangleArray;
+
+
+function GetLinearCoord(const A: TVector2Integer): Integer;
+begin
+  Result := A[0] + A[1] * SlicesX;
+end;
+
+procedure SwapTiles(const A, B: TVector2Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := JigsawRects[GetLinearCoord(A)];
+  JigsawRects[GetLinearCoord(A)] := JigsawRects[GetLinearCoord(B)];
+  JigsawRects[GetLinearCoord(B)] := R;
+end;
 
 procedure GameRender(Container: TUIContainer);
 var
@@ -62,7 +79,7 @@ var
   WrongRects, BorderRects: TMyFloatRectangleArray;
   }
 begin
-  Image.Draw(@JigsawRects[0], @ImageRects[0], JigCount);
+  Image.Draw(@ImageRects[0], @JigsawRects[0], JigCount);
 
   i := 0;
   {
@@ -86,20 +103,25 @@ begin
       inc(i);
     end;
   //BlackBorder.Draw(@WrongRects[0], @BorderRects[0], Count);
+  if Selected[0] >= 0 then
+    WhiteBorder.Draw3x3(ImageRects[GetLinearCoord(Selected)], Vector4Integer(15, 15, 15, 15));
 end;
 
-function GetLinearCoord(A: TVector2Integer): Integer;
-begin
-  Result := A[0] + A[1] * SlicesX;
-end;
-
-procedure SwapTiles(A, B: TVector2Integer);
+procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 var
-  R: TFloatRectangle;
+  Pos: TVector2Integer;
 begin
-  R := ImageRects[GetLinearCoord(A)];
-  ImageRects[GetLinearCoord(A)] := ImageRects[GetLinearCoord(B)];
-  ImageRects[GetLinearCoord(B)] := R;
+  if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
+  begin
+    Pos := Vector2Integer(Trunc(Event.Position[0] / Window.Width * SlicesX), Trunc(Event.Position[1] / Window.Height * SlicesY));
+    if Selected[0] = -1 then
+      Selected := Pos
+    else
+    begin
+      SwapTiles(Selected, Pos);
+      Selected := Vector2Integer(-1, -1);
+    end;
+  end;
 end;
 
 procedure NewGame;
@@ -120,8 +142,8 @@ begin
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
   SetLength(ImageRects, SlicesX * SlicesY);
-  for ix := 0 to Pred(SlicesX) do
-    for iy := 0 to Pred(SlicesY) do
+  for iy := 0 to Pred(SlicesY) do
+    for ix := 0 to Pred(SlicesX) do
     begin
       JigsawRects[JigCount] := FloatRectangle(ix * Image.Width / SlicesX, iy * Image.Height / SlicesY, Image.Width / SlicesX, Image.Height / SlicesY);
       ImageRects[JigCount] := JigsawRects[JigCount];
@@ -133,12 +155,14 @@ begin
   begin
     SwapTiles(Vector2Integer(RND.Random(SlicesX), RND.Random(SlicesY)), Vector2Integer(RND.Random(SlicesX), RND.Random(SlicesY)));
   end;
+
+  Selected := Vector2Integer(-1, -1);
 end;
 
 procedure InitGame;
 begin
   Window.OnRender := @GameRender;
-  //Window.OnPress := ;
+  Window.OnPress := @GamePress;
   NewGame;
 end;
 
