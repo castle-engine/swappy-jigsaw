@@ -32,25 +32,71 @@ procedure InitGame;
 procedure FreeGame;
 implementation
 uses
-  CastleGLImages;
+  SysUtils,
+  CastleFilesUtils, CastleWindow,
+  CastleRectangles, CastleImages, CastleGLImages,
+  Global;
+
+const
+  MaxSlices = 16 * 16;
+type
+  TMyFloatRectangleArray = packed array [0 .. MaxSlices] of TFloatRectangle;
+
+var
+  SlicesX: Integer = 5;
+  SlicesY: Integer = 4;
 
 var
   Image: TGLImage;
+  JigCount: Integer;
+  JigsawRects, ImageRects: TMyFloatRectangleArray; //TFloatRectangleArray;
+
+procedure GameRender(Container: TUIContainer);
+begin
+  Image.Draw(@JigsawRects, @ImageRects, JigCount);
+end;
 
 procedure NewGame;
+var
+  i, ix, iy: Integer;
+  R: TFloatRectangle;
 begin
+  //Image := TGLImage.Create(ApplicationData('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), true);
+  Image := TGLImage.Create(ApplicationData('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], Window.Width, Window.Height, riBilinear);
+
+  JigCount := 0;
+  //SetLength(JigsawRects, SlicesX * SlicesY);
+  //SetLength(ImageRects, SlicesX * SlicesY);
+  for ix := 0 to Pred(SlicesX) do
+    for iy := 0 to Pred(SlicesY) do
+    begin
+      JigsawRects[JigCount] := FloatRectangle(ix * Image.Width / SlicesX, iy * Image.Height / SlicesY, Image.Width / SlicesX, Image.Height / SlicesY);
+      ImageRects[JigCount] := JigsawRects[JigCount];
+      inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
+    end;
+
+  for i := 0 to 100 do
+  begin
+    iy := RND.Random(JigCount);
+    ix := RND.Random(JigCount);
+    R := ImageRects[iy];
+    ImageRects[iy] := ImageRects[ix];
+    ImageRects[ix] := R;
+  end;
 end;
 
 procedure InitGame;
 begin
-  //Window.OnRender := ;
+  Window.OnRender := @GameRender;
   //Window.OnPress := ;
+  NewGame;
 end;
 
 procedure FreeGame;
 begin
   Window.OnRender := nil;
   Window.OnPress := nil;
+  FreeAndNil(Image);
 end;
 
 

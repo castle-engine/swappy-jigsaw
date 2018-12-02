@@ -34,7 +34,7 @@ uses
 
 function GetApplicationName: String;
 begin
-  Result := 'Semita Inferius';
+  Result := 'Swappy Jigsaw';
 end;
 
 procedure ApplicationInitialize;
