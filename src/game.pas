@@ -44,7 +44,7 @@ type
 var
   {}
   SlicesX: Integer = 8;
-  SlicesY: Integer = 5;
+  SlicesY: Integer = 6;
 
 var
   {}
@@ -54,7 +54,7 @@ var
   ScaleX, ScaleY: Single;
   {}
   GameScreenRight, GameScreenLeft: TGLImage;
-  MenuBarLeft, MenuBarWidth: Integer;
+  MenuBarLeft, MenuBarWidth, GameWidth: Integer;
   {}
   WhiteBorder, BlackBorder: TGlImage;
   {}
@@ -67,6 +67,8 @@ var
   {}
   ButtonForward, ButtonRestart, ButtonSoundOn, ButtonSoundOff, ButtonExit: TGLImage;
   ButtonSize, ButtonSpacer: Integer;
+  {}
+  WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
 
 function GetLinearCoord(const A: TVector2Integer): Integer;
@@ -94,8 +96,8 @@ end;
 
 function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
-  Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom) > ScaleY / 2) or
-            (Abs(JigsawRects[ScreenLinearCoordinates].Left - ScreenRects[ScreenLinearCoordinates].Left) > ScaleX / 2);
+  Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom + ImageStartBottom) > ScaleY / 2) or
+            (Abs(JigsawRects[ScreenLinearCoordinates].Left - ScreenRects[ScreenLinearCoordinates].Left + ImageStartLeft) > ScaleX / 2);
 end;
 
 function IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
@@ -143,14 +145,14 @@ begin
 
   {DRAW UI}
 
-  GameScreenLeft.Draw3x3(0, 0, MenuBarLeft, Window.Height, 19, 19, 19, 19);
-  GameScreenRight.Draw3x3(MenuBarLeft, 0, MenuBarWidth, Window.Height, 19, 9, 19, 0);
+  GameScreenLeft.Draw3x3(WindowLeft, WindowBottom, GameWidth, WindowHeight, 19, 19, 19, 19);
+  GameScreenRight.Draw3x3(MenuBarLeft, WindowBottom, MenuBarWidth, WindowHeight, 19, 9, 19, 0);
 
-  ButtonForward.Draw(MenuBarLeft, ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
-  ButtonRestart.Draw(MenuBarLeft, ButtonSpacer * 2.5 - ButtonSize / 2, ButtonSize, ButtonSize);
-  ButtonSoundOn.Draw(MenuBarLeft, ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
-  //ButtonSoundOff.Draw(MenuBarLeft, ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
-  ButtonExit.Draw(MenuBarLeft, ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonForward.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonRestart.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 2.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonSoundOn.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  //ButtonSoundOff.Draw(WindowLeft + MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonExit.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize);
 end;
 
 {function ScreenToCoord(X, Y: Single): TVector2Integer;
@@ -199,8 +201,8 @@ begin
   if Y <= ImageStartBottom then
     Y := ImageStartBottom + 1
   else
-  if Y >= ImageStartBottom + ImageWidth then
-    Y := ImageStartBottom + ImageWidth - 1;
+  if Y >= ImageStartBottom + ImageHeight then
+    Y := ImageStartBottom + ImageHeight - 1;
 
   for i := 0 to Pred(JigCount) do
     if ScreenRects[i].Contains(X, Y) then
@@ -299,15 +301,22 @@ begin
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
 
-  MenuBarWidth := Round(Window.Width * 0.07);
-  MenuBarLeft := Window.Width - MenuBarWidth;
-  ImageWidth := MenuBarLeft - 20;
-  ImageHeight := Window.Height - 20;
-  ImageStartLeft := 10;
-  ImageStartBottom := 10;
+  WindowWidth := Window.Width;
+  WindowHeight := Window.Height;
+  WindowLeft := (Window.Width - WindowWidth) div 2;
+  WindowBottom := (Window.Height - WindowHeight) div 2;
+
+  MenuBarWidth := Round(WindowWidth * 0.07);
+  GameWidth := WindowWidth - MenuBarWidth;
+  MenuBarLeft := WindowLeft + GameWidth;
+
+  ImageWidth := GameWidth - 20;
+  ImageHeight := WindowHeight - 20;
+  ImageStartLeft := WindowLeft + 10;
+  ImageStartBottom := WindowBottom + 10;
 
   ButtonSize := MenuBarWidth - 10;
-  ButtonSpacer := Window.Height div 4;
+  ButtonSpacer := WindowHeight div 4;
   ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
   ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
   ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
