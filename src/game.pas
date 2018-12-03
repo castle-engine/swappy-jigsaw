@@ -55,10 +55,10 @@ var
   {}
   WhiteBorder, BlackBorder: TGlImage;
   {}
-  Selected: TVector2Integer;
+  Selected: Integer;
   {}
   JigCount: Integer;
-  JigsawRects, ImageRects: TMyFloatRectangleArray; //TFloatRectangleArray;
+  JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
   {}
   WrongRects: TMyFloatRectangleArray;
 
@@ -72,24 +72,24 @@ procedure SwapTiles(const A, B: TVector2Integer);
 var
   R: TFloatRectangle;
 begin
-  R := JigsawRects[GetLinearCoord(A)];
-  JigsawRects[GetLinearCoord(A)] := JigsawRects[GetLinearCoord(B)];
-  JigsawRects[GetLinearCoord(B)] := R;
+  R := ScreenRects[GetLinearCoord(A)];
+  ScreenRects[GetLinearCoord(A)] := ScreenRects[GetLinearCoord(B)];
+  ScreenRects[GetLinearCoord(B)] := R;
 end;
 
 procedure SwapTiles(const A, B: Integer);
 var
   R: TFloatRectangle;
 begin
-  R := JigsawRects[A];
-  JigsawRects[A] := JigsawRects[B];
-  JigsawRects[B] := R;
+  R := ScreenRects[A];
+  ScreenRects[A] := ScreenRects[B];
+  ScreenRects[B] := R;
 end;
 
 function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
-  Result := (JigsawRects[ScreenLinearCoordinates].Bottom <> ImageRects[ScreenLinearCoordinates].Bottom) or
-            (JigsawRects[ScreenLinearCoordinates].Left <> ImageRects[ScreenLinearCoordinates].Left);
+  Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom) > ScaleY / 2) or
+            (Abs(JigsawRects[ScreenLinearCoordinates].Left - ScreenRects[ScreenLinearCoordinates].Left) > ScaleX / 2);
 end;
 
 function IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
@@ -115,7 +115,7 @@ var
 
   Count: Integer;
 begin
-  Image.Draw(@ImageRects[0], @JigsawRects[0], JigCount);
+  Image.Draw(@ScreenRects[0], @JigsawRects[0], JigCount);
 
   i := 0;
 
@@ -125,48 +125,90 @@ begin
     begin
       if IsTileWrong(i) then
       begin
-        WrongRects[Count] := JigsawRects[i];
+        WrongRects[Count] := ScreenRects[i];
         inc(Count);
       end;
       inc(i);
     end;
   BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 15, 15, 15, 15);
 
-  if Selected[0] >= 0 then
-    WhiteBorder.Draw3x3(ImageRects[GetLinearCoord(Selected)], Vector4Integer(15, 15, 15, 15));
+  if Selected >= 0 then
+    WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(15, 15, 15, 15));
 end;
 
-procedure FixCoordinates(var aCoord: TVector2Integer);
+{function ScreenToCoord(X, Y: Single): TVector2Integer;
 begin
-  if aCoord[0] < 0 then
-    aCoord[0] := 0
+  Result[0] := Trunc((X - ImageStartLeft) / ScaleX);
+  Result[1] := Trunc((Y - ImageStartBottom) / ScaleY);
+
+  //fix screen coordinates
+  if Result[0] < 0 then
+    Result[0] := 0
   else
-    if aCoord[0] >= SlicesX then
-      aCoord[0] := Pred(SlicesX);
-  if aCoord[1] < 0 then
-    aCoord[1] := 0
+    if Result[0] >= SlicesX then
+      Result[0] := Pred(SlicesX);
+  if Result[1] < 0 then
+    Result[1] := 0
   else
-    if aCoord[1] >= SlicesY then
-      aCoord[1] := Pred(SlicesY);
+    if Result[1] >= SlicesY then
+      Result[1] := Pred(SlicesY);
+end;
+
+function GetScreenTile(ScreenCoordinates: TVector2Integer): TVector2Integer;
+var
+  i: Integer;
+  Jig: TFloatRectangle;
+begin
+  Jig := JigsawRects[GetLinearCoord(ScreenCoordinates)];
+  for i := 0 to Pred(JigCount) do
+    if (Abs(Jig.Bottom - ScreenRects[i].Bottom) < ScaleY / 2) or
+       (Abs(Jig.Left - ScreenRects[i].Left) < ScaleX / 2) then
+    begin
+      Result := ScreenToCoord(JigsawRects[i].Left + ScaleX / 2, JigsawRects[i].Bottom + ScaleY / 2);
+      Exit;
+    end;
+end;}
+
+function GetScreenTile(X, Y: Single): Integer;
+var
+  i: Integer;
+begin
+  if X <= ImageStartLeft then
+    X := ImageStartLeft + 1
+  else
+  if X >= ImageStartLeft + ImageWidth then
+    X := ImageStartLeft + ImageWidth - 1;
+
+  if Y <= ImageStartBottom then
+    Y := ImageStartBottom + 1
+  else
+  if Y >= ImageStartBottom + ImageWidth then
+    Y := ImageStartBottom + ImageWidth - 1;
+
+  for i := 0 to Pred(JigCount) do
+    if ScreenRects[i].Contains(X, Y) then
+    begin
+      Result := i;
+      Exit;
+    end;
 end;
 
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 var
-  Pos: TVector2Integer;
+  Pos: Integer;
 begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
-    Pos := Vector2Integer(Trunc((Event.Position[0] - ImageStartLeft) / ScaleX), Trunc((Event.Position[1] - ImageStartBottom) / ScaleY));
-    FixCoordinates(Pos);
+    Pos := GetScreenTile(Event.Position[0], Event.Position[1]);
 
     if IsTileWrong(Pos) then
     begin
-      if Selected[0] = -1 then
+      if Selected = -1 then
         Selected := Pos
       else
       begin
         SwapTiles(Selected, Pos);
-        Selected := Vector2Integer(-1, -1);
+        Selected := -1;
         if isGameOver then
           Log(CurrentRoutine, 'HOOORAY!');
       end;
@@ -190,13 +232,12 @@ begin
 
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
-  SetLength(ImageRects, SlicesX * SlicesY);
+  SetLength(ScreenRects, SlicesX * SlicesY);
   for iy := 0 to Pred(SlicesY) do
     for ix := 0 to Pred(SlicesX) do
     begin
-      JigsawRects[JigCount] := FloatRectangle(ImageStartLeft + ix * ScaleX,
-        ImageStartBottom + iy * ScaleY, ScaleX, ScaleY);
-      ImageRects[JigCount] := FloatRectangle(ImageStartLeft + ix * ScaleX,
+      JigsawRects[JigCount] := FloatRectangle(ix * ScaleX, iy * ScaleY, ScaleX, ScaleY);
+      ScreenRects[JigCount] := FloatRectangle(ImageStartLeft + ix * ScaleX,
         ImageStartBottom + iy * ScaleY, ScaleX, ScaleY);
       inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
     end;
@@ -207,7 +248,7 @@ begin
 
   SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
 
-  Selected := Vector2Integer(-1, -1);
+  Selected := -1;
 end;
 
 procedure InitGame;
