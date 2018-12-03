@@ -40,8 +40,9 @@ begin
   Window := TCastleWindowCustom.Create(Application);
   Window.ResizeAllowed := raOnlyAtOpen;
   Window.AutoRedisplay := false;
-  {Window.Height := 600;
-  Window.Width := Round(Window.Height * 1.61);}
+
+  Window.Height := 600;
+  Window.Width := Round(Window.Height * 1.61);
 end;
 
 end.

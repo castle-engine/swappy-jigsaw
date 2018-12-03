@@ -43,7 +43,7 @@ type
 
 var
   {}
-  SlicesX: Integer = 8;
+  SlicesX: Integer = 7;
   SlicesY: Integer = 6;
 
 var
@@ -301,8 +301,14 @@ begin
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
 
+  //set the aspect ratio always 1:1.61, as majority of mobile devices
   WindowWidth := Window.Width;
   WindowHeight := Window.Height;
+  if WindowWidth / WindowHeight > 1.61 then
+    WindowWidth := Round(WindowHeight * 1.61)
+  else
+    WindowHeight := Round(WindowWidth / 1.61);
+
   WindowLeft := (Window.Width - WindowWidth) div 2;
   WindowBottom := (Window.Height - WindowHeight) div 2;
 
