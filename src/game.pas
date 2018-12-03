@@ -104,37 +104,40 @@ begin
     Result := Result and (not IsTileWrong(i));
 end;
 
+{$INCLUDE GLImageHelper.inc}
+
 procedure GameRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
-  {
+
   Count: Integer;
   WrongRects, BorderRects: TMyFloatRectangleArray;
-  }
+
 begin
   Image.Draw(@ImageRects[0], @JigsawRects[0], JigCount);
 
   i := 0;
-  {
+
   Count := 0;
   SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
   SetLength(BorderRects, JigCount); //we don't care about it's current length, Count will do its job
-  }
+
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
       if IsTileWrong(i) then
       begin
-        {
+
         WrongRects[Count] := JigsawRects[i];
-        BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!
+        //BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!
         inc(Count);
-        }
-        BlackBorder.Draw3x3(JigsawRects[i], Vector4Integer(15, 15, 15, 15));
+
+        //BlackBorder.Draw3x3(JigsawRects[i], Vector4Integer(15, 15, 15, 15));
       end;
       inc(i);
     end;
-  //BlackBorder.Draw(@WrongRects[0], @BorderRects[0], Count);
+  BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 15, 15, 15, 15);
+
   if Selected[0] >= 0 then
     WhiteBorder.Draw3x3(ImageRects[GetLinearCoord(Selected)], Vector4Integer(15, 15, 15, 15));
 end;
