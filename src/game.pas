@@ -50,7 +50,7 @@ var
   {}
   Image: TGLImage;
   {}
-  ImageWidth, ImageHeight: Integer;
+  ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight: Integer;
   {}
   WhiteBorder, BlackBorder: TGlImage;
   {}
@@ -142,7 +142,18 @@ var
 begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
-    Pos := Vector2Integer(Trunc(Event.Position[0] / ImageWidth * SlicesX), Trunc(Event.Position[1] / ImageHeight * SlicesY));
+    Pos := Vector2Integer(Trunc((Event.Position[0] - ImageStartLeft) / ImageWidth * SlicesX), Trunc((Event.Position[1] - ImageStartBottom) / ImageHeight * SlicesY));
+    if Pos[0] < 0 then
+      Pos[0] := 0
+    else
+      if Pos[0] >= SlicesX then
+        Pos[0] := Pred(SlicesX);
+    if Pos[1] < 0 then
+      Pos[1] := 0
+    else
+      if Pos[1] >= SlicesY then
+        Pos[1] := Pred(SlicesY);
+
     if IsTileWrong(Pos) then
     begin
       if Selected[0] = -1 then
@@ -167,11 +178,6 @@ procedure NewGame;
 var
   i, ix, iy: Integer;
 begin
-  BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
-  BlackBorder.Color := Vector4(1, 1, 1, 0.8);
-  WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
-  WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
-
   Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
 
   JigCount := 0;
@@ -180,7 +186,8 @@ begin
   for iy := 0 to Pred(SlicesY) do
     for ix := 0 to Pred(SlicesX) do
     begin
-      JigsawRects[JigCount] := FloatRectangle(ix * Image.Width / SlicesX, iy * Image.Height / SlicesY, Image.Width / SlicesX, Image.Height / SlicesY);
+      JigsawRects[JigCount] := FloatRectangle(ImageStartLeft + ix * Image.Width / SlicesX,
+        ImageStartBottom + iy * Image.Height / SlicesY, Image.Width / SlicesX, Image.Height / SlicesY);
       ImageRects[JigCount] := JigsawRects[JigCount];
       inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
     end;
@@ -194,11 +201,18 @@ end;
 
 procedure InitGame;
 begin
+  BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
+  BlackBorder.Color := Vector4(1, 1, 1, 0.8);
+  WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
+  WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
+
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
 
-  ImageWidth := Window.Width;
-  ImageHeight := Window.Height;
+  ImageWidth := Window.Width - 20;
+  ImageHeight := Window.Height - 20;
+  ImageStartLeft := 10;
+  ImageStartBottom := 10;
 
   NewGame;
 end;
