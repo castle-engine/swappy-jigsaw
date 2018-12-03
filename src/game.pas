@@ -51,6 +51,7 @@ var
   Image: TGLImage;
   {}
   ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight: Integer;
+  ScaleX, ScaleY: Single;
   {}
   WhiteBorder, BlackBorder: TGlImage;
   {}
@@ -58,6 +59,8 @@ var
   {}
   JigCount: Integer;
   JigsawRects, ImageRects: TMyFloatRectangleArray; //TFloatRectangleArray;
+  {}
+  WrongRects: TMyFloatRectangleArray;
 
 
 function GetLinearCoord(const A: TVector2Integer): Integer;
@@ -111,15 +114,12 @@ var
   i, ix, iy: Integer;
 
   Count: Integer;
-  WrongRects: TMyFloatRectangleArray;
-
 begin
   Image.Draw(@ImageRects[0], @JigsawRects[0], JigCount);
 
   i := 0;
 
   Count := 0;
-  SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
@@ -136,23 +136,28 @@ begin
     WhiteBorder.Draw3x3(ImageRects[GetLinearCoord(Selected)], Vector4Integer(15, 15, 15, 15));
 end;
 
+procedure FixCoordinates(var aCoord: TVector2Integer);
+begin
+  if aCoord[0] < 0 then
+    aCoord[0] := 0
+  else
+    if aCoord[0] >= SlicesX then
+      aCoord[0] := Pred(SlicesX);
+  if aCoord[1] < 0 then
+    aCoord[1] := 0
+  else
+    if aCoord[1] >= SlicesY then
+      aCoord[1] := Pred(SlicesY);
+end;
+
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 var
   Pos: TVector2Integer;
 begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
-    Pos := Vector2Integer(Trunc((Event.Position[0] - ImageStartLeft) / ImageWidth * SlicesX), Trunc((Event.Position[1] - ImageStartBottom) / ImageHeight * SlicesY));
-    if Pos[0] < 0 then
-      Pos[0] := 0
-    else
-      if Pos[0] >= SlicesX then
-        Pos[0] := Pred(SlicesX);
-    if Pos[1] < 0 then
-      Pos[1] := 0
-    else
-      if Pos[1] >= SlicesY then
-        Pos[1] := Pred(SlicesY);
+    Pos := Vector2Integer(Trunc((Event.Position[0] - ImageStartLeft) / ScaleX), Trunc((Event.Position[1] - ImageStartBottom) / ScaleY));
+    FixCoordinates(Pos);
 
     if IsTileWrong(Pos) then
     begin
@@ -180,21 +185,27 @@ var
 begin
   Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
 
+  ScaleX := ImageWidth / SlicesX;
+  ScaleY := ImageHeight / SlicesY;
+
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
   SetLength(ImageRects, SlicesX * SlicesY);
   for iy := 0 to Pred(SlicesY) do
     for ix := 0 to Pred(SlicesX) do
     begin
-      JigsawRects[JigCount] := FloatRectangle(ImageStartLeft + ix * Image.Width / SlicesX,
-        ImageStartBottom + iy * Image.Height / SlicesY, Image.Width / SlicesX, Image.Height / SlicesY);
-      ImageRects[JigCount] := JigsawRects[JigCount];
+      JigsawRects[JigCount] := FloatRectangle(ImageStartLeft + ix * ScaleX,
+        ImageStartBottom + iy * ScaleY, ScaleX, ScaleY);
+      ImageRects[JigCount] := FloatRectangle(ImageStartLeft + ix * ScaleX,
+        ImageStartBottom + iy * ScaleY, ScaleX, ScaleY);
       inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
     end;
 
   //shuffle the jigsaw pieces
   for i := Pred(JigCount) downto 1 do
     SwapTiles(i, RND.Random(i));
+
+  SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
 
   Selected := Vector2Integer(-1, -1);
 end;
