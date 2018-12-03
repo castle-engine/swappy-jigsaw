@@ -36,6 +36,7 @@ uses
   CastleVectors,
   CastleRectangles, CastleImages, CastleGLImages,
   Global,
+  ImageList,
   DecoLog;
 
 type
@@ -243,7 +244,7 @@ procedure NewGame;
 var
   i, ix, iy: Integer;
 begin
-  Image := TGLImage.Create(img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
+  Image := TGLImage.Create(Img(ImageDataList[RND.Random(ImageDataList.Count)].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
 
   ScaleX := ImageWidth / SlicesX;
   ScaleY := ImageHeight / SlicesY;
