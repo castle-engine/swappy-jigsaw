@@ -1,0 +1,9 @@
+BlackBorder.png
+WhiteBorder.png
+CC0 by EugeneLoza
+
+GameScreenLeft.png
+GameScreenRight.png
+CC0 by Talosaurus
+https://opengameart.org/content/simple-smooth-menu-buttons
+
