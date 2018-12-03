@@ -39,6 +39,7 @@ begin
   Log(CurrentRoutine, 'Initializing window');
   Window := TCastleWindowCustom.Create(Application);
   Window.ResizeAllowed := raOnlyAtOpen;
+  Window.AutoRedisplay := false;
   {Window.Height := 600;
   Window.Width := Round(Window.Height * 1.61);}
 end;

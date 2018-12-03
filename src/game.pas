@@ -216,6 +216,7 @@ var
 begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
+    Window.Invalidate;
     if Event.Position[0] <= MenuBarLeft then
     begin
       Pos := GetScreenTile(Event.Position[0], Event.Position[1]);
@@ -281,6 +282,7 @@ begin
   SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
 
   Selected := -1;
+  Window.Invalidate;
 end;
 
 procedure InitGame;
