@@ -53,6 +53,9 @@ var
   ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight: Integer;
   ScaleX, ScaleY: Single;
   {}
+  GameScreenRight, GameScreenLeft: TGLImage;
+  MenuBarLeft, MenuBarWidth: Integer;
+  {}
   WhiteBorder, BlackBorder: TGlImage;
   {}
   Selected: Integer;
@@ -134,6 +137,9 @@ begin
 
   if Selected >= 0 then
     WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(15, 15, 15, 15));
+
+  GameScreenLeft.Draw3x3(0, 0, MenuBarLeft, Window.Height, 19, 19, 19, 19);
+  GameScreenRight.Draw3x3(MenuBarLeft, 0, MenuBarWidth, Window.Height, 19, 9, 19, 0);
 end;
 
 {function ScreenToCoord(X, Y: Single): TVector2Integer;
@@ -258,10 +264,16 @@ begin
   WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
   WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
 
+  GameScreenRight := TGLImage.Create(ApplicationData('GameScreenRight.png'), true);
+  GameScreenLeft := TGLImage.Create(ApplicationData('GameScreenLeft.png'), true);
+  GameScreenLeft.Color := Vector4(1, 1, 1, 1);
+
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
 
-  ImageWidth := Window.Width - 20;
+  MenuBarWidth := Round(Window.Width * 0.07);
+  MenuBarLeft := Window.Width - MenuBarWidth;
+  ImageWidth := MenuBarLeft - 20;
   ImageHeight := Window.Height - 20;
   ImageStartLeft := 10;
   ImageStartBottom := 10;
@@ -276,6 +288,8 @@ begin
   FreeAndNil(Image);
   FreeAndNil(WhiteBorder);
   FreeAndNil(BlackBorder);
+  FreeAndNil(GameScreenRight);
+  FreeAndNil(GameScreenLeft);
 end;
 
 
