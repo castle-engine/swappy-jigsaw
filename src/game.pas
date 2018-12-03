@@ -76,6 +76,8 @@ begin
   Result := A[0] + A[1] * SlicesX;
 end;
 
+{----------------------------------------------------------------------------}
+
 procedure SwapTiles(const A, B: TVector2Integer);
 var
   R: TFloatRectangle;
@@ -94,6 +96,8 @@ begin
   ScreenRects[B] := R;
 end;
 
+{----------------------------------------------------------------------------}
+
 function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
   Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom + ImageStartBottom) > ScaleY / 2) or
@@ -105,6 +109,8 @@ begin
   Result := IsTileWrong(GetLinearCoord(ScreenCoordinates));
 end;
 
+{----------------------------------------------------------------------------}
+
 function IsGameOver: Boolean;
 var
   i: Integer;
@@ -114,7 +120,11 @@ begin
     Result := Result and (not IsTileWrong(i));
 end;
 
+{----------------------------------------------------------------------------}
+
 {$INCLUDE GLImageHelper.inc}
+
+{----------------------------------------------------------------------------}
 
 {$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure GameRender(Container: TUIContainer);
@@ -155,38 +165,7 @@ begin
   ButtonExit.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize);
 end;
 
-{function ScreenToCoord(X, Y: Single): TVector2Integer;
-begin
-  Result[0] := Trunc((X - ImageStartLeft) / ScaleX);
-  Result[1] := Trunc((Y - ImageStartBottom) / ScaleY);
-
-  //fix screen coordinates
-  if Result[0] < 0 then
-    Result[0] := 0
-  else
-    if Result[0] >= SlicesX then
-      Result[0] := Pred(SlicesX);
-  if Result[1] < 0 then
-    Result[1] := 0
-  else
-    if Result[1] >= SlicesY then
-      Result[1] := Pred(SlicesY);
-end;
-
-function GetScreenTile(ScreenCoordinates: TVector2Integer): TVector2Integer;
-var
-  i: Integer;
-  Jig: TFloatRectangle;
-begin
-  Jig := JigsawRects[GetLinearCoord(ScreenCoordinates)];
-  for i := 0 to Pred(JigCount) do
-    if (Abs(Jig.Bottom - ScreenRects[i].Bottom) < ScaleY / 2) or
-       (Abs(Jig.Left - ScreenRects[i].Left) < ScaleX / 2) then
-    begin
-      Result := ScreenToCoord(JigsawRects[i].Left + ScaleX / 2, JigsawRects[i].Bottom + ScaleY / 2);
-      Exit;
-    end;
-end;}
+{----------------------------------------------------------------------------}
 
 function GetScreenTile(X, Y: Single): Integer;
 var
@@ -211,6 +190,8 @@ begin
       Exit;
     end;
 end;
+
+{----------------------------------------------------------------------------}
 
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 var
@@ -252,6 +233,8 @@ begin
 end;
 {$POP}
 
+{----------------------------------------------------------------------------}
+
 procedure NewGame;
   function Img(const aURL: String): String;
   begin
@@ -286,6 +269,8 @@ begin
   Selected := -1;
   Window.Invalidate;
 end;
+
+{----------------------------------------------------------------------------}
 
 procedure InitGame;
 begin
@@ -331,6 +316,8 @@ begin
 
   NewGame;
 end;
+
+{----------------------------------------------------------------------------}
 
 procedure FreeGame;
 begin
