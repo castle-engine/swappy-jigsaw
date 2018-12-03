@@ -64,6 +64,9 @@ var
   JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
   {}
   WrongRects: TMyFloatRectangleArray;
+  {}
+  ButtonForward, ButtonRestart, ButtonSoundOn, ButtonSoundOff, ButtonExit: TGLImage;
+  ButtonSize, ButtonSpacer: Integer;
 
 
 function GetLinearCoord(const A: TVector2Integer): Integer;
@@ -138,8 +141,16 @@ begin
   if Selected >= 0 then
     WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(15, 15, 15, 15));
 
+  {DRAW UI}
+
   GameScreenLeft.Draw3x3(0, 0, MenuBarLeft, Window.Height, 19, 19, 19, 19);
   GameScreenRight.Draw3x3(MenuBarLeft, 0, MenuBarWidth, Window.Height, 19, 9, 19, 0);
+
+  ButtonForward.Draw(MenuBarLeft, ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonRestart.Draw(MenuBarLeft, ButtonSpacer * 2.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonSoundOn.Draw(MenuBarLeft, ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  //ButtonSoundOff.Draw(MenuBarLeft, ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  ButtonExit.Draw(MenuBarLeft, ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize);
 end;
 
 {function ScreenToCoord(X, Y: Single): TVector2Integer;
@@ -205,19 +216,34 @@ var
 begin
   if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
   begin
-    Pos := GetScreenTile(Event.Position[0], Event.Position[1]);
-
-    if IsTileWrong(Pos) then
+    if Event.Position[0] <= MenuBarLeft then
     begin
-      if Selected = -1 then
-        Selected := Pos
-      else
+      Pos := GetScreenTile(Event.Position[0], Event.Position[1]);
+
+      if IsTileWrong(Pos) then
       begin
-        SwapTiles(Selected, Pos);
-        Selected := -1;
-        if isGameOver then
-          Log(CurrentRoutine, 'HOOORAY!');
+        if Selected = -1 then
+          Selected := Pos
+        else
+        begin
+          SwapTiles(Selected, Pos);
+          Selected := -1;
+          if isGameOver then
+            Log(CurrentRoutine, 'HOOORAY!');
+        end;
       end;
+    end else
+    begin
+      if Event.Position[1] < ButtonSpacer then
+        //click button 1
+      else
+      if Event.Position[1] < ButtonSpacer * 2 then
+        //click button 2
+      else
+      if Event.Position[1] < ButtonSpacer * 3 then
+        //click button 3
+      else
+        //click button 4
     end;
   end;
 end;
@@ -278,6 +304,14 @@ begin
   ImageStartLeft := 10;
   ImageStartBottom := 10;
 
+  ButtonSize := MenuBarWidth - 10;
+  ButtonSpacer := Window.Height div 4;
+  ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
+  ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
+  ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
+  ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
+  ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
+
   NewGame;
 end;
 
@@ -290,6 +324,12 @@ begin
   FreeAndNil(BlackBorder);
   FreeAndNil(GameScreenRight);
   FreeAndNil(GameScreenLeft);
+
+  FreeAndNil(ButtonForward);
+  FreeAndNil(ButtonRestart);
+  FreeAndNil(ButtonSoundOn);
+  FreeAndNil(ButtonSoundOff);
+  FreeAndNil(ButtonExit);
 end;
 
 
