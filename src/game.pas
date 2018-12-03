@@ -18,7 +18,6 @@
 (* {} *)
 
 unit Game;
-
 {$INCLUDE compilerconfig.inc}
 
 interface
@@ -106,12 +105,13 @@ end;
 
 {$INCLUDE GLImageHelper.inc}
 
+{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure GameRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
 
   Count: Integer;
-  WrongRects, BorderRects: TMyFloatRectangleArray;
+  WrongRects: TMyFloatRectangleArray;
 
 begin
   Image.Draw(@ImageRects[0], @JigsawRects[0], JigCount);
@@ -120,19 +120,13 @@ begin
 
   Count := 0;
   SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
-  SetLength(BorderRects, JigCount); //we don't care about it's current length, Count will do its job
-
   for ix := 0 to Pred(SlicesX) do
     for iy := 0 to Pred(SlicesY) do
     begin
       if IsTileWrong(i) then
       begin
-
         WrongRects[Count] := JigsawRects[i];
-        //BorderRects[Count] := FloatRectangle(0, 0, BlackBorder.Width, BlackBorder.Height); //optimize it!
         inc(Count);
-
-        //BlackBorder.Draw3x3(JigsawRects[i], Vector4Integer(15, 15, 15, 15));
       end;
       inc(i);
     end;
@@ -163,6 +157,7 @@ begin
     end;
   end;
 end;
+{$POP}
 
 procedure NewGame;
   function Img(const aURL: String): String;

@@ -36,6 +36,9 @@ const
     Something minimally > 0.5 is necessary. }
   Epsilon = 0.51;
 begin
+  if Count = 0 then
+    Exit;
+
   DrawCornerTop    := CornerTop    * ScaleCorners;
   DrawCornerRight  := CornerRight  * ScaleCorners;
   DrawCornerBottom := CornerBottom * ScaleCorners;
