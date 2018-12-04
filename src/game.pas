@@ -22,21 +22,24 @@ unit Game;
 
 interface
 
-uses
-  WindowUnit;
+var
+  PlaySound: Boolean;
 
+{}
 procedure NewGame;
-
+{}
 procedure InitGame;
 procedure FreeGame;
+{...........................................................................}
 implementation
 uses
   SysUtils,
   CastleFilesUtils, CastleWindow, CastleKeysMouse,
   CastleVectors,
+  CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
   Global,
-  ImageList,
+  ImageList, WindowUnit,
   DecoLog;
 
 type
@@ -60,6 +63,8 @@ var
   WhiteBorder, BlackBorder: TGlImage;
   {}
   Selected: Integer;
+  {}
+  GameStarted: Boolean;
   {}
   JigCount: Integer;
   JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
@@ -161,8 +166,10 @@ begin
 
   ButtonForward.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
   ButtonRestart.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 2.5 - ButtonSize / 2, ButtonSize, ButtonSize);
-  ButtonSoundOn.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
-  //ButtonSoundOff.Draw(WindowLeft + MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  if PlaySound then
+    ButtonSoundOn.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize)
+  else
+    ButtonSoundOff.Draw(WindowLeft + MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
   ButtonExit.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize);
 end;
 
@@ -194,12 +201,7 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure ClickForwardButton;
-begin
-  NewGame;
-end;
-
-procedure ClickRestartButton;
+procedure Shuffle;
 var
   i: Integer;
 begin
@@ -208,6 +210,36 @@ begin
     SwapTiles(i, RND.Random(i));
   Selected := -1;
   Window.Invalidate;
+  GameStarted := false;
+end;
+
+{----------------------------------------------------------------------------}
+
+procedure ClickForwardButton;
+begin
+  if (IsGameOver) or (not GameStarted) or
+     (MessageYesNo(Window, 'Current progress will be lost, load next image?')) then
+    NewGame;
+end;
+
+procedure ClickRestartButton;
+begin
+  if (IsGameOver) or (not GameStarted) or
+     (MessageYesNo(Window, 'Current progress will be lost, shuffle image?')) then
+    Shuffle;
+end;
+
+procedure ClickSound;
+begin
+  PlaySound := not PlaySound;
+  Window.Invalidate;
+end;
+
+procedure ClickExit;
+begin
+  if (IsGameOver) or (not GameStarted) or
+     (MessageYesNo(Window, 'Current progress will be lost, exit to menu?')) then
+    ;
 end;
 
 {----------------------------------------------------------------------------}
@@ -230,6 +262,7 @@ begin
         else
         begin
           SwapTiles(Selected, Pos);
+          GameStarted := true;
           Selected := -1;
           if isGameOver then
             Log(CurrentRoutine, 'HOOORAY!');
@@ -238,10 +271,10 @@ begin
     end else
     begin
       if Event.Position[1] < ButtonSpacer then
-        //click button 1
+        ClickExit
       else
       if Event.Position[1] < ButtonSpacer * 2 then
-        //click button 2
+        ClickSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
         ClickRestartButton
@@ -263,7 +296,7 @@ procedure NewGame;
     Result := ApplicationData('img/' + aURL);
   end;
 var
-  i, ix, iy: Integer;
+  ix, iy: Integer;
   NewImage: Integer;
 begin
   repeat
@@ -288,15 +321,9 @@ begin
         ImageStartBottom + iy * ScaleY, ScaleX, ScaleY);
       inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
     end;
-
-  //shuffle the jigsaw pieces
-  for i := Pred(JigCount) downto 1 do
-    SwapTiles(i, RND.Random(i));
-
   SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
 
-  Selected := -1;
-  Window.Invalidate;
+  Shuffle;
 end;
 
 {----------------------------------------------------------------------------}
