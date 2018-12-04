@@ -194,6 +194,24 @@ end;
 
 {----------------------------------------------------------------------------}
 
+procedure ClickForwardButton;
+begin
+  NewGame;
+end;
+
+procedure ClickRestartButton;
+var
+  i: Integer;
+begin
+  //shuffle the jigsaw pieces
+  for i := Pred(JigCount) downto 1 do
+    SwapTiles(i, RND.Random(i));
+  Selected := -1;
+  Window.Invalidate;
+end;
+
+{----------------------------------------------------------------------------}
+
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 var
   Pos: Integer;
@@ -226,15 +244,18 @@ begin
         //click button 2
       else
       if Event.Position[1] < ButtonSpacer * 3 then
-        //click button 3
+        ClickRestartButton
       else
-        //click button 4
+        ClickForwardButton;
     end;
   end;
 end;
 {$POP}
 
 {----------------------------------------------------------------------------}
+
+var
+  LastImage: Integer = -1;
 
 procedure NewGame;
   function Img(const aURL: String): String;
@@ -243,8 +264,15 @@ procedure NewGame;
   end;
 var
   i, ix, iy: Integer;
+  NewImage: Integer;
 begin
-  Image := TGLImage.Create(Img(ImageDataList[RND.Random(ImageDataList.Count)].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
+  repeat
+    NewImage := RND.Random(ImageDataList.Count);
+  until LastImage <> NewImage;
+  LastImage := NewImage;
+
+  FreeAndNil(Image);
+  Image := TGLImage.Create(Img(ImageDataList[NewImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
 
   ScaleX := ImageWidth / SlicesX;
   ScaleY := ImageHeight / SlicesY;
@@ -336,9 +364,6 @@ begin
   FreeAndNil(ButtonSoundOff);
   FreeAndNil(ButtonExit);
 end;
-
-
-
 
 end.
 
