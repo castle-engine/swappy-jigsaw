@@ -41,7 +41,7 @@ begin
   Window.ResizeAllowed := raOnlyAtOpen;
   Window.AutoRedisplay := false;
 
-  Window.Height := 600;
+  Window.Height := 700;
   Window.Width := Round(Window.Height * 1.61);
 end;
 
