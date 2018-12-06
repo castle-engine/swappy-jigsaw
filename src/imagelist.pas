@@ -41,6 +41,9 @@ var
 procedure LoadImageList;
 procedure FreeImageList;
 implementation
+uses
+  SysUtils,
+  DecoLog;
 
 procedure LoadImageList;
   function Img(const aString: String): TImageData;
@@ -82,7 +85,16 @@ begin
     Add(Img('log-cabin-bathroom_CC0_by_Kirk_F.jpg.jpg'));
     Add(Img('myerson-symphony-hall-auditorium_CC0_by_Jean_Beaufort.jpg'));
     Add(Img('moscow-metro-1491063019StZ_CC0_by_Svetlana_Tikhonova.jpg'));
+    Add(Img('2510-1271756952NRs5_CC0_by_Lebin_Yuriy_[crop].jpg'));
+    Add(Img('1453-12518312749cEY_CC0_by_Shari_Weinsheimer.jpg'));
+    Add(Img('byodo-in-temple_CC0_by_Kathryn_Smith_Mrs_[crop].jpg'));
+    Add(Img('new-york-skyline-at-night-1539859690ef4_CC0_by_Petr_Kratochvil_[crop].jpg'));
+    Add(Img('dining-room-with-view_CC0_by_Kirk_F_[crop].jpg'));
+    Add(Img('hong-kong_CC0_by_Jean_Beaufort_[crop].jpg'));
+    Add(Img('lower-manhattan-view-15173081023Vc_CC0_by_Petr_Kratochvil_[crop].jpg'));
+    Add(Img('lowther-castle-1538849370MBj_CC0_by_George_Hodan_[crop,gmic].jpg'));
     {
+    Add(Img(''));
     Add(Img(''));
     Add(Img(''));
     Add(Img(''));
@@ -90,6 +102,7 @@ begin
     }
     //Add(Img(''));
   end;
+  Log(CurrentRoutine, 'Images loaded: ' + IntToStr(ImageDataList.Count));
 end;
 
 procedure FreeImageList;
