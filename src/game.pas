@@ -23,7 +23,7 @@ unit Game;
 interface
 
 var
-  PlaySound: Boolean;
+  PlaySound: Boolean = true;
 
 {}
 procedure NewGame;
@@ -76,6 +76,7 @@ var
   {}
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
+{----------------------------------------------------------------------------}
 
 function GetLinearCoord(const A: TVector2Integer): Integer;
 begin
@@ -303,6 +304,8 @@ begin
     NewImage := RND.Random(ImageDataList.Count);
   until LastImage <> NewImage;
   LastImage := NewImage;
+
+  //NewImage := Pred(ImageDataList.Count);
 
   FreeAndNil(Image);
   Image := TGLImage.Create(Img(ImageDataList[NewImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
