@@ -55,7 +55,7 @@ var
   Image: TGLImage;
   {}
   ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight: Integer;
-  ScaleX, ScaleY: Single;
+  ScaleX, ScaleY: Integer;//Single;
   {}
   GameScreenRight, GameScreenLeft: TGLImage;
   MenuBarLeft, MenuBarWidth, GameWidth: Integer;
@@ -155,10 +155,10 @@ begin
       end;
       inc(i);
     end;
-  BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 15, 15, 15, 15);
+  BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 5, 5, 5, 5);
 
   if Selected >= 0 then
-    WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(15, 15, 15, 15));
+    WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(5, 5, 5, 5));
 
   {DRAW UI}
 
@@ -310,8 +310,8 @@ begin
   FreeAndNil(Image);
   Image := TGLImage.Create(Img(ImageDataList[NewImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
 
-  ScaleX := ImageWidth / SlicesX;
-  ScaleY := ImageHeight / SlicesY;
+  ScaleX := Round(ImageWidth / SlicesX);
+  ScaleY := Round(ImageHeight / SlicesY);
 
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
