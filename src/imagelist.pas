@@ -125,6 +125,10 @@ begin
     Add(Img('ripley-castle-1519492524MBx_CC0_by_George_Hodan_[crop,color].jpg'));
     Add(Img('moscow-metro-1493829074b5V_CC0_by_Svetlana_Tikhonova_[color,crop].jpg'));
     Add(Img('grand-central-station-in-new-york-1467650581Sca_CC0_by_George_Hodan_[color].jpg'));
+    Add(Img('columbia-university-1463234260i61_CC0_by_George_Hodan_[color,trapeze,gmic].jpg'));
+    Add(Img('flagler-college-1494245565Bg9_CC0_by_Paul_Brennan_[trapeze].jpg'));
+    Add(Img('greek-coastal-town-1522932978e39_CC0_by_Petr_Kratochvil_[crop,edit,color].jpg'));
+    Add(Img('knaresborough-bridge-1489604461ORB_CC0_by_George_Hodan_[crop,color].jpg'));
     {
     Add(Img(''));
     }
