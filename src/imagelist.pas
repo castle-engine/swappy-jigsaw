@@ -113,10 +113,21 @@ begin
     Add(Img('interior-of-the-uss-intrepid-1475219268cnM_CC0_by_George_Hodan_[color,crop].jpg'));
     Add(Img('new-york-street-photography-14767774038Dd_CC0_by_George_Hodan.jpg'));
     Add(Img('new-york-city-public-library-1465661149YQr_CC0_by_George_Hodan_[crop,color].jpg'));
+    Add(Img('china-town-liverpool-1525143791tHs_CC0_by_George_Hodan_[crop,color].jpg'));
+    Add(Img('room-interior_CC0_by_RAJESH_misra_[crop,gmic].jpg'));
+    Add(Img('palazzo-reale-di-napoli_CC0_by_Enzo_Abramo_[gmic,color].jpg'));
+    Add(Img('walkway-seabus-terminal-vancouver_CC0_by_Patricia_Keith_[color,gmic].jpg'));
+    Add(Img('wellington-arch-1476431714529_CC0_by_George_Hodan_[gmic,color,trapeze].jpg'));
+    Add(Img('train-station-1506005295b7I_CC0_by_Jean_Beaufort_[color].jpg'));
+    Add(Img('storing-and-canning-room_CC0_by_Kirk_F_[color].jpg'));
+    Add(Img('street-1373969121UmD_CC0_by_George_Hodan.jpg'));
+    Add(Img('palatial-charm_CC0_by_RAJESH_misra_[gmic,color].jpg'));
+    Add(Img('ripley-castle-1519492524MBx_CC0_by_George_Hodan_[crop,color].jpg'));
+    Add(Img('moscow-metro-1493829074b5V_CC0_by_Svetlana_Tikhonova_[color,crop].jpg'));
+    Add(Img('grand-central-station-in-new-york-1467650581Sca_CC0_by_George_Hodan_[color].jpg'));
     {
     Add(Img(''));
     }
-    //Add(Img(''));
   end;
   Log(CurrentRoutine, 'Images loaded: ' + IntToStr(ImageDataList.Count));
 end;
