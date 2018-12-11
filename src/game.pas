@@ -64,7 +64,7 @@ var
   {}
   Selected: Integer;
   {}
-  GameStarted: Boolean;
+  GameStarted, Victory: Boolean;
   {}
   JigCount: Integer;
   JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
@@ -118,6 +118,26 @@ end;
 
 {----------------------------------------------------------------------------}
 
+procedure StartVictory;
+begin
+  Window.AutoRedisplay := true;
+end;
+
+procedure EndVictory;
+begin
+  Window.AutoRedisplay := false;
+end;
+
+{----------------------------------------------------------------------------}
+
+procedure DoVictory;
+begin
+  if true then
+    EndVictory;
+end;
+
+{----------------------------------------------------------------------------}
+
 function IsGameOver: Boolean;
 var
   i: Integer;
@@ -125,6 +145,12 @@ begin
   Result := true;
   for i := 0 to Pred(JigCount) do
     Result := Result and (not IsTileWrong(i));
+
+  if (not Victory) and Result then
+  begin
+    Victory := true;
+    StartVictory;
+  end;
 end;
 
 {----------------------------------------------------------------------------}
@@ -172,6 +198,9 @@ begin
   else
     ButtonSoundOff.Draw(WindowLeft + MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
   ButtonExit.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+
+  if Victory then
+    DoVictory;
 end;
 
 {----------------------------------------------------------------------------}
@@ -212,6 +241,7 @@ begin
   Selected := -1;
   Window.Invalidate;
   GameStarted := false;
+  Victory := false;
 end;
 
 {----------------------------------------------------------------------------}
