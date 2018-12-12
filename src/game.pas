@@ -76,6 +76,10 @@ var
   {}
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
+var
+  {}
+  LastImage: Integer = -1;
+
 {----------------------------------------------------------------------------}
 
 function GetLinearCoord(const A: TVector2Integer): Integer;
@@ -120,11 +124,15 @@ end;
 
 procedure StartVictory;
 begin
+  //increase image score
+  inc(ImageDataList.L[LastImage].Hits);
+  //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
 end;
 
 procedure EndVictory;
 begin
+  //return window in low-resources mode
   Window.AutoRedisplay := false;
 end;
 
@@ -132,6 +140,7 @@ end;
 
 procedure DoVictory;
 begin
+  //if the victory animation is finished, stop victory effect
   if true then
     EndVictory;
 end;
@@ -317,9 +326,6 @@ end;
 {$POP}
 
 {----------------------------------------------------------------------------}
-
-var
-  LastImage: Integer = -1;
 
 procedure NewGame;
   function Img(const aURL: String): String;
