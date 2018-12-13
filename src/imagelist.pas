@@ -28,25 +28,72 @@ uses
 type
   {}
   TImageData = record
+    {}
     URL: String;
+    {}
     Hits: Integer;
+    {}
+    Shows: Integer;
   end;
 
 type
+  {}
   TImageDataList = specialize TStructList<TImageData>;
 
 var
+  {}
   ImageDataList: TImageDataList;
 
+{}
 procedure LoadImageList;
+{}
 procedure FreeImageList;
+{}
 procedure SaveStatistics;
+{}
+function SortList: TImageDataList;
 {...........................................................................}
 implementation
 uses
-  SysUtils,
+  SysUtils, Generics.Collections, Generics.Defaults,
   CastleConfig,
   DecoLog;
+
+function CompareImageData(constref i1, i2: TImageData): integer;
+begin
+  Result := i1.Hits - i2.Hits;
+  if Result = 0 then
+    Result := i1.Shows - i2.Shows;
+end;
+type
+  {}
+  TImageComparer = specialize TComparer<TImageData>;
+
+function SortList: TImageDataList;
+var
+  i: Integer;
+  LastHits, LastShows: Integer;
+begin
+  ImageDataList.Sort(TImageComparer.Construct(@CompareImageData));
+  //must free manually
+  Result := TImageDataList.Create;
+  //select least shows and least hits image;
+  LastHits := 0;
+  LastShows := 0;
+  for i := 0 to Pred(ImageDataList.Count) do
+  begin
+    if ((LastHits = ImageDataList[i].Hits) and (LastShows = ImageDataList[i].Shows)) or (i <= 1) then
+    begin
+      LastHits := ImageDataList[i].Hits;
+      LastShows := ImageDataList[i].Shows;
+      Result.Add(ImageDataList[i]);
+      //WriteLn(ImageDataList[i].Hits, ImageDataList[i].Shows);
+    end else
+      Break;
+  end;
+end;
+
+{----------------------------------------------------------------------------}
 
 procedure SaveStatistics;
 var
@@ -73,6 +120,7 @@ procedure LoadImageList;
   begin
     Result.URL := aString;
     //Result.Hits := 0; //redundant
+    Result.Shows := 0;
   end;
 begin
   ImageDataList := TImageDataList.Create;

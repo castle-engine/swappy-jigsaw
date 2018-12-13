@@ -336,16 +336,24 @@ procedure NewGame;
 var
   ix, iy: Integer;
   NewImage: Integer;
+  NextImagesList: TImageDataList;
 begin
+  NextImagesList := SortList;
+  NextImagesList.Free;
+
   repeat
     NewImage := RND.Random(ImageDataList.Count);
   until LastImage <> NewImage;
   LastImage := NewImage;
 
+  //increase image shows
+  inc(ImageDataList.L[LastImage].Shows);
+
   //NewImage := Pred(ImageDataList.Count);
 
   FreeAndNil(Image);
   Image := TGLImage.Create(Img(ImageDataList[NewImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
+  Log(CurrentRoutine, 'New image: ' + ImageDataList[NewImage].URL);
 
   ScaleX := Round(ImageWidth / SlicesX);
   ScaleY := Round(ImageHeight / SlicesY);
