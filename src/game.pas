@@ -126,6 +126,7 @@ procedure StartVictory;
 begin
   //increase image score
   inc(ImageDataList.L[LastImage].Hits);
+  SaveStatistics;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
 end;

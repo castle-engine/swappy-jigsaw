@@ -40,16 +40,39 @@ var
 
 procedure LoadImageList;
 procedure FreeImageList;
+procedure SaveStatistics;
+{...........................................................................}
 implementation
 uses
   SysUtils,
+  CastleConfig,
   DecoLog;
+
+procedure SaveStatistics;
+var
+  I: TImageData;
+begin
+  for I in ImageDataList do
+    UserConfig.SetValue(I.URL, I.Hits);
+  UserConfig.Save;
+end;
+
+procedure LoadStatistics;
+var
+  i: Integer;
+begin
+  UserConfig.Load;
+  for i := 0 to Pred(ImageDataList.Count) do
+    ImageDataList.L[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
+end;
+
+{----------------------------------------------------------------------------}
 
 procedure LoadImageList;
   function Img(const aString: String): TImageData;
   begin
     Result.URL := aString;
-    Result.Hits := 0;
+    //Result.Hits := 0; //redundant
   end;
 begin
   ImageDataList := TImageDataList.Create;
@@ -143,7 +166,8 @@ begin
     Add(Img(''));
     }
   end;
-  Log(CurrentRoutine, 'Images loaded: ' + IntToStr(ImageDataList.Count));
+  Log(CurrentRoutine, 'Images information loaded: ' + IntToStr(ImageDataList.Count));
+  LoadStatistics;
 end;
 
 procedure FreeImageList;
