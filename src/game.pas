@@ -78,7 +78,7 @@ var
 
 var
   {}
-  LastImage: Integer = -1;
+  CurrentImage: Integer = -1;
 
 {----------------------------------------------------------------------------}
 
@@ -125,7 +125,7 @@ end;
 procedure StartVictory;
 begin
   //increase image score
-  inc(ImageDataList.L[LastImage].Hits);
+  inc(ImageDataList.L[CurrentImage].Hits);
   SaveStatistics;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
@@ -335,25 +335,19 @@ procedure NewGame;
   end;
 var
   ix, iy: Integer;
-  NewImage: Integer;
-  NextImagesList: TImageDataList;
+  NextImagesCount: Integer;
 begin
-  NextImagesList := SortList;
-  NextImagesList.Free;
-
-  repeat
-    NewImage := RND.Random(ImageDataList.Count);
-  until LastImage <> NewImage;
-  LastImage := NewImage;
+  NextImagesCount := SortListCount;
+  CurrentImage := RND.Random(NextImagesCount);
 
   //increase image shows
-  inc(ImageDataList.L[LastImage].Shows);
+  inc(ImageDataList.L[CurrentImage].Shows);
 
   //NewImage := Pred(ImageDataList.Count);
 
   FreeAndNil(Image);
-  Image := TGLImage.Create(Img(ImageDataList[NewImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
-  Log(CurrentRoutine, 'New image: ' + ImageDataList[NewImage].URL);
+  Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
+  Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
 
   ScaleX := Round(ImageWidth / SlicesX);
   ScaleY := Round(ImageHeight / SlicesY);

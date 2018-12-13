@@ -51,7 +51,7 @@ procedure FreeImageList;
 {}
 procedure SaveStatistics;
 {}
-function SortList: TImageDataList;
+function SortListCount: Integer;
 {...........................................................................}
 implementation
 uses
@@ -69,28 +69,28 @@ type
   {}
   TImageComparer = specialize TComparer<TImageData>;
 
-function SortList: TImageDataList;
+function SortListCount: Integer;
 var
   i: Integer;
   LastHits, LastShows: Integer;
 begin
   ImageDataList.Sort(TImageComparer.Construct(@CompareImageData));
-  //must free manually
-  Result := TImageDataList.Create;
+
   //select least shows and least hits image;
   LastHits := 0;
   LastShows := 0;
   for i := 0 to Pred(ImageDataList.Count) do
   begin
-    if ((LastHits = ImageDataList[i].Hits) and (LastShows = ImageDataList[i].Shows)) or (i <= 1) then
+    if ((LastHits = ImageDataList[i].Hits) and (LastShows = ImageDataList[i].Shows)) or (i = 0) then
     begin
       LastHits := ImageDataList[i].Hits;
       LastShows := ImageDataList[i].Shows;
-      Result.Add(ImageDataList[i]);
-      //WriteLn(ImageDataList[i].Hits, ImageDataList[i].Shows);
+      Result := i;
+      WriteLn(ImageDataList[i].Hits, ImageDataList[i].Shows);
     end else
       Break;
   end;
+  inc(Result); //Result is actually "count"
 end;
 
 {----------------------------------------------------------------------------}
