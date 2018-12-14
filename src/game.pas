@@ -64,6 +64,8 @@ var
   {}
   Selected: Integer;
   {}
+  ShowHint: Boolean;
+  {}
   GameStarted, Victory: Boolean;
   {}
   JigCount: Integer;
@@ -176,25 +178,32 @@ var
 
   Count: Integer;
 begin
-  Image.Draw(@ScreenRects[0], @JigsawRects[0], JigCount);
+  if ShowHint then
+    Image.Draw(ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight)
+  else begin
 
-  i := 0;
+    Image.Draw(@ScreenRects[0], @JigsawRects[0], JigCount);
 
-  Count := 0;
-  for ix := 0 to Pred(SlicesX) do
-    for iy := 0 to Pred(SlicesY) do
-    begin
-      if IsTileWrong(i) then
+    i := 0;
+
+    Count := 0;
+    for ix := 0 to Pred(SlicesX) do
+      for iy := 0 to Pred(SlicesY) do
       begin
-        WrongRects[Count] := ScreenRects[i];
-        inc(Count);
+        if IsTileWrong(i) then
+        begin
+          WrongRects[Count] := ScreenRects[i];
+          inc(Count);
+        end;
+        inc(i);
       end;
-      inc(i);
-    end;
-  BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 5, 5, 5, 5);
+    BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 5, 5, 5, 5);
 
-  if Selected >= 0 then
-    WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(5, 5, 5, 5));
+    if Selected >= 0 then
+      WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(5, 5, 5, 5));
+  end;
+
+
 
   {DRAW UI}
 
@@ -263,17 +272,22 @@ begin
     NewGame;
 end;
 
-procedure ClickRestartButton;
+procedure ClickHintButton;
 begin
-  if (IsGameOver) or (not GameStarted) or
-     (MessageYesNo(Window, 'Current progress will be lost, shuffle image?')) then
-    Shuffle;
+  ShowHint := true;
+  //Window.Invalidate;
+end;
+
+procedure ReleaseHintButton;
+begin
+  ShowHint := false;
+  Window.Invalidate;
 end;
 
 procedure ClickSound;
 begin
   PlaySound := not PlaySound;
-  Window.Invalidate;
+  //Window.Invalidate;
 end;
 
 procedure ClickExit;
@@ -318,11 +332,18 @@ begin
         ClickSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
-        ClickRestartButton
+        ClickHintButton
       else
         ClickForwardButton;
     end;
   end;
+end;
+
+procedure GameRelease(Container: TUIContainer; const Event: TInputPressRelease);
+begin
+  //now the only release event we catch is after ShowHint
+  if ShowHint and (Event.EventType = itMouseButton) then
+    ReleaseHintButton;
 end;
 {$POP}
 
@@ -337,7 +358,7 @@ var
   ix, iy: Integer;
   NextImagesCount: Integer;
 begin
-  NextImagesCount := SortListCount;
+  NextImagesCount := SortListCount;  //image list is sorted only here, so it's perfectly safe to use CurrentImage as image reference
   CurrentImage := RND.Random(NextImagesCount);
 
   //increase image shows
@@ -383,6 +404,7 @@ begin
 
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
+  Window.OnRelease := @GameRelease;
 
   //set the aspect ratio always 1:1.61, as majority of mobile devices
   WindowWidth := Window.Width;
@@ -421,6 +443,7 @@ procedure FreeGame;
 begin
   Window.OnRender := nil;
   Window.OnPress := nil;
+  Window.OnRelease := nil;
   FreeAndNil(Image);
   FreeAndNil(WhiteBorder);
   FreeAndNil(BlackBorder);

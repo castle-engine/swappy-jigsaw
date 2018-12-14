@@ -86,7 +86,7 @@ begin
       LastHits := ImageDataList[i].Hits;
       LastShows := ImageDataList[i].Shows;
       Result := i;
-      WriteLn(ImageDataList[i].Hits, ImageDataList[i].Shows);
+      //WriteLn(ImageDataList[i].Hits, ImageDataList[i].Shows);
     end else
       Break;
   end;
