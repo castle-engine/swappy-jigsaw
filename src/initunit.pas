@@ -34,7 +34,7 @@ uses
 
 function GetApplicationName: String;
 begin
-  Result := 'Swappy Jigsaw';
+  Result := 'SwappyJigsaw';
 end;
 
 procedure ApplicationInitialize;
@@ -59,7 +59,7 @@ Application.OnInitialize := @ApplicationInitialize;
 //set application name (tree copies)
 SysUtils.OnGetApplicationName := @GetApplicationName;
 ApplicationProperties(true).ApplicationName := GetApplicationName;
-Window.Caption := GetApplicationName;
+Window.Caption := 'Swappy Jigsaw';
 
 finalization
 FreeGame;
