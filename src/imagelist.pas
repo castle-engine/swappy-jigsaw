@@ -37,6 +37,7 @@ type
     Shows: Integer;
     {}
     Thumbnail: TGLImage;
+    destructor Destroy; override;
   end;
 
 type
@@ -59,7 +60,7 @@ function SortListCount: Integer;
 implementation
 uses
   SysUtils, Generics.Defaults,
-  CastleConfig,
+  CastleConfig, CastleFilesUtils,
   DecoLog;
 
 function CompareImageData(constref i1, i2: TImageData): integer;
@@ -102,6 +103,7 @@ procedure SaveStatistics;
 var
   I: TImageData;
 begin
+  Log(CurrentRoutine, 'Saving statistics...');
   for I in ImageDataList do
     UserConfig.SetValue(I.URL, I.Hits);
   UserConfig.Save;
@@ -111,6 +113,7 @@ procedure LoadStatistics;
 var
   i: Integer;
 begin
+  Log(CurrentRoutine, 'Reading statistics...');
   UserConfig.Load;
   for i := 0 to Pred(ImageDataList.Count) do
     ImageDataList[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
@@ -124,7 +127,7 @@ procedure LoadImageList;
     Result := TImageData.Create;
     Result.URL := aString;
     Result.Shows := 0;
-    //Result.Image := ...
+    Result.Thumbnail := TGLImage.Create(ApplicationData('img/thumbnails/' + aString));
   end;
 begin
   ImageDataList := TImageDataList.Create(true);
@@ -222,10 +225,21 @@ begin
   LoadStatistics;
 end;
 
+{----------------------------------------------------------------------------}
+
 procedure FreeImageList;
 begin
   ImageDataList.Free;
 end;
+
+{----------------------------------------------------------------------------}
+
+destructor TImageData.Destroy;
+begin
+  FreeAndNil(Thumbnail);
+  inherited Destroy;
+end;
+
 
 end.
 
