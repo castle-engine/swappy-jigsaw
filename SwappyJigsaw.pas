@@ -23,6 +23,8 @@ uses
   CThreads,
   InitUnit, WindowUnit;
 
+{$R *.res}
+
 begin
   Window.OpenAndRun;
 end.
