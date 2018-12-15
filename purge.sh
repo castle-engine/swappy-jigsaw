@@ -18,7 +18,3 @@ rm heap.trc
 rm SwappyJigsaw
 rm SwappyJigsaw.exe
 
-# Remove screenshots
-
-rm *.png
-
