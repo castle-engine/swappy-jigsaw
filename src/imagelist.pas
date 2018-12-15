@@ -23,22 +23,25 @@ unit ImageList;
 interface
 
 uses
-  CastleUtils;
+  Generics.Collections,
+  CastleGlImages;
 
 type
   {}
-  TImageData = record
+  TImageData = class(TObject)
     {}
     URL: String;
     {}
     Hits: Integer;
     {}
     Shows: Integer;
+    {}
+    Thumbnail: TGLImage;
   end;
 
 type
   {}
-  TImageDataList = specialize TStructList<TImageData>;
+  TImageDataList = specialize TObjectList<TImageData>;
 
 var
   {}
@@ -55,7 +58,7 @@ function SortListCount: Integer;
 {...........................................................................}
 implementation
 uses
-  SysUtils, Generics.Collections, Generics.Defaults,
+  SysUtils, Generics.Defaults,
   CastleConfig,
   DecoLog;
 
@@ -110,7 +113,7 @@ var
 begin
   UserConfig.Load;
   for i := 0 to Pred(ImageDataList.Count) do
-    ImageDataList.L[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
+    ImageDataList[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
 end;
 
 {----------------------------------------------------------------------------}
@@ -118,12 +121,13 @@ end;
 procedure LoadImageList;
   function Img(const aString: String): TImageData;
   begin
+    Result := TImageData.Create;
     Result.URL := aString;
-    //Result.Hits := 0; //redundant
     Result.Shows := 0;
+    //Result.Image := ...
   end;
 begin
-  ImageDataList := TImageDataList.Create;
+  ImageDataList := TImageDataList.Create(true);
   With ImageDataList do
   begin
     Add(Img('cambridge-city-architecture-1503401533iOz_CC0_by_George_Hodan.jpg'));

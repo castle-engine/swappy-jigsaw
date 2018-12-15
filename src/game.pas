@@ -127,7 +127,7 @@ end;
 procedure StartVictory;
 begin
   //increase image score
-  inc(ImageDataList.L[CurrentImage].Hits);
+  inc(ImageDataList[CurrentImage].Hits);
   SaveStatistics;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
@@ -362,7 +362,7 @@ begin
   CurrentImage := RND.Random(NextImagesCount);
 
   //increase image shows
-  inc(ImageDataList.L[CurrentImage].Shows);
+  inc(ImageDataList[CurrentImage].Shows);
 
   //NewImage := Pred(ImageDataList.Count);
 
