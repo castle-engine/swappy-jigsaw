@@ -20,7 +20,7 @@
 program SwappyJigsaw;
 
 uses
-  CThreads,
+  {$IFDEF Linux}CThreads,{$ENDIF}
   InitUnit, WindowUnit;
 
 {$R *.res}
