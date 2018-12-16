@@ -246,8 +246,9 @@ begin
       Result := i;
       Exit;
     end;
+
   //error, can't find sreen tile
-  Log(CurrentRoutine, 'Error: Can''t find sreen tile at (' + FloatToStr(X) + ',' + FloatToStr(Y) + ')');
+  Log(CurrentRoutine, 'Error: Can''t find sreen tile at (' + FloatToStr(X) + ',' + FloatToStr(Y) + ') in ' + IntToStr(ImageStartLeft) + '..' + IntToStr(ImageStartLeft + ImageWidth) + ',' + IntToStr(ImageStartBottom) + '..' + IntToStr(ImageStartBottom + ImageHeight));
   Result := -1; //so that result is always defined
 end;
 
