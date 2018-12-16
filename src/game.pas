@@ -203,8 +203,6 @@ begin
       WhiteBorder.Draw3x3(ScreenRects[Selected], Vector4Integer(5, 5, 5, 5));
   end;
 
-
-
   {DRAW UI}
 
   GameScreenLeft.Draw3x3(WindowLeft, WindowBottom, GameWidth, WindowHeight, 19, 19, 19, 19);
@@ -378,9 +376,6 @@ begin
   Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
   Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
 
-  ScaleX := Round(ImageWidth / SlicesX);
-  ScaleY := Round(ImageHeight / SlicesY);
-
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
   SetLength(ScreenRects, SlicesX * SlicesY);
@@ -400,6 +395,8 @@ end;
 {----------------------------------------------------------------------------}
 
 procedure InitGame;
+const
+  FrameWidth = 10; {not 19! as the frame is semi-tranparent with rounded corners}
 begin
   BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
   BlackBorder.Color := Vector4(1, 1, 1, 0.8);
@@ -422,17 +419,25 @@ begin
   else
     WindowHeight := Round(WindowWidth / 1.61);
 
+  MenuBarWidth := Round(WindowWidth * 0.07);
+
+  //get integer scale for specific slices
+  ScaleX := Trunc((WindowWidth - MenuBarWidth - 2 * FrameWidth) / SlicesX);
+  ScaleY := Trunc((WindowHeight - 2 * FrameWidth) / SlicesY);
+
+  WindowWidth := MenuBarWidth + 2 * FrameWidth + ScaleX * SlicesX;
+  WindowHeight := 2 * FrameWidth + ScaleY * SlicesY;
+
   WindowLeft := (Window.Width - WindowWidth) div 2;
   WindowBottom := (Window.Height - WindowHeight) div 2;
 
-  MenuBarWidth := Round(WindowWidth * 0.07);
   GameWidth := WindowWidth - MenuBarWidth;
   MenuBarLeft := WindowLeft + GameWidth;
 
-  ImageWidth := GameWidth - 20;
-  ImageHeight := WindowHeight - 20;
-  ImageStartLeft := WindowLeft + 10;
-  ImageStartBottom := WindowBottom + 10;
+  ImageWidth := GameWidth - 2 * FrameWidth;
+  ImageHeight := WindowHeight - 2 * FrameWidth;
+  ImageStartLeft := WindowLeft + FrameWidth;
+  ImageStartBottom := WindowBottom + FrameWidth + 1; // I really have no idea why I need +1 here... sorry :) But otherwise image is not symmetric against the frame
 
   ButtonSize := MenuBarWidth - 10;
   ButtonSpacer := WindowHeight div 4;
