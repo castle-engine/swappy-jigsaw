@@ -246,6 +246,9 @@ begin
       Result := i;
       Exit;
     end;
+  //error, can't find sreen tile
+  Log(CurrentRoutine, 'Error: Can''t find sreen tile at (' + FloatToStr(X) + ',' + FloatToStr(Y) + ')');
+  Result := -1; //so that result is always defined
 end;
 
 {----------------------------------------------------------------------------}
@@ -309,6 +312,10 @@ begin
     if Event.Position[0] <= MenuBarLeft then
     begin
       Pos := GetScreenTile(Event.Position[0], Event.Position[1]);
+
+      //if something went badly wrong, then
+      if Pos = -1 then
+        Exit;
 
       if IsTileWrong(Pos) then
       begin
