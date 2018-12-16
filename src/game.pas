@@ -22,9 +22,6 @@ unit Game;
 
 interface
 
-var
-  PlaySound: Boolean = true;
-
 {}
 procedure NewGame;
 {}
@@ -38,7 +35,7 @@ uses
   CastleVectors,
   CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
-  Global,
+  Global, GUI,
   ImageList, WindowUnit,
   DecoLog;
 
@@ -47,20 +44,7 @@ type
 
 var
   {}
-  SlicesX: Integer = 7;
-  SlicesY: Integer = 6;
-
-var
-  {}
   Image: TGLImage;
-  {}
-  ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight: Integer;
-  ScaleX, ScaleY: Integer;//Single;
-  {}
-  GameScreenRight, GameScreenLeft: TGLImage;
-  MenuBarLeft, MenuBarWidth, GameWidth: Integer;
-  {}
-  WhiteBorder, BlackBorder: TGlImage;
   {}
   Selected: Integer;
   {}
@@ -72,11 +56,6 @@ var
   JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
   {}
   WrongRects: TMyFloatRectangleArray;
-  {}
-  ButtonForward, ButtonRestart, ButtonSoundOn, ButtonSoundOff, ButtonExit: TGLImage;
-  ButtonSize, ButtonSpacer: Integer;
-  {}
-  WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
 var
   {}
@@ -395,57 +374,10 @@ end;
 {----------------------------------------------------------------------------}
 
 procedure InitGame;
-const
-  FrameWidth = 10; {not 19! as the frame is semi-tranparent with rounded corners}
 begin
-  BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
-  BlackBorder.Color := Vector4(1, 1, 1, 0.8);
-  WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
-  WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
-
-  GameScreenRight := TGLImage.Create(ApplicationData('GameScreenRight.png'), true);
-  GameScreenLeft := TGLImage.Create(ApplicationData('GameScreenLeft.png'), true);
-  GameScreenLeft.Color := Vector4(1, 1, 1, 1);
-
   Window.OnRender := @GameRender;
   Window.OnPress := @GamePress;
   Window.OnRelease := @GameRelease;
-
-  //set the aspect ratio always 1:1.61, as majority of mobile devices
-  WindowWidth := Window.Width;
-  WindowHeight := Window.Height;
-  if WindowWidth / WindowHeight > 1.61 then
-    WindowWidth := Round(WindowHeight * 1.61)
-  else
-    WindowHeight := Round(WindowWidth / 1.61);
-
-  MenuBarWidth := Round(WindowWidth * 0.07);
-
-  //get integer scale for specific slices
-  ScaleX := Trunc((WindowWidth - MenuBarWidth - 2 * FrameWidth) / SlicesX);
-  ScaleY := Trunc((WindowHeight - 2 * FrameWidth) / SlicesY);
-
-  WindowWidth := MenuBarWidth + 2 * FrameWidth + ScaleX * SlicesX;
-  WindowHeight := 2 * FrameWidth + ScaleY * SlicesY;
-
-  WindowLeft := (Window.Width - WindowWidth) div 2;
-  WindowBottom := (Window.Height - WindowHeight) div 2;
-
-  GameWidth := WindowWidth - MenuBarWidth;
-  MenuBarLeft := WindowLeft + GameWidth;
-
-  ImageWidth := GameWidth - 2 * FrameWidth;
-  ImageHeight := WindowHeight - 2 * FrameWidth;
-  ImageStartLeft := WindowLeft + FrameWidth;
-  ImageStartBottom := WindowBottom + FrameWidth + 1; // I really have no idea why I need +1 here... sorry :) But otherwise image is not symmetric against the frame
-
-  ButtonSize := MenuBarWidth - 10;
-  ButtonSpacer := WindowHeight div 4;
-  ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
-  ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
-  ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
-  ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
-  ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
 
   NewGame;
 end;
@@ -458,16 +390,6 @@ begin
   Window.OnPress := nil;
   Window.OnRelease := nil;
   FreeAndNil(Image);
-  FreeAndNil(WhiteBorder);
-  FreeAndNil(BlackBorder);
-  FreeAndNil(GameScreenRight);
-  FreeAndNil(GameScreenLeft);
-
-  FreeAndNil(ButtonForward);
-  FreeAndNil(ButtonRestart);
-  FreeAndNil(ButtonSoundOn);
-  FreeAndNil(ButtonSoundOff);
-  FreeAndNil(ButtonExit);
 end;
 
 end.

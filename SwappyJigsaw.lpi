@@ -94,7 +94,7 @@
         <PackageName Value="castle_base"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="SwappyJigsaw.pas"/>
         <IsPartOfProject Value="True"/>
@@ -145,6 +145,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImageList"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="src/gui.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GUI"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

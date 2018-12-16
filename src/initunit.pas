@@ -29,7 +29,7 @@ interface
 implementation
 uses
   SysUtils, CastleWindow, CastleApplicationProperties,
-  Game, ImageList,
+  Game, ImageList, GUI,
   DecoTime, WindowUnit, DecoLog, Global;
 
 function GetApplicationName: String;
@@ -41,6 +41,7 @@ procedure ApplicationInitialize;
 begin
   Log(CurrentRoutine, 'Init sequence started.');
   LoadImageList;
+  InitUI;
   InitGame;
 
   Log(CurrentRoutine, 'Init sequence finished.');
@@ -63,6 +64,7 @@ Window.Caption := 'Swappy Jigsaw';
 
 finalization
 FreeGame;
+FreeUI;
 FreeImageList;
 FreeLog;
 FreeGlobal;
