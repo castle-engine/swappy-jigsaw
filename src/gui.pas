@@ -52,7 +52,7 @@ procedure InitUI;
 procedure FreeUI;
 implementation
 uses
-  SysUtils, CastleFilesUtils, CastleVectors,
+  SysUtils, CastleFilesUtils, CastleVectors, CastleImages,
   WindowUnit,
   DecoLog;
 
@@ -100,11 +100,23 @@ begin
 
   ButtonSize := MenuBarWidth - 10;
   ButtonSpacer := WindowHeight div 4;
-  ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
-  ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
-  ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
-  ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
-  ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
+  if ButtonSize < 122 then
+  begin
+    //scale buttons down on loading if displayed size is smaller than button image size
+    ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
+    ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
+    ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
+    ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
+    ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
+  end else
+  begin
+    //otherwise don't scale buttons
+    ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
+    ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
+    ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
+    ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
+    ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
+  end;
 end;
 
 { --------------------------------------------------------------------------- }
