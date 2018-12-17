@@ -45,6 +45,9 @@ var
   ButtonSize, ButtonSpacer: Integer;
   {}
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
+  {}
+  StarImage: TGLImage;
+  StarSize: Integer;
 
 {}
 procedure InitUI;
@@ -102,7 +105,7 @@ begin
   ButtonSpacer := WindowHeight div 4;
   if ButtonSize < 122 then
   begin
-    //scale buttons down on loading if displayed size is smaller than button image size
+    //scale buttons down on loading if displayed size is smaller than button image size, to save memory and boost performance
     ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
     ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
     ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
@@ -110,13 +113,16 @@ begin
     ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
   end else
   begin
-    //otherwise don't scale buttons
+    //otherwise don't scale buttons, to save memory
     ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
     ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
     ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
     ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
     ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
   end;
+
+  StarSize := ButtonSize div 2;
+  StarImage := TGLImage.Create(ApplicationData('Star.png'), [TRGBAlphaImage], StarSize, StarSize, riBilinear);
 end;
 
 { --------------------------------------------------------------------------- }
@@ -134,6 +140,8 @@ begin
   FreeAndNil(ButtonSoundOn);
   FreeAndNil(ButtonSoundOff);
   FreeAndNil(ButtonExit);
+
+  FreeAndNil(StarImage);
 end;
 
 end.

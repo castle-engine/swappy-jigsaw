@@ -10,3 +10,7 @@ https://opengameart.org/content/simple-smooth-menu-buttons
 SwappyJigsawIcon.png
 SwappyJigsawIcon.ico
 CC0 by George Hodan
+
+Star.png
+CC0 by Photoshopwizard
+https://opengameart.org/content/ui-pack-expansion
