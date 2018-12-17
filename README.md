@@ -1,6 +1,6 @@
 # Swappy Jigsaw
 
-Swappy Jigsaw is a very simple game, where you have to unravel a jigsaw puzzle by swapping image parts
+Swappy Jigsaw is a simple jigsaw puzzle game, where you have to unravel an image split into many tiles. Click to pick a tile and click another tile to swap them. There are 84 images total.
 
 # Installation
 
