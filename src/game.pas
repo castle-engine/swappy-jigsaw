@@ -103,6 +103,13 @@ end;
 
 {----------------------------------------------------------------------------}
 
+const
+  VictoryDuration = 1 /24/60/60; {1 second}
+
+var
+  {}
+  VictoryStartTime: TDateTime;
+
 procedure StartVictory;
 begin
   //increase image score
@@ -110,6 +117,7 @@ begin
   SaveStatistics;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
+  VictoryStartTime := Now;
 end;
 
 procedure EndVictory;
@@ -120,10 +128,59 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure DoVictory;
+type
+  {}
+  TStar = class(TObject)
+    {}
+    X, Y, Vx, Vy, Size: Single;
+    {}
+    function StarRect: TFloatRectangle;
+    {}
+    function isRender: Boolean;
+    {}
+    procedure Update;
+    constructor Create;
+  end;
+
+function TStar.StarRect: TFloatRectangle;
 begin
+  Result := FloatRectangle(X, Y, Size, Size);
+end;
+function TStar.isRender: Boolean;
+begin
+  Result := Y > 0;
+end;
+procedure TStar.Update;
+begin
+  Vy -= RND.Random;
+  Vx += (RND.Random - 0.5) / 10;
+  X += Vx;
+  Y += Vy;
+  Size += RND.Random;
+end;
+constructor TStar.Create;
+begin
+  X := WindowLeft + RND.Random(WindowWidth);
+  Y := WindowBottom + WindowHeight * (1 + RND.Random) / 2;
+  Vy := -RND.Random;
+  Vx := RND.Random - 0.5;
+  Size := StarSize / 10;
+end;
+
+{this procedure happens inside Window.onRender event, so rendering can be done here
+ Moreover, it renders the last, i.e. on top of all other elements.}
+procedure DoVictory;
+var
+  Star: TStar;
+begin
+  if Now - VictoryStartTime < VictoryDuration / 2 then
+  begin
+    Star := TStar.Create;
+    Star.Free;
+  end;
+
   //if the victory animation is finished, stop victory effect
-  if true then
+  if Now - VictoryStartTime > VictoryDuration then
     EndVictory;
 end;
 
