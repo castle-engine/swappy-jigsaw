@@ -2,6 +2,8 @@
 
 Swappy Jigsaw is a simple jigsaw puzzle game, where you have to unravel an image split into many tiles. Click to pick a tile and click another tile to swap them. There are 84 images total.
 
+The game is made in Castle Game Engine (Lazarus/FreePascal), is free, libre and open source.
+
 # Installation
 
 # Windows
