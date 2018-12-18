@@ -207,6 +207,11 @@ begin
       inc(i);
     end;
 
+  if (Now - VictoryStartTime < VictoryDuration / 2) then
+    StarImage.Color := Vector4(1, 1, 1, 1)
+  else
+    StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+
   if i > 0 then
     StarImage.Draw(@StarScreen[0], @StarSource[0], i);
 
