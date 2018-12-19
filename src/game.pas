@@ -226,6 +226,16 @@ end;
 
 {----------------------------------------------------------------------------}
 
+function WrongTilesCount: Integer;
+var
+  i: Integer;
+begin
+  Result := 0;
+  for i := 0 to Pred(JigCount) do
+    if IsTileWrong(i) then
+      inc(Result);
+end;
+
 function IsGameOver: Boolean;
 var
   i: Integer;
@@ -333,8 +343,12 @@ var
   i: Integer;
 begin
   //shuffle the jigsaw pieces
-  for i := Pred(JigCount) downto 1 do
-    SwapTiles(i, RND.Random(i));
+  repeat
+    for i := Pred(JigCount) downto 1 do
+      SwapTiles(i, RND.Random(i));
+  until WrongTilesCount > JigCount - 2; //only one tile is allowed to be in place after shuffle
+
+  //prepare for game
   Selected := -1;
   Window.Invalidate;
   GameStarted := false;
