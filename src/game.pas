@@ -36,6 +36,7 @@ uses
   CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
   Global, GUI,
+  StarFallUnit,
   ImageList, WindowUnit,
   DecoLog;
 
@@ -103,13 +104,6 @@ end;
 
 {----------------------------------------------------------------------------}
 
-const
-  VictoryDuration = 2 /24/60/60; {2 seconds}
-
-var
-  {}
-  VictoryStartTime: TDateTime;
-
 procedure StartVictory;
 begin
   //increase image score
@@ -124,104 +118,20 @@ procedure EndVictory;
 begin
   //return window in low-resources mode
   Window.AutoRedisplay := false;
+  FreeStars;
 end;
 
 {----------------------------------------------------------------------------}
 
-type
-  {}
-  TStar = class(TObject)
-    {}
-    X, Y, Vx, Vy, Size: Single;
-    {}
-    function StarRect: TFloatRectangle;
-    {}
-    function isRender: Boolean;
-    {}
-    procedure Update;
-    constructor Create;
-  end;
-
-type
-  {}
-  TStarList = specialize TObjectList<TStar>;
-
-var
-  {}
-  StarList: TStarList;
-
-function TStar.StarRect: TFloatRectangle;
-begin
-  Result := FloatRectangle(X, Y, Size, Size);
-end;
-function TStar.isRender: Boolean;
-begin
-  Result := (Y > 0) {and (Size < StarSize)};
-end;
-procedure TStar.Update;
-begin
-  Vy -= RND.Random;
-  Vx += (RND.Random - 0.5) / 2;
-  X += Vx;
-  Y += Vy;
-  Size += 1.4 * RND.Random;
-end;
-constructor TStar.Create;
-begin
-  X := WindowLeft + RND.Random(WindowWidth);
-  Y := WindowBottom + WindowHeight * (1 + 1.2 * RND.Random) / 2; //stars may start 50% to 110% of WindowHeight
-  Vy := -RND.Random;
-  Vx := 10 * (RND.Random - 0.5);
-  Size := StarSize / 10;
-end;
-
 {this procedure happens inside Window.onRender event, so rendering can be done here
  Moreover, it renders the last, i.e. on top of all other elements.}
 procedure DoVictory;
-var
-  {}
-  Star: TStar;
-  {}
-  StarScreen, StarSource: TMyFloatRectangleArray;
-  i: Integer;
 begin
-  if StarList = nil then
-    StarList := TStarList.Create(true);
-
-  if Now - VictoryStartTime < VictoryDuration / 3 then
-    for i := 0 to 6 do  //add 7 stars each frame
-    begin
-      Star := TStar.Create;
-      StarList.Add(Star);
-    end;
-
-  SetLength(StarScreen, StarList.Count);
-  SetLength(StarSource, StarList.Count);
-  i := 0;
-  for Star in StarList do
-    if Star.isRender then
-    begin
-      Star.Update;
-      StarScreen[i] := Star.StarRect;
-      StarSource[i] := FloatRectangle(0, 0, StarSize, StarSize);
-      inc(i);
-    end;
-
-  if (Now - VictoryStartTime < VictoryDuration / 2) then
-    StarImage.Color := Vector4(1, 1, 1, 1)
-  else
-    StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
-
-  if i > 0 then
-    StarImage.Draw(@StarScreen[0], @StarSource[0], i);
+   doStars;
 
   //if the victory animation is finished, stop victory effect
-  if (Now - VictoryStartTime > VictoryDuration) or (i = 0) then
-  begin
+  if (Now - VictoryStartTime > VictoryDuration) then
     EndVictory;
-    FreeAndNil(StarList);
-    Window.Invalidate; //clear the stars remaining on screen
-  end;
 end;
 
 {----------------------------------------------------------------------------}
@@ -502,7 +412,7 @@ begin
   Window.OnRelease := nil;
   FreeAndNil(Image);
   //if player accidentally exits when VictoryEffect takes place
-  FreeAndNil(StarList);
+  FreeStars;
 end;
 
 end.
