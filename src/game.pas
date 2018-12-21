@@ -128,8 +128,11 @@ end;
 {this procedure happens inside Window.onRender event, so rendering can be done here
  Moreover, it renders the last, i.e. on top of all other elements.}
 procedure DoVictory;
+var
+  h: Boolean;
 begin
-   StarFall.Render;
+  StarFall.Update(0, h);
+  StarFall.Render;
 
   //if the victory animation is finished, stop victory effect
   if (Now - VictoryStartTime > VictoryDuration) then

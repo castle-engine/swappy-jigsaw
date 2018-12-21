@@ -63,10 +63,13 @@ type
   TStarFall = class(TUIControl)
   strict private
     FStarList: TStarList;
+    FRenderStars: Integer;
     StarScreen, StarSource: TMyFloatRectangleArray;
     procedure AddStar;
   public
     procedure Render; override;
+    procedure Update(const SecondsPassed: Single;
+      var HandleInput: boolean); override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
@@ -94,34 +97,42 @@ begin
   StarSource[High(StarSource)] := FloatRectangle(0, 0, StarSize, StarSize);
 end;
 
-procedure TStarFall.Render;
+procedure TStarFall.Update(const SecondsPassed: Single; var HandleInput: boolean);
 var
   Star: TStar;
   i: Integer;
 begin
+  inherited Update(SecondsPassed, HandleInput);
+
+  //Add stars if necessary
   if Now - VictoryStartTime < VictoryDuration / 3 then
-    for i := 0 to 6 do  //add 7 stars each frame
+    for i := 0 to 6 do
       AddStar;
 
-  i := 0;
+  //Reset StarScreen to current values
+  FRenderStars := 0;
   for Star in FStarList do
     if Star.isRender then
     begin
       Star.Update;
-      StarScreen[i] := Star.Rect;
-      inc(i);
+      StarScreen[FRenderStars] := Star.Rect;
+      inc(FRenderStars);
     end;
 
+  //fade out image after half of requested time
   if (Now - VictoryStartTime < VictoryDuration / 2) then
     StarImage.Color := Vector4(1, 1, 1, 1)
   else
     StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+end;
 
-  if i > 0 then
-    StarImage.Draw(@StarScreen[0], @StarSource[0], i);
-
-  if i = 0 then
-    VictoryStartTime -= VictoryDuration;
+procedure TStarFall.Render;
+begin
+  //Render stars, batched
+  if FRenderStars > 0 then
+    StarImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
+  else
+    VictoryStartTime -= VictoryDuration; //if no stars to render, then stop StarFall
 end;
 
 constructor TStarFall.Create(AOwner: TComponent);
