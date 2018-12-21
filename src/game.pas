@@ -57,6 +57,8 @@ var
   JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
   {}
   WrongRects: TMyFloatRectangleArray;
+  {}
+  StarFall: TStarFall;
 
 var
   {}
@@ -127,7 +129,7 @@ end;
  Moreover, it renders the last, i.e. on top of all other elements.}
 procedure DoVictory;
 begin
-   doStars;
+   StarFall.Render;
 
   //if the victory animation is finished, stop victory effect
   if (Now - VictoryStartTime > VictoryDuration) then
@@ -400,6 +402,8 @@ begin
   Window.OnPress := @GamePress;
   Window.OnRelease := @GameRelease;
 
+  StarFall := TStarFall.Create(nil);
+
   NewGame;
 end;
 
@@ -410,7 +414,10 @@ begin
   Window.OnRender := nil;
   Window.OnPress := nil;
   Window.OnRelease := nil;
+
   FreeAndNil(Image);
+  StarFall.Free;
+
   //if player accidentally exits when VictoryEffect takes place
   FreeStars;
 end;

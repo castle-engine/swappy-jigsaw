@@ -1,45 +1,42 @@
-{ Copyright (C) 2018 Yevhen Loza
+{ MIT License
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Copyright (c) 2018 Yevhen Loza
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>. }
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
 
-{ --------------------------------------------------------------------------- }
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+}
+
+{----------------------------------------------------------------------------}
 
 (* {} *)
 
 unit StarFallUnit;
 
-{$INCLUDE compilerconfig.inc}
+//{$I castleconf.inc}
 
 interface
 
 uses
-  SysUtils;
+  SysUtils, Classes, Generics.Collections,
+  CastleRectangles, CastleUIControls;
 
-const
-  VictoryDuration = 2 /24/60/60; {2 seconds}
-
-var
-  {}
-  VictoryStartTime: TDateTime;
-
-procedure DoStars;
-procedure FreeStars;
-implementation
-uses
-  Generics.Collections,
-  CastleRectangles, CastleVectors,
-  WindowUnit, Global, Gui;
+type
+  TMyFloatRectangleArray = packed array of TFloatRectangle;
 
 type
   {}
@@ -47,7 +44,7 @@ type
     {}
     X, Y, Vx, Vy, Size: Single;
     {}
-    function StarRect: TFloatRectangle;
+    function Rect: TFloatRectangle;
     {}
     function isRender: Boolean;
     {}
@@ -59,13 +56,86 @@ type
   {}
   TStarList = specialize TObjectList<TStar>;
 
+type
+  {}
+  TStarFall = class(TUIControl)
+  strict private
+    FStarList: TStarList;
+  public
+    procedure Render; override;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  published
+
+  end;
+
+const
+  VictoryDuration = 2 /24/60/60; {2 seconds}
+
 var
   {}
-  StarList: TStarList;
+  VictoryStartTime: TDateTime;
 
+procedure FreeStars;
+implementation
+uses
+  CastleVectors,
+  WindowUnit, Global, Gui;
 
+procedure TStarFall.Render;
+var
+  {}
+  Star: TStar;
+  {}
+  StarScreen, StarSource: TMyFloatRectangleArray;
+  i: Integer;
+begin
+  if Now - VictoryStartTime < VictoryDuration / 3 then
+    for i := 0 to 6 do  //add 7 stars each frame
+    begin
+      Star := TStar.Create;
+      FStarList.Add(Star);
+    end;
 
-function TStar.StarRect: TFloatRectangle;
+  SetLength(StarScreen, FStarList.Count);
+  SetLength(StarSource, FStarList.Count);
+  i := 0;
+  for Star in FStarList do
+    if Star.isRender then
+    begin
+      Star.Update;
+      StarScreen[i] := Star.Rect;
+      StarSource[i] := FloatRectangle(0, 0, StarSize, StarSize);
+      inc(i);
+    end;
+
+  if (Now - VictoryStartTime < VictoryDuration / 2) then
+    StarImage.Color := Vector4(1, 1, 1, 1)
+  else
+    StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+
+  if i > 0 then
+    StarImage.Draw(@StarScreen[0], @StarSource[0], i);
+
+  if i = 0 then
+    VictoryStartTime -= VictoryDuration;
+end;
+
+constructor TStarFall.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FStarList := TStarList.Create(true);
+end;
+
+destructor TStarFall.Destroy;
+begin
+  FreeAndNil(FStarList);
+  inherited Destroy;
+end;
+
+{=========================================================================}
+
+function TStar.Rect: TFloatRectangle;
 begin
   Result := FloatRectangle(X, Y, Size, Size);
 end;
@@ -92,54 +162,8 @@ end;
 
 {=========================================================================}
 
-type
-  TMyFloatRectangleArray = packed array of TFloatRectangle;
-
-procedure DoStars;
-var
-  {}
-  Star: TStar;
-  {}
-  StarScreen, StarSource: TMyFloatRectangleArray;
-  i: Integer;
-begin
-  if StarList = nil then
-    StarList := TStarList.Create(true);
-
-  if Now - VictoryStartTime < VictoryDuration / 3 then
-    for i := 0 to 6 do  //add 7 stars each frame
-    begin
-      Star := TStar.Create;
-      StarList.Add(Star);
-    end;
-
-  SetLength(StarScreen, StarList.Count);
-  SetLength(StarSource, StarList.Count);
-  i := 0;
-  for Star in StarList do
-    if Star.isRender then
-    begin
-      Star.Update;
-      StarScreen[i] := Star.StarRect;
-      StarSource[i] := FloatRectangle(0, 0, StarSize, StarSize);
-      inc(i);
-    end;
-
-  if (Now - VictoryStartTime < VictoryDuration / 2) then
-    StarImage.Color := Vector4(1, 1, 1, 1)
-  else
-    StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
-
-  if i > 0 then
-    StarImage.Draw(@StarScreen[0], @StarSource[0], i);
-
-  if i = 0 then
-    VictoryStartTime -= VictoryDuration;
-end;
-
 procedure FreeStars;
 begin
-  FreeAndNil(StarList);
   Window.Invalidate; //clear the stars remaining on screen
 end;
 
