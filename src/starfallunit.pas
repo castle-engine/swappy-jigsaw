@@ -61,6 +61,8 @@ type
   TStarFall = class(TUIControl)
   strict private
     FStarList: TStarList;
+    StarScreen, StarSource: TMyFloatRectangleArray;
+    procedure AddStar;
   public
     procedure Render; override;
     constructor Create(AOwner: TComponent); override;
@@ -82,30 +84,31 @@ uses
   CastleVectors,
   WindowUnit, Global, Gui;
 
+procedure TStarFall.AddStar;
+begin
+  FStarList.Add(TStar.Create);
+  SetLength(StarScreen, FStarList.Count);
+  SetLength(StarSource, FStarList.Count);
+  StarSource[High(StarSource)] := FloatRectangle(0, 0, StarSize, StarSize);
+end;
+
 procedure TStarFall.Render;
 var
   {}
   Star: TStar;
   {}
-  StarScreen, StarSource: TMyFloatRectangleArray;
   i: Integer;
 begin
   if Now - VictoryStartTime < VictoryDuration / 3 then
     for i := 0 to 6 do  //add 7 stars each frame
-    begin
-      Star := TStar.Create;
-      FStarList.Add(Star);
-    end;
+      AddStar;
 
-  SetLength(StarScreen, FStarList.Count);
-  SetLength(StarSource, FStarList.Count);
   i := 0;
   for Star in FStarList do
     if Star.isRender then
     begin
       Star.Update;
       StarScreen[i] := Star.Rect;
-      StarSource[i] := FloatRectangle(0, 0, StarSize, StarSize);
       inc(i);
     end;
 
