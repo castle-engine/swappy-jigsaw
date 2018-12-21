@@ -144,7 +144,7 @@ begin
 end;
 function TStar.isRender: Boolean;
 begin
-  Result := (Y > 0);
+  Result := (Y > -Size) and (X > -Size) and (X < Window.Width); //shouldn't depend on Window.Width here!
 end;
 procedure TStar.Update;
 begin
