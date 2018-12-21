@@ -131,6 +131,7 @@ procedure DoVictory;
 var
   h: Boolean;
 begin
+  h := false;
   StarFall.Update(0, h);
   StarFall.Render;
 
