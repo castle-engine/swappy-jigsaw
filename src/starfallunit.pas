@@ -39,25 +39,27 @@ type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
 
 type
-  {}
+  { An single object (star) properties that falls down }
   TStar = class(TObject)
-    {}
+  public
+    { Coordinates, speed and size of the star}
     X, Y, Vx, Vy, Size: Single;
-    {}
+    { Rectangle of the star's current position and size }
     function Rect: TFloatRectangle;
-    {}
+    { Is this star on-screen? }
     function isRender: Boolean;
-    {}
+    { Update coordinates/properties of the Star
+      should be called each frame}
     procedure Update;
     constructor Create;
   end;
 
 type
-  {}
+  { A list of Stars }
   TStarList = specialize TObjectList<TStar>;
 
 type
-  {}
+  { UI element, that can display a burst of stars falling down if launched }
   TStarFall = class(TUIControl)
   strict private
     FStarList: TStarList;
@@ -94,9 +96,7 @@ end;
 
 procedure TStarFall.Render;
 var
-  {}
   Star: TStar;
-  {}
   i: Integer;
 begin
   if Now - VictoryStartTime < VictoryDuration / 3 then
@@ -144,7 +144,7 @@ begin
 end;
 function TStar.isRender: Boolean;
 begin
-  Result := (Y > 0) {and (Size < StarSize)};
+  Result := (Y > 0);
 end;
 procedure TStar.Update;
 begin
