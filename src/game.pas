@@ -58,7 +58,7 @@ var
   {}
   WrongRects: TMyFloatRectangleArray;
   {}
-  StarFall: TStarFall;
+  StarFall: TStarFallEffect;
 
 var
   {}
@@ -405,7 +405,7 @@ begin
   Window.OnPress := @GamePress;
   Window.OnRelease := @GameRelease;
 
-  StarFall := TStarFall.Create(nil);
+  StarFall := TStarFallEffect.Create(nil);
 
   NewGame;
 end;

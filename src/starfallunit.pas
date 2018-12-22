@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  CastleRectangles, CastleUIControls;
+  CastleRectangles, CastleUIControls, CastleComponentSerialize;
 
 type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
@@ -60,7 +60,7 @@ type
 
 type
   { UI element, that can display a burst of stars falling down if launched }
-  TStarFall = class(TUIControl)
+  TStarFallEffect = class(TUIControl)
   strict private
     FStarList: TStarList;
     FRenderStars: Integer;
@@ -89,7 +89,7 @@ uses
   CastleVectors,
   WindowUnit, Global, Gui;
 
-procedure TStarFall.AddStar;
+procedure TStarFallEffect.AddStar;
 begin
   FStarList.Add(TStar.Create);
   SetLength(StarScreen, FStarList.Count);
@@ -97,7 +97,7 @@ begin
   StarSource[High(StarSource)] := FloatRectangle(0, 0, StarSize, StarSize);
 end;
 
-procedure TStarFall.Update(const SecondsPassed: Single; var HandleInput: boolean);
+procedure TStarFallEffect.Update(const SecondsPassed: Single; var HandleInput: boolean);
 var
   Star: TStar;
   i: Integer;
@@ -126,7 +126,7 @@ begin
     StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
 end;
 
-procedure TStarFall.Render;
+procedure TStarFallEffect.Render;
 begin
   //Render stars, batched
   if FRenderStars > 0 then
@@ -135,13 +135,13 @@ begin
     VictoryStartTime -= VictoryDuration; //if no stars to render, then stop StarFall
 end;
 
-constructor TStarFall.Create(AOwner: TComponent);
+constructor TStarFallEffect.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FStarList := TStarList.Create(true);
 end;
 
-destructor TStarFall.Destroy;
+destructor TStarFallEffect.Destroy;
 begin
   FreeAndNil(FStarList);
   inherited Destroy;
@@ -181,5 +181,6 @@ begin
   Window.Invalidate; //clear the stars remaining on screen
 end;
 
+initialization
+  RegisterSerializableComponent(TStarFallEffect, 'StarFall Effect');
 end.
-
