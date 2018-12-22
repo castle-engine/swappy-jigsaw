@@ -60,7 +60,7 @@ type
 
 type
   { UI element, that can display a burst of stars falling down if launched }
-  TStarFallEffect = class(TUIControl)
+  TStarFallEffect = class(TCastleUserInterface)
   strict private
     FStarList: TStarList;
     FRenderStars: Integer;
