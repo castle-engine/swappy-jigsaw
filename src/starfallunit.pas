@@ -32,8 +32,9 @@ unit StarFallUnit;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, CastleGLImages,
-  CastleRectangles, CastleUIControls, CastleComponentSerialize;
+  SysUtils, Classes, Generics.Collections,
+  CastleGLImages, CastleRectangles, CastleColors,
+  CastleUIControls, CastleComponentSerialize;
 
 type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
@@ -63,6 +64,8 @@ type
   TStarFallEffect = class(TCastleUserInterface)
   strict private
     FImage: TGLImage;
+    FDefaultColor: Boolean;
+    FColor: TCastleColor;
     FURL: String;
     FOwnsImage: Boolean;
     FStarList: TStarList;
@@ -72,15 +75,19 @@ type
     procedure CreatePixel;
     procedure SetImage(const AImage: TGLImage);
     procedure SetURL(const AURL: String);
+    procedure SetColor(const AColor: TCastleColor);
   public
+    { Color of StarFall objects.
+      In case no image is provided, this will mean color of falling squares
+      Otherwise Image.Color will be set to this value
+      Defaults are White for Images and Yellow for falling squares }
+    property Color: TCastleColor read FColor write SetColor;
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
       var HandleInput: boolean); override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
-    //property Color;
-
     {}
     property Image: TGLImage read FImage write SetImage;
     property URL: String read FURL write SetURL;
@@ -117,6 +124,7 @@ procedure TStarFallEffect.Update(const SecondsPassed: Single; var HandleInput: b
 var
   Star: TStar;
   i: Integer;
+  CurrentColor: TCastleColor;
 begin
   inherited Update(SecondsPassed, HandleInput);
 
@@ -136,16 +144,18 @@ begin
     end;
 
   //fade out image after half of requested time
-  if (Now - VictoryStartTime < VictoryDuration / 2) then
-    FImage.Color := Vector4(1, 1, 1, 1)
-  else
-    FImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+  CurrentColor := FColor; //can't assign to FColor directly as TGLImage.Color is a property
+  if (Now - VictoryStartTime > VictoryDuration / 2) then
+    CurrentColor.Data[3] := CurrentColor.Data[3] * (1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+  FImage.Color := CurrentColor;
 end;
 
 procedure TStarFallEffect.SetURL(const AURL: String);
 begin
   if FOwnsImage then
     FreeAndNil(FImage);
+  if FDefaultColor then
+    FColor := White;
 
   FURL := AURL;
   FImage := TGLImage.Create(FURL, [TRGBAlphaImage], true);
@@ -156,7 +166,15 @@ procedure TStarFallEffect.SetImage(const AImage: TGLImage);
 begin
   if FOwnsImage then
     FreeAndNil(FImage);
+  if FDefaultColor then
+    FColor := White;
   FImage := AImage;
+end;
+
+procedure TStarFallEffect.SetColor(const AColor: TCastleColor);
+begin
+  FColor := AColor;
+  FDefaultColor := false; //prevent color from automatically changing
 end;
 
 procedure TStarFallEffect.CreatePixel;
@@ -167,6 +185,8 @@ begin
   WhitePixel.Clear(Vector4(1,1,1,1));
   FImage := TGLImage.Create(WhitePixel, true, true);
   FOwnsImage := true;
+  if FDefaultColor then
+    FColor := Yellow;
 end;
 
 procedure TStarFallEffect.Render;
@@ -185,6 +205,7 @@ end;
 constructor TStarFallEffect.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FDefaultColor := true;
   FStarList := TStarList.Create(true);
 end;
 
