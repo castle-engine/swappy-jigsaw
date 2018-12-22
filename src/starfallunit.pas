@@ -85,7 +85,6 @@ type
     procedure SetURL(const AURL: String);
     procedure SetColor(const AColor: TCastleColor);
     procedure ClearStars;
-    procedure StopEffect;
     procedure CheckIsImageValid;
   public
     const
@@ -95,19 +94,28 @@ type
       Otherwise Image.Color will be set to this value
       Defaults are White for Images and Yellow for falling squares }
     property Color: TCastleColor read FColor write SetColor;
+    { Start the effect }
+    procedure Start;
+    { Stop the effect }
+    procedure Stop;
+    { Is the effect in-progress.
+      This is temporarily @true after calling @link(Start).
+      It automatically ends (switches to @false) after the @link(Duration)
+      has passed, and when you call @link(Stop) explicitly.}
+    function Active: boolean;
+
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
       var HandleInput: boolean); override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    {}
-    procedure Start;
-    {}
-    function Active: boolean;
   published
-    {}
+    { Duration of the effect.
+      1/3 of it the stars will spawn
+      after 1/2 of the duration, the remaining stars will fade }
     property Duration: Single read FDuration write FDuration default DefaultDuration;
-    {}
+    { The image object to fall down can be set either by providing a TGLImage
+      to Image property or a valid image URL to URL property }
     property Image: TGLImage read FImage write SetImage;
     property URL: String read FURL write SetURL;
 
@@ -123,9 +131,14 @@ uses
 
 procedure TStarFallEffect.Start;
 begin
-  WriteLn(Self.EffectiveRect.Width, ' ', Self.EffectiveRect.Height);
   FStartTime := Timer;
   FActive := true;
+end;
+
+procedure TStarFallEffect.Stop;
+begin
+  ClearStars;
+  FActive := false;
 end;
 
 procedure TStarFallEffect.AddStar;
@@ -216,7 +229,7 @@ begin
     FImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
   end
   else
-    StopEffect;
+    Stop;
 end;
 
 procedure TStarFallEffect.CheckIsImageValid;
@@ -228,12 +241,6 @@ end;
 procedure TStarFallEffect.ClearStars;
 begin
   FStarList.Clear;
-  FActive := false;
-end;
-
-procedure TStarFallEffect.StopEffect;
-begin
-  ClearStars;
   FActive := false;
 end;
 
