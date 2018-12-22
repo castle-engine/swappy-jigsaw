@@ -79,6 +79,9 @@ type
     procedure SetImage(const AImage: TGLImage);
     procedure SetURL(const AURL: String);
     procedure SetColor(const AColor: TCastleColor);
+    procedure ClearStars;
+    procedure StopEffect;
+    procedure CheckIsImageValid;
   public
     { Color of StarFall objects.
       In case no image is provided, this will mean color of falling squares
@@ -118,8 +121,6 @@ begin
   FStarList.Add(TStar.Create);
   SetLength(StarScreen, FStarList.Count);
   SetLength(StarSource, FStarList.Count);
-  if FImage = nil then
-    CreatePixel;
   StarSource[High(StarSource)] := FloatRectangle(0, 0, FImage.Width, FImage.Height);
 end;
 
@@ -130,6 +131,8 @@ var
   CurrentColor: TCastleColor;
 begin
   inherited Update(SecondsPassed, HandleInput);
+
+  CheckIsImageValid;
 
   //Add stars if necessary
   if Now - VictoryStartTime < VictoryDuration / 3 then
@@ -197,13 +200,34 @@ begin
   //Render stars, batched
   if FRenderStars > 0 then
   begin
-    if FImage = nil then
-      CreatePixel;
+    CheckIsImageValid;
     FImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
   end
   else
+  begin
     VictoryStartTime -= VictoryDuration; //if no stars to render, then stop StarFall
+    StopEffect
+  end;
 end;
+
+procedure TStarFallEffect.CheckIsImageValid;
+begin
+  if FImage = nil then
+    CreatePixel;
+end;
+
+procedure TStarFallEffect.ClearStars;
+begin
+  FStarList.Clear;
+end;
+
+procedure TStarFallEffect.StopEffect;
+begin
+  ClearStars;
+end;
+
+
+
 
 constructor TStarFallEffect.Create(AOwner: TComponent);
 begin
