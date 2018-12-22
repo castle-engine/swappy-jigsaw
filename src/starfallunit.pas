@@ -37,7 +37,7 @@ uses
   CastleUIControls, CastleComponentSerialize;
 
 type
-  TMyFloatRectangleArray = packed array of TFloatRectangle;
+  TStarsFloatRectangleArray = packed array of TFloatRectangle;
 
 type
   { An single object (star) properties that falls down }
@@ -70,7 +70,7 @@ type
     FOwnsImage: Boolean;
     FStarList: TStarList;
     FRenderStars: Integer;
-    StarScreen, StarSource: TMyFloatRectangleArray;
+    StarScreen, StarSource: TStarsFloatRectangleArray;
     procedure AddStar;
     procedure CreatePixel;
     procedure SetImage(const AImage: TGLImage);
