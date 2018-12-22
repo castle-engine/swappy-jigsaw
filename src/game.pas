@@ -406,7 +406,7 @@ begin
   Window.OnRelease := @GameRelease;
 
   StarFall := TStarFallEffect.Create(nil);
-  StarFall.Image := StarImage;
+  StarFall.URL := ApplicationData('Star.png');
 
   NewGame;
 end;

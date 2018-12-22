@@ -63,6 +63,7 @@ type
   TStarFallEffect = class(TCastleUserInterface)
   strict private
     FImage: TGLImage;
+    FURL: String;
     FOwnsImage: Boolean;
     FStarList: TStarList;
     FRenderStars: Integer;
@@ -70,6 +71,7 @@ type
     procedure AddStar;
     procedure CreatePixel;
     procedure SetImage(const AImage: TGLImage);
+    procedure SetURL(const AURL: String);
   public
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
@@ -79,9 +81,9 @@ type
   published
     //property Color;
 
-    { Set this to non-nil to modulate the color with an image.
-      The image is always stretched to cover our whole size. }
+    {}
     property Image: TGLImage read FImage write SetImage;
+    property URL: String read FURL write SetURL;
 
     { Free the @link(Image) instance automatically. }
     property OwnsImage: boolean read FOwnsImage write FOwnsImage default false;
@@ -106,7 +108,9 @@ begin
   FStarList.Add(TStar.Create);
   SetLength(StarScreen, FStarList.Count);
   SetLength(StarSource, FStarList.Count);
-  StarSource[High(StarSource)] := FloatRectangle(0, 0, StarSize, StarSize);
+  if FImage = nil then
+    CreatePixel;
+  StarSource[High(StarSource)] := FloatRectangle(0, 0, FImage.Width, FImage.Height);
 end;
 
 procedure TStarFallEffect.Update(const SecondsPassed: Single; var HandleInput: boolean);
@@ -133,9 +137,19 @@ begin
 
   //fade out image after half of requested time
   if (Now - VictoryStartTime < VictoryDuration / 2) then
-    StarImage.Color := Vector4(1, 1, 1, 1)
+    FImage.Color := Vector4(1, 1, 1, 1)
   else
-    StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+    FImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+end;
+
+procedure TStarFallEffect.SetURL(const AURL: String);
+begin
+  if FOwnsImage then
+    FreeAndNil(FImage);
+
+  FURL := AURL;
+  FImage := TGLImage.Create(FURL, [TRGBAlphaImage], true);
+  FOwnsImage := true;
 end;
 
 procedure TStarFallEffect.SetImage(const AImage: TGLImage);
@@ -206,7 +220,7 @@ begin
   Y := WindowBottom + WindowHeight * (1 + 1.2 * RND.Random) / 2; //stars may start 50% to 110% of WindowHeight
   Vy := -RND.Random;
   Vx := 10 * (RND.Random - 0.5);
-  Size := StarSize / 10;
+  Size := 3;
 end;
 
 {=========================================================================}
