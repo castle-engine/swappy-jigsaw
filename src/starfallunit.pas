@@ -32,7 +32,7 @@ unit StarFallUnit;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
+  SysUtils, Classes, Generics.Collections, CastleGLImages,
   CastleRectangles, CastleUIControls, CastleComponentSerialize;
 
 type
@@ -62,10 +62,13 @@ type
   { UI element, that can display a burst of stars falling down if launched }
   TStarFallEffect = class(TCastleUserInterface)
   strict private
+    FImage: TGLImage;
+    FOwnsImage: Boolean;
     FStarList: TStarList;
     FRenderStars: Integer;
     StarScreen, StarSource: TMyFloatRectangleArray;
     procedure AddStar;
+    procedure CreatePixel;
   public
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
@@ -73,7 +76,16 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
+    //property Color;
 
+    { Set this to non-nil to modulate the color with an image.
+      The image is always stretched to cover our whole size. }
+    property Image: TGLImage read FImage write FImage;
+
+    { Free the @link(Image) instance automatically. }
+    property OwnsImage: boolean read FOwnsImage write FOwnsImage default false;
+
+    property FullSize default true;
   end;
 
 const
@@ -86,7 +98,7 @@ var
 procedure FreeStars;
 implementation
 uses
-  CastleVectors,
+  CastleVectors, CastleImages,
   WindowUnit, Global, Gui;
 
 procedure TStarFallEffect.AddStar;
@@ -126,11 +138,25 @@ begin
     StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
 end;
 
+procedure TStarFallEffect.CreatePixel;
+var
+  WhitePixel: TGrayscaleImage;
+begin
+  WhitePixel := TGrayscaleImage.Create(1, 1);
+  WhitePixel.Clear(Vector4(1,1,1,1));
+  FImage := TGLImage.Create(WhitePixel, true, true);
+  FOwnsImage := true;
+end;
+
 procedure TStarFallEffect.Render;
 begin
   //Render stars, batched
   if FRenderStars > 0 then
-    StarImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
+  begin
+    if FImage = nil then
+      CreatePixel;
+    FImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
+  end
   else
     VictoryStartTime -= VictoryDuration; //if no stars to render, then stop StarFall
 end;
@@ -143,6 +169,8 @@ end;
 
 destructor TStarFallEffect.Destroy;
 begin
+  if FOwnsImage then
+    FreeAndNil(FImage);
   FreeAndNil(FStarList);
   inherited Destroy;
 end;
