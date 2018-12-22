@@ -120,7 +120,7 @@ procedure EndVictory;
 begin
   //return window in low-resources mode
   Window.AutoRedisplay := false;
-  FreeStars;
+  Window.Invalidate;
 end;
 
 {----------------------------------------------------------------------------}
@@ -421,9 +421,6 @@ begin
 
   FreeAndNil(Image);
   StarFall.Free;
-
-  //if player accidentally exits when VictoryEffect takes place
-  FreeStars;
 end;
 
 end.

@@ -69,6 +69,7 @@ type
     StarScreen, StarSource: TMyFloatRectangleArray;
     procedure AddStar;
     procedure CreatePixel;
+    procedure SetImage(const AImage: TGLImage);
   public
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
@@ -80,7 +81,7 @@ type
 
     { Set this to non-nil to modulate the color with an image.
       The image is always stretched to cover our whole size. }
-    property Image: TGLImage read FImage write FImage;
+    property Image: TGLImage read FImage write SetImage;
 
     { Free the @link(Image) instance automatically. }
     property OwnsImage: boolean read FOwnsImage write FOwnsImage default false;
@@ -95,7 +96,6 @@ var
   {}
   VictoryStartTime: TDateTime;
 
-procedure FreeStars;
 implementation
 uses
   CastleVectors, CastleImages,
@@ -136,6 +136,13 @@ begin
     StarImage.Color := Vector4(1, 1, 1, 1)
   else
     StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+end;
+
+procedure TStarFallEffect.SetImage(const AImage: TGLImage);
+begin
+  if FOwnsImage then
+    FreeAndNil(FImage);
+  FImage := AImage;
 end;
 
 procedure TStarFallEffect.CreatePixel;
@@ -203,11 +210,6 @@ begin
 end;
 
 {=========================================================================}
-
-procedure FreeStars;
-begin
-  Window.Invalidate; //clear the stars remaining on screen
-end;
 
 initialization
   RegisterSerializableComponent(TStarFallEffect, 'StarFall Effect');
