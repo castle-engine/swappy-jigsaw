@@ -43,7 +43,7 @@ type
   TStarsFloatRectangleArray = packed array of TFloatRectangle;
 
 type
-  { An single object (star) properties that falls down }
+  { An single star properties that falls down }
   TStar = class(TObject)
   strict private
     FParentRect: TFloatRectangle;
@@ -71,6 +71,8 @@ type
     FImage: TGLImage;
     FDefaultColor: Boolean;
     FColor: TCastleColor;
+    FNumber: Integer;
+    FRemainingNumber: Integer;
     FURL: String;
     FActive: Boolean;
     FDuration: Single;
@@ -85,12 +87,15 @@ type
     procedure SetURL(const AURL: String);
     procedure SetColor(const AColor: TCastleColor);
     procedure SetDuration(const ADuration: Single);
+    procedure SetNumber(const ANumber: Integer);
     procedure ClearStars;
     procedure CheckIsImageValid;
   public
     const
       DefaultDuration = 2.0;
-    { Color of StarFall objects.
+    const
+      DefaultNumber = 200;
+    { Color of Stars.
       In case no image is provided, this will mean color of falling squares
       Otherwise Image.Color will be set to this value
       Defaults are White for Images and Yellow for falling squares }
@@ -111,17 +116,19 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
+    { Number of stars to fall down }
+    property Number: Integer read FNumber write SetNumber default DefaultNumber;
     { Duration of the effect.
       1/3 of it the stars will spawn
       after 1/2 of the duration, the remaining stars will fade }
     property Duration: Single read FDuration write SetDuration default DefaultDuration;
-    { The image object to fall down can be set either by providing a TGLImage
+    { The image of star to fall down can be set either by providing a TGLImage
       to Image property or a valid image URL to URL property }
     property Image: TGLImage read FImage write SetImage;
     property URL: String read FURL write SetURL;
 
     { Free the @link(Image) instance automatically. }
-    property OwnsImage: boolean read FOwnsImage write FOwnsImage default false;
+    property OwnsImage: Boolean read FOwnsImage write FOwnsImage default false;
 
     property FullSize default true;
   end;
@@ -134,6 +141,7 @@ procedure TStarFallEffect.Start;
 begin
   FStartTime := Timer;
   FActive := true;
+  FRemainingNumber := FNumber;
 end;
 
 procedure TStarFallEffect.Stop;
@@ -148,6 +156,7 @@ begin
   SetLength(StarScreen, FStarList.Count);
   SetLength(StarSource, FStarList.Count);
   StarSource[High(StarSource)] := FloatRectangle(0, 0, FImage.Width, FImage.Height);
+  Dec(FRemainingNumber);
 end;
 
 procedure TStarFallEffect.Update(const SecondsPassed: Single; var HandleInput: boolean);
@@ -162,7 +171,7 @@ begin
 
   //Add stars if necessary
   if (TimerSeconds(Timer, FStartTime) < FDuration / 3) then
-    for i := 0 to 6 do
+    for i := 0 to Round(FRemainingNumber * TimerSeconds(Timer, FStartTime) / (FDuration / 3)) do
       AddStar;
 
   //Reset StarScreen to current values
@@ -217,13 +226,21 @@ begin
     FDuration := DefaultDuration;
 end;
 
+procedure TStarFallEffect.SetNumber(const ANumber: Integer);
+begin
+  if ANumber > 0 then
+    FNumber := ANumber
+  else
+    FNumber := DefaultNumber;
+end;
+
 procedure TStarFallEffect.CreatePixel;
 var
   WhitePixel: TGrayscaleImage;
 begin
   WhitePixel := TGrayscaleImage.Create(1, 1);
   WhitePixel.Clear(Vector4(1,1,1,1));
-  FImage := TGLImage.Create(WhitePixel, true, true);
+  FImage := TGLImage.Create(WhitePixel, false, true);
   FOwnsImage := true;
   if FDefaultColor then
     FColor := Yellow;

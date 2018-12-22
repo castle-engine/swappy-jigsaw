@@ -413,6 +413,7 @@ begin
   StarFall.Bottom := 0;
   StarFall.Width := Window.Width;
   StarFall.Height := Window.Height;
+  StarFall.Number := 250;
 
   NewGame;
 end;
