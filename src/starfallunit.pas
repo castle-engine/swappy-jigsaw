@@ -84,6 +84,7 @@ type
     procedure SetImage(const AImage: TGLImage);
     procedure SetURL(const AURL: String);
     procedure SetColor(const AColor: TCastleColor);
+    procedure SetDuration(const ADuration: Single);
     procedure ClearStars;
     procedure CheckIsImageValid;
   public
@@ -102,7 +103,7 @@ type
       This is temporarily @true after calling @link(Start).
       It automatically ends (switches to @false) after the @link(Duration)
       has passed, and when you call @link(Stop) explicitly.}
-    function Active: boolean;
+    function Active: Boolean;
 
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
@@ -113,7 +114,7 @@ type
     { Duration of the effect.
       1/3 of it the stars will spawn
       after 1/2 of the duration, the remaining stars will fade }
-    property Duration: Single read FDuration write FDuration default DefaultDuration;
+    property Duration: Single read FDuration write SetDuration default DefaultDuration;
     { The image object to fall down can be set either by providing a TGLImage
       to Image property or a valid image URL to URL property }
     property Image: TGLImage read FImage write SetImage;
@@ -206,6 +207,14 @@ procedure TStarFallEffect.SetColor(const AColor: TCastleColor);
 begin
   FColor := AColor;
   FDefaultColor := false; //prevent color from automatically changing
+end;
+
+procedure TStarFallEffect.SetDuration(const ADuration: Single);
+begin
+  if ADuration > 0 then
+    FDuration := ADuration
+  else
+    FDuration := DefaultDuration;
 end;
 
 procedure TStarFallEffect.CreatePixel;
