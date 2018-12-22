@@ -23,7 +23,10 @@
 
 {----------------------------------------------------------------------------}
 
-(* {} *)
+(* A simple victory effect, "throws" a lot of stars or other images on screen
+   and lets them fall accelerated by gravity.
+   By default it'll throw yellow squares, but user can set Image or URL to load
+   any image supported by Castle Game Engine. *)
 
 unit StarFallUnit;
 
