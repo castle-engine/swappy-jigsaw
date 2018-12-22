@@ -88,13 +88,12 @@ type
     procedure SetColor(const AColor: TCastleColor);
     procedure SetDuration(const ADuration: Single);
     procedure SetNumber(const ANumber: Integer);
-    procedure ClearStars;
     procedure CheckIsImageValid;
   public
     const
-      DefaultDuration = 2.0;
+      DefaultDuration = 1.5;
     const
-      DefaultNumber = 200;
+      DefaultNumber = 250;
     { Color of Stars.
       In case no image is provided, this will mean color of falling squares
       Otherwise Image.Color will be set to this value
@@ -146,7 +145,9 @@ end;
 
 procedure TStarFallEffect.Stop;
 begin
-  ClearStars;
+  FStarList.Clear;
+  StarScreen := nil;
+  StarSource := nil;
   FActive := false;
 end;
 
@@ -262,12 +263,6 @@ procedure TStarFallEffect.CheckIsImageValid;
 begin
   if FImage = nil then
     CreatePixel;
-end;
-
-procedure TStarFallEffect.ClearStars;
-begin
-  FStarList.Clear;
-  FActive := false;
 end;
 
 function TStarFallEffect.Active: Boolean;

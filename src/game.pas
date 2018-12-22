@@ -118,6 +118,7 @@ end;
 
 procedure EndVictory;
 begin
+  StarFall.Stop;
   //return window in low-resources mode
   Window.AutoRedisplay := false;
   Window.Invalidate;
@@ -136,7 +137,7 @@ begin
   StarFall.Render;
 
   //if the victory animation is finished, stop victory effect
-  if StarFall.Active then
+  if not StarFall.Active then
     EndVictory;
 end;
 
@@ -370,6 +371,8 @@ var
   ix, iy: Integer;
   NextImagesCount: Integer;
 begin
+  EndVictory;
+
   NextImagesCount := SortListCount;  //image list is sorted only here, so it's perfectly safe to use CurrentImage as image reference
   CurrentImage := RND.Random(NextImagesCount);
 
@@ -408,12 +411,12 @@ begin
 
   StarFall := TStarFallEffect.Create(nil);
   StarFall.URL := ApplicationData('Star.png');
-  StarFall.Duration := 1.5;
+  StarFall.Duration := 1.5; //=default
+  StarFall.Number := 250; //=default
   StarFall.Left := 0;
   StarFall.Bottom := 0;
   StarFall.Width := Window.Width;
   StarFall.Height := Window.Height;
-  StarFall.Number := 250;
 
   NewGame;
 end;
@@ -422,6 +425,8 @@ end;
 
 procedure FreeGame;
 begin
+  EndVictory;
+
   Window.OnRender := nil;
   Window.OnPress := nil;
   Window.OnRelease := nil;
