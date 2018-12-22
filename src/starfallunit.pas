@@ -45,6 +45,8 @@ type
 type
   { An single object (star) properties that falls down }
   TStar = class(TObject)
+  strict private
+    FParentRect: TFloatRectangle;
   public
     { Coordinates, speed and size of the star}
     X, Y, Vx, Vy, Size: Single;
@@ -55,7 +57,7 @@ type
     { Update coordinates/properties of the Star
       should be called each frame}
     procedure Update;
-    constructor Create;
+    constructor Create(const AParentRectangle: TFloatRectangle);
   end;
 
 type
@@ -117,18 +119,18 @@ type
 
 implementation
 uses
-  CastleVectors, CastleImages,
-  WindowUnit, Global, Gui;
+  CastleVectors, CastleImages, CastleRandom;
 
 procedure TStarFallEffect.Start;
 begin
+  WriteLn(Self.EffectiveRect.Width, ' ', Self.EffectiveRect.Height);
   FStartTime := Timer;
   FActive := true;
 end;
 
 procedure TStarFallEffect.AddStar;
 begin
-  FStarList.Add(TStar.Create);
+  FStarList.Add(TStar.Create(Self.EffectiveRect));
   SetLength(StarScreen, FStarList.Count);
   SetLength(StarSource, FStarList.Count);
   StarSource[High(StarSource)] := FloatRectangle(0, 0, FImage.Width, FImage.Height);
@@ -264,22 +266,23 @@ begin
 end;
 function TStar.isRender: Boolean;
 begin
-  Result := (Y > -Size) and (X > -Size) and (X < Window.Width); //shouldn't depend on Window.Width here!
+  Result := (Y > -Size) and (X > -Size) and (X < FParentRect.Width); //shouldn't depend on Window.Width here!
 end;
 procedure TStar.Update;
 begin
-  Vy -= RND.Random;
-  Vx += (RND.Random - 0.5) / 2;
+  Vy -= Rand.Random;
+  Vx += (Rand.Random - 0.5) / 2;
   X += Vx;
   Y += Vy;
-  Size += 1.4 * RND.Random;
+  Size += 1.4 * Rand.Random;
 end;
-constructor TStar.Create;
+constructor TStar.Create(const AParentRectangle: TFloatRectangle);
 begin
-  X := WindowLeft + RND.Random(WindowWidth);
-  Y := WindowBottom + WindowHeight * (1 + 1.2 * RND.Random) / 2; //stars may start 50% to 110% of WindowHeight
-  Vy := -RND.Random;
-  Vx := 10 * (RND.Random - 0.5);
+  FParentRect := AParentRectangle;
+  X := FParentRect.Left + Rand.Random(Round(FParentRect.Width));
+  Y := FParentRect.Bottom + FParentRect.Height * (1 + 1.2 * Rand.Random) / 2; //stars may start 50% to 110% of WindowHeight
+  Vy := -Rand.Random;
+  Vx := 10 * (Rand.Random - 0.5);
   Size := 3;
 end;
 

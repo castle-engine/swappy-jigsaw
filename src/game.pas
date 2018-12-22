@@ -409,6 +409,10 @@ begin
   StarFall := TStarFallEffect.Create(nil);
   StarFall.URL := ApplicationData('Star.png');
   StarFall.Duration := 2.0;
+  StarFall.Left := 0;
+  StarFall.Bottom := 0;
+  StarFall.Width := Window.Width;
+  StarFall.Height := Window.Height;
 
   NewGame;
 end;
