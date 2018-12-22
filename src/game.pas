@@ -332,7 +332,7 @@ begin
           GameStarted := true;
           Selected := -1;
           if isGameOver then
-            Log(CurrentRoutine, 'HOOORAY!');
+            Log(CurrentRoutine, 'Image solved!');
         end;
       end;
     end else
