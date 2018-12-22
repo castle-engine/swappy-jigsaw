@@ -45,9 +45,6 @@ var
   ButtonSize, ButtonSpacer: Integer;
   {}
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
-  {}
-  StarImage: TGLImage;
-  StarSize: Integer;
 
 {}
 procedure InitUI;
@@ -120,9 +117,6 @@ begin
     ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
     ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
   end;
-
-  StarSize := ButtonSize div 2;
-  StarImage := TGLImage.Create(ApplicationData('Star.png'), [TRGBAlphaImage], StarSize, StarSize, riBilinear);
 end;
 
 { --------------------------------------------------------------------------- }
@@ -140,8 +134,6 @@ begin
   FreeAndNil(ButtonSoundOn);
   FreeAndNil(ButtonSoundOff);
   FreeAndNil(ButtonExit);
-
-  FreeAndNil(StarImage);
 end;
 
 end.

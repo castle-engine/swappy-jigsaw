@@ -58,7 +58,7 @@ var
   {}
   WrongRects: TMyFloatRectangleArray;
   {}
-  StarFall: TStarFall;
+  StarFall: TStarFallEffect;
 
 var
   {}
@@ -120,7 +120,7 @@ procedure EndVictory;
 begin
   //return window in low-resources mode
   Window.AutoRedisplay := false;
-  FreeStars;
+  Window.Invalidate;
 end;
 
 {----------------------------------------------------------------------------}
@@ -406,7 +406,8 @@ begin
   Window.OnPress := @GamePress;
   Window.OnRelease := @GameRelease;
 
-  StarFall := TStarFall.Create(nil);
+  StarFall := TStarFallEffect.Create(nil);
+  StarFall.URL := ApplicationData('Star.png');
 
   NewGame;
 end;
@@ -421,9 +422,6 @@ begin
 
   FreeAndNil(Image);
   StarFall.Free;
-
-  //if player accidentally exits when VictoryEffect takes place
-  FreeStars;
 end;
 
 end.

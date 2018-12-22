@@ -32,8 +32,8 @@ unit StarFallUnit;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
-  CastleRectangles, CastleUIControls;
+  SysUtils, Classes, Generics.Collections, CastleGLImages,
+  CastleRectangles, CastleUIControls, CastleComponentSerialize;
 
 type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
@@ -60,12 +60,18 @@ type
 
 type
   { UI element, that can display a burst of stars falling down if launched }
-  TStarFall = class(TUIControl)
+  TStarFallEffect = class(TCastleUserInterface)
   strict private
+    FImage: TGLImage;
+    FURL: String;
+    FOwnsImage: Boolean;
     FStarList: TStarList;
     FRenderStars: Integer;
     StarScreen, StarSource: TMyFloatRectangleArray;
     procedure AddStar;
+    procedure CreatePixel;
+    procedure SetImage(const AImage: TGLImage);
+    procedure SetURL(const AURL: String);
   public
     procedure Render; override;
     procedure Update(const SecondsPassed: Single;
@@ -73,7 +79,16 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
+    //property Color;
 
+    {}
+    property Image: TGLImage read FImage write SetImage;
+    property URL: String read FURL write SetURL;
+
+    { Free the @link(Image) instance automatically. }
+    property OwnsImage: boolean read FOwnsImage write FOwnsImage default false;
+
+    property FullSize default true;
   end;
 
 const
@@ -83,21 +98,22 @@ var
   {}
   VictoryStartTime: TDateTime;
 
-procedure FreeStars;
 implementation
 uses
-  CastleVectors,
+  CastleVectors, CastleImages,
   WindowUnit, Global, Gui;
 
-procedure TStarFall.AddStar;
+procedure TStarFallEffect.AddStar;
 begin
   FStarList.Add(TStar.Create);
   SetLength(StarScreen, FStarList.Count);
   SetLength(StarSource, FStarList.Count);
-  StarSource[High(StarSource)] := FloatRectangle(0, 0, StarSize, StarSize);
+  if FImage = nil then
+    CreatePixel;
+  StarSource[High(StarSource)] := FloatRectangle(0, 0, FImage.Width, FImage.Height);
 end;
 
-procedure TStarFall.Update(const SecondsPassed: Single; var HandleInput: boolean);
+procedure TStarFallEffect.Update(const SecondsPassed: Single; var HandleInput: boolean);
 var
   Star: TStar;
   i: Integer;
@@ -121,28 +137,61 @@ begin
 
   //fade out image after half of requested time
   if (Now - VictoryStartTime < VictoryDuration / 2) then
-    StarImage.Color := Vector4(1, 1, 1, 1)
+    FImage.Color := Vector4(1, 1, 1, 1)
   else
-    StarImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+    FImage.Color := Vector4(1, 1, 1, 1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
 end;
 
-procedure TStarFall.Render;
+procedure TStarFallEffect.SetURL(const AURL: String);
+begin
+  if FOwnsImage then
+    FreeAndNil(FImage);
+
+  FURL := AURL;
+  FImage := TGLImage.Create(FURL, [TRGBAlphaImage], true);
+  FOwnsImage := true;
+end;
+
+procedure TStarFallEffect.SetImage(const AImage: TGLImage);
+begin
+  if FOwnsImage then
+    FreeAndNil(FImage);
+  FImage := AImage;
+end;
+
+procedure TStarFallEffect.CreatePixel;
+var
+  WhitePixel: TGrayscaleImage;
+begin
+  WhitePixel := TGrayscaleImage.Create(1, 1);
+  WhitePixel.Clear(Vector4(1,1,1,1));
+  FImage := TGLImage.Create(WhitePixel, true, true);
+  FOwnsImage := true;
+end;
+
+procedure TStarFallEffect.Render;
 begin
   //Render stars, batched
   if FRenderStars > 0 then
-    StarImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
+  begin
+    if FImage = nil then
+      CreatePixel;
+    FImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
+  end
   else
     VictoryStartTime -= VictoryDuration; //if no stars to render, then stop StarFall
 end;
 
-constructor TStarFall.Create(AOwner: TComponent);
+constructor TStarFallEffect.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FStarList := TStarList.Create(true);
 end;
 
-destructor TStarFall.Destroy;
+destructor TStarFallEffect.Destroy;
 begin
+  if FOwnsImage then
+    FreeAndNil(FImage);
   FreeAndNil(FStarList);
   inherited Destroy;
 end;
@@ -171,15 +220,11 @@ begin
   Y := WindowBottom + WindowHeight * (1 + 1.2 * RND.Random) / 2; //stars may start 50% to 110% of WindowHeight
   Vy := -RND.Random;
   Vx := 10 * (RND.Random - 0.5);
-  Size := StarSize / 10;
+  Size := 3;
 end;
 
 {=========================================================================}
 
-procedure FreeStars;
-begin
-  Window.Invalidate; //clear the stars remaining on screen
-end;
-
+initialization
+  RegisterSerializableComponent(TStarFallEffect, 'StarFall Effect');
 end.
-
