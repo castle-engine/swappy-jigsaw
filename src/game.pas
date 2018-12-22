@@ -113,7 +113,7 @@ begin
   SaveStatistics;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
-  VictoryStartTime := Now;
+  StarFall.Start;
 end;
 
 procedure EndVictory;
@@ -136,7 +136,7 @@ begin
   StarFall.Render;
 
   //if the victory animation is finished, stop victory effect
-  if (Now - VictoryStartTime > VictoryDuration) then
+  if StarFall.Active then
     EndVictory;
 end;
 
@@ -408,6 +408,7 @@ begin
 
   StarFall := TStarFallEffect.Create(nil);
   StarFall.URL := ApplicationData('Star.png');
+  StarFall.Duration := 2.0;
 
   NewGame;
 end;

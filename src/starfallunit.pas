@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  CastleGLImages, CastleRectangles, CastleColors,
+  CastleGLImages, CastleRectangles, CastleColors, CastleTimeUtils,
   CastleUIControls, CastleComponentSerialize;
 
 type
@@ -70,6 +70,9 @@ type
     FDefaultColor: Boolean;
     FColor: TCastleColor;
     FURL: String;
+    FActive: Boolean;
+    FDuration: Single;
+    FStartTime: TTimerResult;
     FOwnsImage: Boolean;
     FStarList: TStarList;
     FRenderStars: Integer;
@@ -83,6 +86,8 @@ type
     procedure StopEffect;
     procedure CheckIsImageValid;
   public
+    const
+      DefaultDuration = 2.0;
     { Color of StarFall objects.
       In case no image is provided, this will mean color of falling squares
       Otherwise Image.Color will be set to this value
@@ -93,7 +98,13 @@ type
       var HandleInput: boolean); override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    {}
+    procedure Start;
+    {}
+    function Active: boolean;
   published
+    {}
+    property Duration: Single read FDuration write FDuration default DefaultDuration;
     {}
     property Image: TGLImage read FImage write SetImage;
     property URL: String read FURL write SetURL;
@@ -104,17 +115,16 @@ type
     property FullSize default true;
   end;
 
-const
-  VictoryDuration = 2 /24/60/60; {2 seconds}
-
-var
-  {}
-  VictoryStartTime: TDateTime;
-
 implementation
 uses
   CastleVectors, CastleImages,
   WindowUnit, Global, Gui;
+
+procedure TStarFallEffect.Start;
+begin
+  FStartTime := Timer;
+  FActive := true;
+end;
 
 procedure TStarFallEffect.AddStar;
 begin
@@ -135,7 +145,7 @@ begin
   CheckIsImageValid;
 
   //Add stars if necessary
-  if Now - VictoryStartTime < VictoryDuration / 3 then
+  if (TimerSeconds(Timer, FStartTime) < FDuration / 3) then
     for i := 0 to 6 do
       AddStar;
 
@@ -151,8 +161,8 @@ begin
 
   //fade out image after half of requested time
   CurrentColor := FColor; //can't assign to FColor directly as TGLImage.Color is a property
-  if (Now - VictoryStartTime > VictoryDuration / 2) then
-    CurrentColor.Data[3] := CurrentColor.Data[3] * (1 - (Now - VictoryStartTime - VictoryDuration / 2) / (VictoryDuration / 2) );
+  if (TimerSeconds(Timer, FStartTime) > FDuration / 2) then
+    CurrentColor.Data[3] := CurrentColor.Data[3] * (1 - (TimerSeconds(Timer, FStartTime) - FDuration / 2) / (FDuration / 2) );
   FImage.Color := CurrentColor;
 end;
 
@@ -204,10 +214,7 @@ begin
     FImage.Draw(@StarScreen[0], @StarSource[0], FRenderStars)
   end
   else
-  begin
-    VictoryStartTime -= VictoryDuration; //if no stars to render, then stop StarFall
-    StopEffect
-  end;
+    StopEffect;
 end;
 
 procedure TStarFallEffect.CheckIsImageValid;
@@ -219,20 +226,25 @@ end;
 procedure TStarFallEffect.ClearStars;
 begin
   FStarList.Clear;
+  FActive := false;
 end;
 
 procedure TStarFallEffect.StopEffect;
 begin
   ClearStars;
+  FActive := false;
 end;
 
-
-
+function TStarFallEffect.Active: Boolean;
+begin
+  Result := FActive;
+end;
 
 constructor TStarFallEffect.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FDefaultColor := true;
+  FActive := false;
   FStarList := TStarList.Create(true);
 end;
 
