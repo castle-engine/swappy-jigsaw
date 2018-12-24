@@ -23,7 +23,7 @@ unit Game;
 interface
 
 {}
-procedure NewGame;
+procedure NewGame(const AImageID: Integer = -1);
 {}
 procedure InitGame;
 procedure FreeGame;
@@ -37,7 +37,7 @@ uses
   CastleRectangles, CastleImages, CastleGLImages,
   Global, GUI,
   StarFallUnit,
-  ImageList, WindowUnit,
+  ImageList, WindowUnit, SelectImage,
   DecoLog;
 
 type
@@ -303,7 +303,7 @@ procedure ClickExit;
 begin
   if (IsGameOver) or (not GameStarted) or
      (MessageYesNo(Window, 'Current progress will be lost, exit to menu?')) then
-    ;
+    ShowImageSelector;
 end;
 
 {----------------------------------------------------------------------------}
@@ -362,7 +362,7 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure NewGame;
+procedure NewGame(const AImageID: Integer = -1);
   function Img(const aURL: String): String;
   begin
     Result := ApplicationData('img/' + aURL);
@@ -371,10 +371,18 @@ var
   ix, iy: Integer;
   NextImagesCount: Integer;
 begin
+  Window.OnRender := @GameRender;
+  Window.OnPress := @GamePress;
+  Window.OnRelease := @GameRelease;
+
   EndVictory;
 
-  NextImagesCount := SortListCount;  //image list is sorted only here, so it's perfectly safe to use CurrentImage as image reference
-  CurrentImage := RND.Random(NextImagesCount);
+  if AImageID = -1 then
+  begin
+    NextImagesCount := SortListCount;  //image list is sorted only here, so it's perfectly safe to use CurrentImage as image reference
+    CurrentImage := RND.Random(NextImagesCount);
+  end else
+    CurrentImage := AImageID;
 
   //increase image shows
   inc(ImageDataList[CurrentImage].Shows);
@@ -405,10 +413,6 @@ end;
 
 procedure InitGame;
 begin
-  Window.OnRender := @GameRender;
-  Window.OnPress := @GamePress;
-  Window.OnRelease := @GameRelease;
-
   StarFall := TStarFallEffect.Create(nil);
   StarFall.URL := ApplicationData('Star.png');
   StarFall.Duration := 1.5; //=default
@@ -417,8 +421,6 @@ begin
   StarFall.Bottom := 0;
   StarFall.Width := Window.Width;
   StarFall.Height := Window.Height;
-
-  NewGame;
 end;
 
 {----------------------------------------------------------------------------}

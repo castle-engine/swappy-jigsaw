@@ -29,7 +29,7 @@ interface
 implementation
 uses
   SysUtils, CastleWindow, CastleApplicationProperties,
-  Game, ImageList, GUI,
+  Game, ImageList, GUI, SelectImage,
   DecoTime, WindowUnit, DecoLog, Global;
 
 function GetApplicationName: String;
@@ -43,6 +43,7 @@ begin
   LoadImageList;
   InitUI;
   InitGame;
+  ShowImageSelector;
 
   Log(CurrentRoutine, 'Init sequence finished.');
 end;
