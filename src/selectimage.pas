@@ -34,12 +34,24 @@ uses
   WindowUnit, ImageList,
   Game;
 
-procedure ImageSelectorRender(Container: TUIContainer);
 var
-  i: Integer;
+  ScaleX: Integer = 100;
+  ScaleY: Integer = 100;
+
+procedure ImageSelectorRender(Container: TUIContainer);
+const
+  Page = 1;
+  ImagesPerPage = 12;
+var
+  i, ix, iy: Integer;
 begin
-  for i := 0 to Pred(ImageDataList.Count) do
-    ImageDataList[i].Thumbnail.Draw(i,i);
+  for ix := 0 to 2 do
+    for iy := 0 to 3 do
+    begin
+      i := Page * ImagesPerPage + ix + iy * 3;
+      if i < ImageDataList.Count then
+        ImageDataList[i].Thumbnail.Draw(ix * ScaleX, iy * ScaleY, ScaleX, ScaleY);
+    end;
 end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
@@ -51,6 +63,9 @@ procedure ShowImageSelector;
 begin
   Window.OnRender := @ImageSelectorRender;
   Window.OnPress := @ImageSelectorPress;
+
+  ScaleX := Window.Width div 3;
+  ScaleY := Window.Height div 4;
 
   Window.Invalidate;
 
