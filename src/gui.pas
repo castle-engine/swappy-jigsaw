@@ -24,7 +24,11 @@ unit GUI;
 interface
 
 uses
+  CastleRectangles,
   CastleGLImages;
+
+{type
+  TButtonsFloatRectangleArray = packed array of TFloatRectangle;}
 
 var
   {}
@@ -41,8 +45,13 @@ var
   {}
   WhiteBorder, BlackBorder: TGlImage;
   {}
-  ButtonForward, ButtonRestart, ButtonSoundOn, ButtonSoundOff, ButtonExit: TGLImage;
+  Buttons: TGLImage;
+  ButtonForward, ButtonHint, ButtonSoundOn, ButtonSoundOff, ButtonMenu, ButtonCredits: TFloatRectangle;
   ButtonSize, ButtonSpacer: Integer;
+  {}
+  SolvedImage: TGLImage;
+  {}
+  PagesArrow: TGLImage;
   {}
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
@@ -100,23 +109,25 @@ begin
 
   ButtonSize := MenuBarWidth - 10;
   ButtonSpacer := WindowHeight div 4;
-  if ButtonSize < 122 then
+  if ButtonSize < 256 then
   begin
     //scale buttons down on loading if displayed size is smaller than button image size, to save memory and boost performance
-    ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
-    ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
-    ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
-    ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
-    ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), [TRGBAlphaImage], ButtonSize, ButtonSize, riBilinear);
+    Buttons := TGLImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBilinear);
+    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBilinear);
   end else
   begin
     //otherwise don't scale buttons, to save memory
-    ButtonForward := TGLImage.Create(ApplicationData('buttons/ButtonForward.png'), true);
-    ButtonRestart := TGLImage.Create(ApplicationData('buttons/ButtonRestart.png'), true);
-    ButtonSoundOn := TGLImage.Create(ApplicationData('buttons/ButtonSoundOn.png'), true);
-    ButtonSoundOff := TGLImage.Create(ApplicationData('buttons/ButtonSoundOff.png'), true);
-    ButtonExit := TGLImage.Create(ApplicationData('buttons/ButtonExit.png'), true);
+    Buttons := TGLImage.Create(ApplicationData('UI.png'), true);
+    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), true);
   end;
+  ButtonForward := FloatRectangle(0, 0, Buttons.Width div 6, Buttons.Height);
+  ButtonHint := FloatRectangle(Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
+  ButtonSoundOn := FloatRectangle(2 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
+  ButtonSoundOff := FloatRectangle(3 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
+  ButtonMenu := FloatRectangle(4 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
+  ButtonCredits := FloatRectangle(5 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
+
+  PagesArrow := TGLImage.Create(ApplicationData('PagesArrow.png'), true);
 end;
 
 { --------------------------------------------------------------------------- }
@@ -129,11 +140,10 @@ begin
   FreeAndNil(GameScreenRight);
   FreeAndNil(GameScreenLeft);
 
-  FreeAndNil(ButtonForward);
-  FreeAndNil(ButtonRestart);
-  FreeAndNil(ButtonSoundOn);
-  FreeAndNil(ButtonSoundOff);
-  FreeAndNil(ButtonExit);
+  FreeAndNil(Buttons);
+
+  FreeAndNil(SolvedImage);
+  FreeAndNil(PagesArrow);
 end;
 
 end.

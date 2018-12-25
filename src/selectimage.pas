@@ -30,7 +30,7 @@ procedure InitImageSelector;
 
 implementation
 uses
-  CastleWindow, CastleKeysMouse,
+  CastleWindow, CastleKeysMouse, CastleRectangles,
   WindowUnit, ImageList, GUI, CreditsScreen,
   Game;
 
@@ -63,19 +63,25 @@ begin
           ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
           ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY);
     end;
+
+  PagesArrow.Draw(ImageStartLeft + RightLeftButtonWidth,
+    ImageStartBottom, -RightLeftButtonWidth, ImageHeight);
+  PagesArrow.Draw(ImageStartLeft + ImageWidth - RightLeftButtonWidth,
+    ImageStartBottom, RightLeftButtonWidth, ImageHeight);
+
   GameScreenLeft.Draw3x3(WindowLeft, WindowBottom, GameWidth, WindowHeight, 19, 19, 19, 19);
   GameScreenRight.Draw3x3(MenuBarLeft, WindowBottom, MenuBarWidth, WindowHeight, 19, 9, 19, 0);
 
-  ButtonForward.Draw(ImageStartLeft + RightLeftButtonWidth,
-    ImageStartBottom, -RightLeftButtonWidth, ImageHeight);
-  ButtonForward.Draw(ImageStartLeft + ImageWidth - RightLeftButtonWidth,
-    ImageStartBottom, RightLeftButtonWidth, ImageHeight);
-
-  ButtonForward.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  Buttons.Draw(FloatRectangle(MenuBarLeft, WindowBottom + ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize),
+    ButtonForward);
   if PlaySound then
-    ButtonSoundOn.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize)
+    Buttons.Draw(FloatRectangle(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize),
+      ButtonSoundOn)
   else
-    ButtonSoundOff.Draw(WindowLeft + MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+    Buttons.Draw(FloatRectangle(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize),
+      ButtonSoundOff);
+  Buttons.Draw(FloatRectangle(MenuBarLeft, WindowBottom + ButtonSpacer * 0.5 - ButtonSize / 2, ButtonSize, ButtonSize),
+    ButtonCredits);
 end;
 
 procedure ClickSound;
