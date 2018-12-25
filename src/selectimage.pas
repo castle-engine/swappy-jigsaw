@@ -31,7 +31,7 @@ procedure InitImageSelector;
 implementation
 uses
   CastleWindow, CastleKeysMouse,
-  WindowUnit, ImageList, GUI,
+  WindowUnit, ImageList, GUI, CreditsScreen,
   Game;
 
 var
@@ -125,7 +125,7 @@ begin
     end else
     begin
       if Event.Position[1] < ButtonSpacer then
-        //ClickExit
+        DisplayCredits
       else
       if Event.Position[1] < ButtonSpacer * 2 then
         ClickSound
@@ -147,8 +147,6 @@ begin
 
   Page := 0;
   TotalPages := ImageDataList.Count div ImagesPerPage;
-
-  //NewGame(-1); //temporarily here
 end;
 
 procedure InitImageSelector;

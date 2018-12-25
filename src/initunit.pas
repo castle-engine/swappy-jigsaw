@@ -29,7 +29,7 @@ interface
 implementation
 uses
   SysUtils, CastleWindow, CastleApplicationProperties,
-  Game, ImageList, GUI, SelectImage,
+  Game, ImageList, GUI, SelectImage, CreditsScreen,
   DecoTime, WindowUnit, DecoLog, Global;
 
 function GetApplicationName: String;
@@ -71,6 +71,7 @@ FreeImageList;
 FreeLog;
 FreeGlobal;
 FreeTime;
+FreeCredits;
 
 end.
 
