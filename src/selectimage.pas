@@ -41,16 +41,21 @@ var
   SelectorWidth: Integer;
   {}
   RightLeftButtonWidth: Integer;
+  {}
+  Page: Integer;
+  TotalPages: Integer;
+
+const
+  ImagesX = 3;
+  ImagesY = 4;
+  ImagesPerPage = ImagesX * ImagesY;
 
 procedure ImageSelectorRender(Container: TUIContainer);
-const
-  Page = 1;
-  ImagesPerPage = 12;
 var
   i, ix, iy: Integer;
 begin
-  for ix := 0 to 2 do
-    for iy := 0 to 3 do
+  for ix := 0 to Pred(ImagesX) do
+    for iy := 0 to Pred(ImagesY) do
     begin
       i := Page * ImagesPerPage + ix + iy * 3;
       if i < ImageDataList.Count then
@@ -68,7 +73,32 @@ end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
 begin
-  NewGame(-1);
+  if (Event.EventType = itMouseButton) then
+  begin
+    Window.Invalidate;
+    if Event.Position[0] <= MenuBarLeft then
+    begin
+      if Event.Position[0] <= ImageStartLeft + RightLeftButtonWidth then
+      begin
+        //click "LEFT"
+        if Page < Pred(TotalPages) then
+          inc(Page)
+        else
+          Page := 0;
+      end else
+      if Event.Position[0] >= ImageStartLeft + ImageWidth - RightLeftButtonWidth then
+      begin
+        //click "RIGHT"
+        if Page >0 then
+          dec(Page)
+        else
+          Page := Pred(TotalPages);
+      end else
+        NewGame(-1);
+    end else
+      //right buttons here
+      ;
+  end;
 end;
 
 procedure ShowImageSelector;
@@ -78,7 +108,9 @@ begin
 
   Window.Invalidate;
 
-  NewGame(-1); //temporarily here
+  Page := 0;
+  TotalPages := ImageDataList.Count div ImagesPerPage;
+  //NewGame(-1); //temporarily here
 end;
 
 procedure InitImageSelector;

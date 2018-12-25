@@ -312,7 +312,7 @@ procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 var
   Pos: Integer;
 begin
-  if (Event.EventType = itMouseButton) {and (Event.MouseButton = mbLeft)} then
+  if (Event.EventType = itMouseButton) then
   begin
     Window.Invalidate;
     if Event.Position[0] <= MenuBarLeft then
