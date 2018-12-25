@@ -69,6 +69,8 @@ begin
     ImageStartBottom, -RightLeftButtonWidth, ImageHeight);
   ButtonForward.Draw(ImageStartLeft + ImageWidth - RightLeftButtonWidth,
     ImageStartBottom, RightLeftButtonWidth, ImageHeight);
+
+  ButtonForward.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
 end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
@@ -96,8 +98,18 @@ begin
       end else
         NewGame(-1);
     end else
-      //right buttons here
-      ;
+    begin
+      if Event.Position[1] < ButtonSpacer then
+        //ClickExit
+      else
+      if Event.Position[1] < ButtonSpacer * 2 then
+        //ClickSound
+      else
+      if Event.Position[1] < ButtonSpacer * 3 then
+        //ClickHintButton
+      else
+        NewGame(-1);
+    end;
   end;
 end;
 
@@ -110,7 +122,8 @@ begin
 
   Page := 0;
   TotalPages := ImageDataList.Count div ImagesPerPage;
-  //NewGame(-1); //temporarily here
+
+  NewGame(-1); //temporarily here
 end;
 
 procedure InitImageSelector;
