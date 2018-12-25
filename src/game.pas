@@ -284,7 +284,6 @@ end;
 procedure ClickHintButton;
 begin
   ShowHint := true;
-  //Window.Invalidate;
 end;
 
 procedure ReleaseHintButton;
@@ -296,7 +295,6 @@ end;
 procedure ClickSound;
 begin
   PlaySound := not PlaySound;
-  //Window.Invalidate;
 end;
 
 procedure ClickExit;

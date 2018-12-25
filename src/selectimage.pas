@@ -65,12 +65,22 @@ begin
     end;
   GameScreenLeft.Draw3x3(WindowLeft, WindowBottom, GameWidth, WindowHeight, 19, 19, 19, 19);
   GameScreenRight.Draw3x3(MenuBarLeft, WindowBottom, MenuBarWidth, WindowHeight, 19, 9, 19, 0);
+
   ButtonForward.Draw(ImageStartLeft + RightLeftButtonWidth,
     ImageStartBottom, -RightLeftButtonWidth, ImageHeight);
   ButtonForward.Draw(ImageStartLeft + ImageWidth - RightLeftButtonWidth,
     ImageStartBottom, RightLeftButtonWidth, ImageHeight);
 
   ButtonForward.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 3.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+  if PlaySound then
+    ButtonSoundOn.Draw(MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize)
+  else
+    ButtonSoundOff.Draw(WindowLeft + MenuBarLeft, WindowBottom + ButtonSpacer * 1.5 - ButtonSize / 2, ButtonSize, ButtonSize);
+end;
+
+procedure ClickSound;
+begin
+  PlaySound := not PlaySound;
 end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
@@ -103,7 +113,7 @@ begin
         //ClickExit
       else
       if Event.Position[1] < ButtonSpacer * 2 then
-        //ClickSound
+        ClickSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
         //ClickHintButton
@@ -132,7 +142,6 @@ begin
   SelectorWidth := ImageWidth - 2 * RightLeftButtonWidth;
   SelectorScaleX := SelectorWidth div 3;
   SelectorScaleY := ImageHeight div 4;
-
 end;
 
 end.
