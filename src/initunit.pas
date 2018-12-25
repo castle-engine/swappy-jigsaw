@@ -43,6 +43,7 @@ begin
   LoadImageList;
   InitUI;
   InitGame;
+  InitImageSelector;
   ShowImageSelector;
 
   Log(CurrentRoutine, 'Init sequence finished.');

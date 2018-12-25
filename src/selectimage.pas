@@ -25,18 +25,22 @@ interface
 {}
 procedure ShowImageSelector;
 {}
-//procedure InitImageSelector;
+procedure InitImageSelector;
 //procedure FreeImageSelector;
 
 implementation
 uses
   CastleWindow, CastleKeysMouse,
-  WindowUnit, ImageList,
+  WindowUnit, ImageList, GUI,
   Game;
 
 var
-  ScaleX: Integer = 100;
-  ScaleY: Integer = 100;
+  {}
+  SelectorScaleX, SelectorScaleY: Integer;
+  {}
+  SelectorWidth: Integer;
+  {}
+  RightLeftButtonWidth: Integer;
 
 procedure ImageSelectorRender(Container: TUIContainer);
 const
@@ -50,8 +54,16 @@ begin
     begin
       i := Page * ImagesPerPage + ix + iy * 3;
       if i < ImageDataList.Count then
-        ImageDataList[i].Thumbnail.Draw(ix * ScaleX, iy * ScaleY, ScaleX, ScaleY);
+        ImageDataList[i].Thumbnail.Draw(
+          ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
+          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY);
     end;
+  GameScreenLeft.Draw3x3(WindowLeft, WindowBottom, GameWidth, WindowHeight, 19, 19, 19, 19);
+  GameScreenRight.Draw3x3(MenuBarLeft, WindowBottom, MenuBarWidth, WindowHeight, 19, 9, 19, 0);
+  ButtonForward.Draw(ImageStartLeft + RightLeftButtonWidth,
+    ImageStartBottom, -RightLeftButtonWidth, ImageHeight);
+  ButtonForward.Draw(ImageStartLeft + ImageWidth - RightLeftButtonWidth,
+    ImageStartBottom, RightLeftButtonWidth, ImageHeight);
 end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
@@ -64,12 +76,18 @@ begin
   Window.OnRender := @ImageSelectorRender;
   Window.OnPress := @ImageSelectorPress;
 
-  ScaleX := Window.Width div 3;
-  ScaleY := Window.Height div 4;
-
   Window.Invalidate;
 
   NewGame(-1); //temporarily here
+end;
+
+procedure InitImageSelector;
+begin
+  RightLeftButtonWidth := ImageWidth div 20;
+  SelectorWidth := ImageWidth - 2 * RightLeftButtonWidth;
+  SelectorScaleX := SelectorWidth div 3;
+  SelectorScaleY := ImageHeight div 4;
+
 end;
 
 end.
