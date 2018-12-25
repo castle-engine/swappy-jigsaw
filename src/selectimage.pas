@@ -84,6 +84,8 @@ begin
 end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
+var
+  ix, iy: Integer;
 begin
   if (Event.EventType = itMouseButton) then
   begin
@@ -106,7 +108,20 @@ begin
         else
           Page := Pred(TotalPages);
       end else
-        NewGame(-1);
+      begin
+        ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
+        if ix < 0 then
+          ix := 0;
+        if ix >= ImagesX then
+          ix := Pred(ImagesX);
+        iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
+        if iy < 0 then
+          iy := 0;
+        if iy >= ImagesY then
+          iy := Pred(ImagesY);
+
+        NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
+      end;
     end else
     begin
       if Event.Position[1] < ButtonSpacer then
@@ -133,7 +148,7 @@ begin
   Page := 0;
   TotalPages := ImageDataList.Count div ImagesPerPage;
 
-  NewGame(-1); //temporarily here
+  //NewGame(-1); //temporarily here
 end;
 
 procedure InitImageSelector;
