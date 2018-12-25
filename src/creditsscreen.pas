@@ -50,7 +50,7 @@ end;
 
 procedure InitCredits;
 begin
-  Credits := TGlImage.Create(ApplicationData('credits.png'), [TRGBImage], true);
+  Credits := TGlImage.Create(ApplicationData('credits.jpg'), [TRGBImage], true);
 
   Window.OnPress := @CreditsPress;
   Window.OnRender := @CreditsRender;
