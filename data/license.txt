@@ -15,6 +15,11 @@ Star.png
 CC0 by Photoshopwizard
 https://opengameart.org/content/ui-pack-expansion
 
+credits.png
+made in GIMP
+Font used: EptKazoo by Mark V. (markv@eptcomic.com), SIL Open Font License
+Castle Game Engine Logo: Paweł Wojciechowicz, Michalis Kamburelis, GPLv2
+
 Images in "img" folder:
 PublicDomainPictures.net
 by
