@@ -15,14 +15,17 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Main unit of the game, all the gameplay happens "here"
+   Handles mouse clicks, shuffling, swapping tiles,
+   determines victory conditions, loads images, etc. *)
 
 unit Game;
 {$INCLUDE compilerconfig.inc}
 
 interface
 
-{}
+{ Start a new game with a specified ImageID
+  (Pay attention, ImageID is changed after every NewGame as image list is sorted) }
 procedure NewGame(const AImageID: Integer = -1);
 {}
 procedure InitGame;
