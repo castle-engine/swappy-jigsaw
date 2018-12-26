@@ -15,7 +15,7 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Initialize and use Window of the game *)
 
 unit WindowUnit;
 
@@ -27,8 +27,12 @@ uses
   CastleWindow;
 
 var
+  { Game window - everything happens here
+    We use the lowest type of Window - Custom }
   Window: TCastleWindowCustom;
 
+{ Create and nitialize game Window
+  at Desktop, Window is created with golden section proportions }
 procedure InitWindow;
 implementation
 uses

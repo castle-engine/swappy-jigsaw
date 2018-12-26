@@ -27,7 +27,7 @@ interface
 { Start a new game with a specified ImageID
   (Pay attention, ImageID is changed after every NewGame as image list is sorted) }
 procedure NewGame(const AImageID: Integer = -1);
-{}
+{ Init/release game events and game-specific objects }
 procedure InitGame;
 procedure FreeGame;
 {...........................................................................}
@@ -47,24 +47,22 @@ type
   TMyFloatRectangleArray = packed array of TFloatRectangle;
 
 var
-  {}
+  { Image, currently being solved }
   Image: TGLImage;
-  {}
+  { Selected tile ID }
   Selected: Integer;
-  {}
+  { Is the Hint image currently being shown? }
   ShowHint: Boolean;
-  {}
+  { Has the game been started? Is it over with victory? }
   GameStarted, Victory: Boolean;
-  {}
+  { Rectangles of shuffled and unshuffled images }
   JigCount: Integer;
   JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
-  {}
+  { Rectangles of wronly placed image tiles }
   WrongRects: TMyFloatRectangleArray;
-  {}
+  { Victory effect - stars falling down }
   StarFall: TStarFallEffect;
-
-var
-  {}
+  { Last image (i.e. current image) loaded. }
   CurrentImage: Integer = -1;
 
 {----------------------------------------------------------------------------}

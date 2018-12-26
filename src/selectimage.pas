@@ -15,16 +15,16 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Image selector, to choose an image to solve *)
 
 unit SelectImage;
 {$INCLUDE compilerconfig.inc}
 
 interface
 
-{}
+{ Show Image selector on screen (and stop all other game modes) }
 procedure ShowImageSelector;
-{}
+{ Init Image-selector specific data }
 procedure InitImageSelector;
 //procedure FreeImageSelector;
 
@@ -35,17 +35,19 @@ uses
   Game;
 
 var
-  {}
+  { Sizes of each image in Image Selector }
   SelectorScaleX, SelectorScaleY: Integer;
-  {}
+  { Total width of the Image Selector }
   SelectorWidth: Integer;
-  {}
+  { Width of arrow buttons, that filp pages left and right }
   RightLeftButtonWidth: Integer;
-  {}
+  { Current page }
   Page: Integer;
+  { Total pages }
   TotalPages: Integer;
 
 const
+  { Quantity of images per page }
   ImagesX = 3;
   ImagesY = 4;
   ImagesPerPage = ImagesX * ImagesY;
