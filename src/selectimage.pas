@@ -58,7 +58,7 @@ procedure ImageSelectorRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
 begin
-  RenderContext.Clear([cbColor], Black);
+  RenderContext.Clear([cbColor], Black); //we need clear screen here to avoid bleeding pixels
 
   for ix := 0 to Pred(ImagesX) do
     for iy := 0 to Pred(ImagesY) do
@@ -68,10 +68,16 @@ begin
       begin
         ImageDataList[i].Thumbnail.Draw(
           ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
-          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY);
+          ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY,
+          SelectorScaleX, SelectorScaleY);
         BlackBorder.Draw3x3(ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
-          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY,
+          ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY, SelectorScaleX, SelectorScaleY,
           Vector4Integer(5, 5, 5, 5));
+        if ImageDataList[i].Hits > 0 then
+          SolvedImage.Draw(
+            ImageStartLeft + RightLeftButtonWidth + (ix + 1) * SelectorScaleX - ButtonSize,
+            ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY,
+            ButtonSize, ButtonSize);
       end;
     end;
 
