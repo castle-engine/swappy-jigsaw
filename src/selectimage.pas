@@ -31,7 +31,8 @@ procedure InitImageSelector;
 implementation
 uses
   CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
-  DrawBatched3x3,
+  CastleGLUtils, CastleColors,
+  //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
   Game;
 
@@ -57,6 +58,8 @@ procedure ImageSelectorRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
 begin
+  RenderContext.Clear([cbColor], Black);
+
   for ix := 0 to Pred(ImagesX) do
     for iy := 0 to Pred(ImagesY) do
     begin
@@ -67,8 +70,8 @@ begin
           ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
           ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY);
         BlackBorder.Draw3x3(ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
-          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY
-          , Vector4Integer(5, 5, 5, 5));
+          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY,
+          Vector4Integer(5, 5, 5, 5));
       end;
     end;
 
