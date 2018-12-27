@@ -33,7 +33,7 @@ procedure FreeGame;
 {...........................................................................}
 implementation
 uses
-  SysUtils, Generics.Collections,
+  SysUtils,
   CastleFilesUtils, CastleWindow, CastleKeysMouse,
   CastleVectors,
   CastleMessages,

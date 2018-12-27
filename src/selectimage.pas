@@ -30,7 +30,8 @@ procedure InitImageSelector;
 
 implementation
 uses
-  CastleWindow, CastleKeysMouse, CastleRectangles,
+  CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
+  DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
   Game;
 
@@ -61,9 +62,14 @@ begin
     begin
       i := Page * ImagesPerPage + ix + iy * 3;
       if i < ImageDataList.Count then
+      begin
         ImageDataList[i].Thumbnail.Draw(
           ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
           ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY);
+        BlackBorder.Draw3x3(ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
+          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY
+          , Vector4Integer(5, 5, 5, 5));
+      end;
     end;
 
   PagesArrow.Draw(ImageStartLeft + RightLeftButtonWidth,
