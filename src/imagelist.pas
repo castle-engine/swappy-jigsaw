@@ -15,7 +15,8 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Contains the list of images, reads and writes configuration (i.e. amount of solutions, shows, etc.)
+   All images are hardcoded. *)
 
 unit ImageList;
 {$INCLUDE compilerconfig.inc}
@@ -27,34 +28,36 @@ uses
   CastleGlImages;
 
 type
-  {}
+  { Data container for a single image data }
   TImageData = class(TObject)
-    {}
+    { Relative URL to load the image }
     URL: String;
-    {}
+    { How many times the image has been solved }
     Hits: Integer;
-    {}
+    { How many times the image has been shown to player in this sesssion }
     Shows: Integer;
-    {}
+    { A small image to be used in ImageSelector }
     Thumbnail: TGLImage;
     destructor Destroy; override;
   end;
 
 type
-  {}
+  { List of TImageData }
   TImageDataList = specialize TObjectList<TImageData>;
 
 var
-  {}
+  { Information for all images in game }
   ImageDataList: TImageDataList;
 
-{}
+{ Load the image list }
 procedure LoadImageList;
-{}
+{ Free the image list }
 procedure FreeImageList;
-{}
+{ Save images solution statistics to disk }
 procedure SaveStatistics;
-{}
+{ Sort image list and return quantity of the "most important" images for randomly choosing from
+  Will make sure that "least shown/solved images" go first in the list
+  To randomly pick a new image, that the player didn't yet solve, and/or didn't yet see in this session }
 function SortListCount: Integer;
 {...........................................................................}
 implementation
@@ -70,7 +73,7 @@ begin
     Result := i1.Shows - i2.Shows;
 end;
 type
-  {}
+  { Sorter for TImageDataList }
   TImageComparer = specialize TComparer<TImageData>;
 
 function SortListCount: Integer;

@@ -15,17 +15,18 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Game mode, showing credits screen (actually, just a JPG image)
+   Returns to image Selector on any press *)
 
 unit CreditsScreen;
 {$INCLUDE compilerconfig.inc}
 
 interface
 
-{}
+{ Stops the game and shows credits until press event }
 procedure DisplayCredits;
-{{}
- in case Player exits when in Credits, to avoid memory leak}
+{ Free up memory, used by Credits image
+  in case Player exits when in Credits, to avoid memory leak}
 procedure FreeCredits;
 implementation
 uses
@@ -35,10 +36,12 @@ uses
   WindowUnit;
 
 var
+  { Credits image }
   Credits: TGLImage;
 
 procedure CreditsRender(Container: TUIContainer);
 begin
+  //normally we do this only once, as Window.AutoRedisplay = false
   Credits.Draw(0, 0, Window.Width, Window.Height);
 end;
 
@@ -68,4 +71,3 @@ begin
 end;
 
 end.
-

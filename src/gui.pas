@@ -15,7 +15,7 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Classes and variables handing GUI elements *)
 
 unit GUI;
 
@@ -31,33 +31,39 @@ uses
   TButtonsFloatRectangleArray = packed array of TFloatRectangle;}
 
 var
-  {}
+  { Should the sound be played?
+    TODO: replace with procedure MusicUnit.ToggleSound }
   PlaySound: Boolean = true;
-  {}
+  { How many tiles us the image sliced into? }
   SlicesX: Integer = 7;
   SlicesY: Integer = 6;
-  {}
+  { Rectangle area where the Image is drawn }
   ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight: Integer;
+  { Size of a single tile }
   ScaleX, ScaleY: Integer;
-  {}
+  { Image frame, drawn on top of Image }
   GameScreenRight, GameScreenLeft: TGLImage;
+  { Coordinates to locate interface elements }
   MenuBarLeft, MenuBarWidth, GameWidth: Integer;
-  {}
+  { White border (for selected tiles) and black border (for wrongly placed tiles)
+    Drawn through Draw3x3 using TGLImageHelper }
   WhiteBorder, BlackBorder: TGlImage;
-  {}
+  { A set of buttons }
   Buttons: TGLImage;
+  { Image Rectangles, that determine which button is to be drawn }
   ButtonForward, ButtonHint, ButtonSoundOn, ButtonSoundOff, ButtonMenu, ButtonCredits: TFloatRectangle;
+  { Size of buttons }
   ButtonSize, ButtonSpacer: Integer;
-  {}
+  { A tick symbol, denoting that the image has already been solved }
   SolvedImage: TGLImage;
-  {}
+  { Arrows on the left and right of the ImageSelector to flip pages }
   PagesArrow: TGLImage;
-  {}
+  { Global window width/height/position, always guaranteed to be of golden section }
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
-{}
+{ Load GUI elements and calculate their size }
 procedure InitUI;
-{}
+{ Free GUI elements }
 procedure FreeUI;
 implementation
 uses

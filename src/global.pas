@@ -15,7 +15,8 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Global features of the game,
+   random numbers generator *)
 
 unit Global;
 
@@ -27,12 +28,12 @@ uses
   CastleRandom;
 
 var
-  {}
+  { Random number generator }
   Rnd: TCastleRandom;
 
-{}
+{ Initialize random number generator }
 procedure InitGlobal;
-{}
+{ Free random number generator }
 procedure FreeGlobal;
 implementation
 uses

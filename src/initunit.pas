@@ -15,16 +15,13 @@
 
 { --------------------------------------------------------------------------- }
 
-(* {} *)
+(* Initialize and load all data, start the game *)
 
 unit InitUnit;
 
 {$INCLUDE compilerconfig.inc}
 
 interface
-
-{uses
-  Classes, SysUtils;}
 
 implementation
 uses
@@ -59,7 +56,7 @@ InitWindow;
 Application.MainWindow := Window;
 Application.OnInitialize := @ApplicationInitialize;
 
-//set application name (tree copies)
+//set application name (three copies)
 SysUtils.OnGetApplicationName := @GetApplicationName;
 ApplicationProperties(true).ApplicationName := GetApplicationName;
 Window.Caption := 'Swappy Jigsaw';
