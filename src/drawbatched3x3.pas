@@ -1,21 +1,21 @@
 { Copyright (c) 2018 Michalis Kamburelis, Yevhen Loza
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  This unit license is identical to that of Castle Game Engine.
 
-  This program is distributed in the hope that it will be useful,
+  "Castle Game Engine" is free software; see the file COPYING.txt,
+  included in this distribution, for details about the copyright.
+
+  "Castle Game Engine" is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>. }
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
 
 {----------------------------------------------------------------------------}
 
-(* {} *)
+(* Adds simple Draw3x3Batched function to TGLImage.Draw3x3 to perform batched drawing
+   Just include this unit in uses section
+   and new Draw3x3Batched function will be available.
+   Pay attention, it does not hornor the TGLImage rotation. *)
 
 unit DrawBatched3x3;
 
@@ -27,7 +27,7 @@ uses
   CastleGLImages, CastleRectangles;
 
 type
-  {}
+  { Helper for the TGLImage with a single added function - Draw3x3Batched }
   TGLImageHelper = class helper for TGLImage
     procedure Draw3x3Batched(const DrawRects: PFloatRectangleArray; const Count: Integer;
       const CornerTop, CornerRight, CornerBottom, CornerLeft: Single);
@@ -76,6 +76,8 @@ begin
 
   DrawAddCount := 0;
 
+  ScreenRects := nil;
+  ImageRects := nil;
   SetLength(ScreenRects, Count * 9);
   SetLength(ImageRects, Count * 9);
 
