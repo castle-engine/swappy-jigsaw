@@ -137,33 +137,34 @@
         <UnitName Value="Game"/>
       </Unit8>
       <Unit9>
-        <Filename Value="src/glimagehelper.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
         <Filename Value="src/imagelist.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImageList"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="src/gui.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GUI"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="src/starfallunit.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarFallUnit"/>
-      </Unit12>
-      <Unit13>
+      </Unit11>
+      <Unit12>
         <Filename Value="src/selectimage.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SelectImage"/>
-      </Unit13>
-      <Unit14>
+      </Unit12>
+      <Unit13>
         <Filename Value="src/creditsscreen.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CreditsScreen"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="src/drawbatched3x3.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DrawBatched3x3"/>
       </Unit14>
     </Units>
   </ProjectOptions>

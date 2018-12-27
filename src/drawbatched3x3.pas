@@ -1,9 +1,39 @@
+{ Copyright (c) 2018 Michalis Kamburelis, Yevhen Loza
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>. }
+
+{----------------------------------------------------------------------------}
+
+(* {} *)
+
+unit DrawBatched3x3;
+
+//{$mode objfpc}{$H+}
+
+interface
+
+uses
+  CastleGLImages, CastleRectangles;
+
 type
+  {}
   TGLImageHelper = class helper for TGLImage
     procedure Draw3x3Batched(const DrawRects: PFloatRectangleArray; const Count: Integer;
       const CornerTop, CornerRight, CornerBottom, CornerLeft: Single);
   end;
 
+implementation
 procedure TGLImageHelper.Draw3x3Batched(const DrawRects: PFloatRectangleArray; const Count: Integer;
    const CornerTop, CornerRight, CornerBottom, CornerLeft: Single);
 var
@@ -123,3 +153,6 @@ begin
 
   {UseScreenCenter := false;}
 end;
+
+end.
+

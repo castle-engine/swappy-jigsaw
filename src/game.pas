@@ -36,7 +36,7 @@ uses
   CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
   Global, GUI,
-  StarFallUnit,
+  StarFallUnit, DrawBatched3x3,
   ImageList, WindowUnit, SelectImage,
   DecoLog;
 
@@ -167,10 +167,6 @@ begin
     StartVictory;
   end;
 end;
-
-{----------------------------------------------------------------------------}
-
-{$INCLUDE GLImageHelper.inc}
 
 {----------------------------------------------------------------------------}
 
