@@ -163,6 +163,8 @@ end;
 
 procedure ShowImageSelector;
 begin
+  SortListCount; //not optimal
+
   Window.OnRender := @ImageSelectorRender;
   Window.OnPress := @ImageSelectorPress;
 
