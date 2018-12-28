@@ -36,6 +36,7 @@ uses
   SysUtils,
   CastleFilesUtils, CastleWindow, CastleKeysMouse,
   CastleVectors,
+  CastleGLUtils, CastleColors,
   CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
   Global, GUI,
@@ -178,6 +179,8 @@ var
 
   Count: Integer;
 begin
+  RenderContext.Clear([cbColor], Black);
+
   if ShowHint then
     Image.Draw(ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight)
   else begin
