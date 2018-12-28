@@ -142,6 +142,7 @@ begin
           iy := 0;
         if iy >= ImagesY then
           iy := Pred(ImagesY);
+        iy := Pred(ImagesY) - iy;
 
         NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
       end;
