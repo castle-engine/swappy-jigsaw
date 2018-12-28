@@ -118,18 +118,18 @@ begin
       if Event.Position[0] <= ImageStartLeft + RightLeftButtonWidth then
       begin
         //click "LEFT"
-        if Page < Pred(TotalPages) then
-          inc(Page)
-        else
-          Page := 0;
-      end else
-      if Event.Position[0] >= ImageStartLeft + ImageWidth - RightLeftButtonWidth then
-      begin
-        //click "RIGHT"
         if Page >0 then
           dec(Page)
         else
           Page := Pred(TotalPages);
+      end else
+      if Event.Position[0] >= ImageStartLeft + ImageWidth - RightLeftButtonWidth then
+      begin
+        //click "RIGHT"
+        if Page < Pred(TotalPages) then
+          inc(Page)
+        else
+          Page := 0;
       end else
       begin
         ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
