@@ -27,7 +27,7 @@ implementation
 uses
   SysUtils, CastleWindow, CastleApplicationProperties,
   Game, ImageList, GUI, SelectImage, CreditsScreen,
-  DecoTime, WindowUnit, DecoLog, Global;
+  WindowUnit, DecoLog, Global;
 
 function GetApplicationName: String;
 begin
@@ -48,7 +48,6 @@ end;
 
 initialization
 InitLog;
-InitTime;
 InitGlobal;
 InitWindow;
 
@@ -67,7 +66,6 @@ FreeUI;
 FreeImageList;
 FreeLog;
 FreeGlobal;
-FreeTime;
 FreeCredits;
 
 end.

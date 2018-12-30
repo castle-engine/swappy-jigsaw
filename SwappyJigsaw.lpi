@@ -94,7 +94,7 @@
         <PackageName Value="castle_base"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="14">
       <Unit0>
         <Filename Value="SwappyJigsaw.pas"/>
         <IsPartOfProject Value="True"/>
@@ -114,58 +114,53 @@
         <UnitName Value="InitUnit"/>
       </Unit3>
       <Unit4>
-        <Filename Value="src/decotime.pas"/>
+        <Filename Value="src/macro.inc"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="DecoTime"/>
       </Unit4>
       <Unit5>
-        <Filename Value="src/macro.inc"/>
+        <Filename Value="src/global.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="src/global.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
         <Filename Value="src/windowunit.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WindowUnit"/>
-      </Unit7>
-      <Unit8>
+      </Unit6>
+      <Unit7>
         <Filename Value="src/game.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Game"/>
-      </Unit8>
-      <Unit9>
+      </Unit7>
+      <Unit8>
         <Filename Value="src/imagelist.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImageList"/>
-      </Unit9>
-      <Unit10>
+      </Unit8>
+      <Unit9>
         <Filename Value="src/gui.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GUI"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="src/starfallunit.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarFallUnit"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="src/selectimage.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SelectImage"/>
-      </Unit12>
-      <Unit13>
+      </Unit11>
+      <Unit12>
         <Filename Value="src/creditsscreen.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CreditsScreen"/>
-      </Unit13>
-      <Unit14>
+      </Unit12>
+      <Unit13>
         <Filename Value="src/drawbatched3x3.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="DrawBatched3x3"/>
-      </Unit14>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
