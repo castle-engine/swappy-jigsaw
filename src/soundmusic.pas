@@ -42,9 +42,16 @@ procedure InitMusic;
 procedure FreeMusic;
 implementation
 uses
-  SysUtils,
+  Classes, SysUtils,
   CastleSoundEngine, CastleFilesUtils, CastleTimeUtils,
   Settings, Global;
+
+type
+  {}
+  TMusicThread = class(TThread)
+  protected
+    procedure Execute; override;
+  end;
 
 var
   {}
@@ -53,6 +60,8 @@ var
   CurrentMusicID: Integer = -1;
   {}
   MusicStartTimer: TTimerResult;
+  {}
+  MusicThread: TMusicThread;
 
 function PlaySound: Boolean;
 begin
@@ -65,7 +74,6 @@ begin
   Result := PlaySound;
 end;
 {$ENDIF}
-
 
 function GetMusicFile: String;
 var
@@ -87,10 +95,20 @@ begin
   Result := ApplicationData('music/' + Result);
 end;
 
+procedure TMusicThread.Execute;
+begin
+  CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
+end;
+
 procedure StartMusic;
 begin
   FreeMusic;
-  CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
+  MusicThread := TMusicThread.Create(true);
+  MusicThread.FreeOnTerminate := false;
+  MusicThread.Priority := tpLower;
+  //MusicThread.Start;
+  MusicThread.Execute;
+  FreeAndNil(MusicThread);
   MusicStartTimer := Timer;
   SoundEngine.PlaySound(CurrentMusic);
 end;
