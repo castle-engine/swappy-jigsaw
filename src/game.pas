@@ -39,6 +39,7 @@ uses
   CastleGLUtils, CastleColors,
   CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
+  {$IFDEF AndroidVibrate}CastleOpenDocument,{$ENDIF}
   Global, GUI,
   StarFallUnit, DrawBatched3x3,
   ImageList, WindowUnit, SelectImage, Settings, SoundMusic,
@@ -75,26 +76,6 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure SwapTiles(const A, B: TVector2Integer);
-var
-  R: TFloatRectangle;
-begin
-  R := ScreenRects[GetLinearCoord(A)];
-  ScreenRects[GetLinearCoord(A)] := ScreenRects[GetLinearCoord(B)];
-  ScreenRects[GetLinearCoord(B)] := R;
-end;
-
-procedure SwapTiles(const A, B: Integer);
-var
-  R: TFloatRectangle;
-begin
-  R := ScreenRects[A];
-  ScreenRects[A] := ScreenRects[B];
-  ScreenRects[B] := R;
-end;
-
-{----------------------------------------------------------------------------}
-
 function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
   Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom + ImageStartBottom) > ScaleY / 2) or
@@ -108,6 +89,36 @@ end;
 
 {----------------------------------------------------------------------------}
 
+procedure SwapTiles(const A, B: TVector2Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := ScreenRects[GetLinearCoord(A)];
+  ScreenRects[GetLinearCoord(A)] := ScreenRects[GetLinearCoord(B)];
+  ScreenRects[GetLinearCoord(B)] := R;
+  {$IFDEF AndroidVibrate}
+  if GameStarted and not Victory and DoVibrate and
+    ((not IsTileWrong(A)) or (not IsTileWrong(B))) then
+    Vibrate(100);
+  {$ENDIF}
+end;
+
+procedure SwapTiles(const A, B: Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := ScreenRects[A];
+  ScreenRects[A] := ScreenRects[B];
+  ScreenRects[B] := R;
+  {$IFDEF AndroidVibrate}
+  if GameStarted and not Victory and DoVibrate and
+    ((not IsTileWrong(A)) or (not IsTileWrong(B))) then
+    Vibrate(100);
+  {$ENDIF}
+end;
+
+{----------------------------------------------------------------------------}
+
 procedure StartVictory;
 begin
   //increase image score
@@ -116,6 +127,10 @@ begin
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
   StarFall.Start;
+  {$IFDEF Android}
+  if DoVibrate then
+    Vibrate(500);
+  {$ENDIF}
 end;
 
 procedure EndVictory;

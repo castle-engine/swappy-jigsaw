@@ -62,7 +62,7 @@ implementation
 uses
   SysUtils, Generics.Defaults,
   CastleFilesUtils,
-  Settings, DecoLog;
+  DecoLog;
 
 function CompareImageData(constref i1, i2: TImageData): integer;
 begin

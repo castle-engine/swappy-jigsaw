@@ -52,7 +52,7 @@ begin
   UserConfig.Load;
   for i := 0 to Pred(ImageDataList.Count) do
     ImageDataList[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
-  PlaySound := UserConfig.GetValue('$SOUND_ON', true);
+  FPlaySound := UserConfig.GetValue('$SOUND_ON', true);
 end;
 
 end.

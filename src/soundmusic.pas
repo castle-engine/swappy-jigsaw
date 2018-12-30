@@ -24,9 +24,14 @@ unit SoundMusic;
 interface
 
 var
-  { Should the sound be played? }
-  PlaySound: Boolean = true;
+  {}
+  FPlaySound: Boolean = true;
 
+{ Should the sound be played? }
+function PlaySound: Boolean;
+{$IFDEF AndroidVibrate}
+function DoVibrate: Boolean;
+{$ENDIF}
 {toggles sound on/off}
 procedure ToggleSound;
 {}
@@ -43,6 +48,19 @@ var
   CurrentMusic: TSoundBuffer;
   {}
   CurrentMusicID: Integer = -1;
+
+function PlaySound: Boolean;
+begin
+  Result := FPlaySound;
+end;
+
+{$IFDEF AndroidVibrate}
+function DoVibrate: Boolean;
+begin
+  Result := PlaySound;
+end;
+{$ENDIF}
+
 
 function GetMusicFile: String;
 var
@@ -78,8 +96,8 @@ end;
 
 procedure ToggleSound;
 begin
-  PlaySound := not PlaySound;
-  if PlaySound then
+  FPlaySound := not FPlaySound;
+  if FPlaySound then
     StartMusic
   else
     StopMusic;
@@ -88,7 +106,7 @@ end;
 
 procedure InitMusic;
 begin
-  if PlaySound then
+  if FPlaySound then
     StartMusic;
 end;
 
