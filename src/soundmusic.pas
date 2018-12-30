@@ -31,6 +31,7 @@ var
 procedure ToggleSound;
 {}
 procedure InitMusic;
+procedure FreeMusic;
 implementation
 uses
   SysUtils,
@@ -42,12 +43,6 @@ var
   CurrentMusic: TSoundBuffer;
   {}
   CurrentMusicID: Integer = -1;
-
-procedure ToggleSound;
-begin
-  PlaySound := not PlaySound;
-  SaveConfig;
-end;
 
 function GetMusicFile: String;
 var
@@ -71,14 +66,36 @@ end;
 
 procedure StartMusic;
 begin
-  FreeAndNil(CurrentMusic);
+  FreeMusic;
   CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
   SoundEngine.PlaySound(CurrentMusic);
 end;
 
+procedure StopMusic;
+begin
+  FreeMusic;
+end;
+
+procedure ToggleSound;
+begin
+  PlaySound := not PlaySound;
+  if PlaySound then
+    StartMusic
+  else
+    StopMusic;
+  SaveConfig;
+end;
+
 procedure InitMusic;
 begin
-  StartMusic;
+  if PlaySound then
+    StartMusic;
+end;
+
+procedure FreeMusic;
+begin
+  SoundEngine.StopAllSources;
+  SoundEngine.FreeBuffer(CurrentMusic);
 end;
 
 end.

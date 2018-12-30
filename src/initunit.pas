@@ -64,6 +64,7 @@ Window.Caption := 'Swappy Jigsaw';
 
 finalization
 FreeGame;
+FreeMusic; //redundant
 FreeUI;
 FreeImageList;
 FreeLog;
