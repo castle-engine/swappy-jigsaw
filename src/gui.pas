@@ -31,9 +31,6 @@ uses
   TButtonsFloatRectangleArray = packed array of TFloatRectangle;}
 
 var
-  { Should the sound be played?
-    TODO: replace with procedure MusicUnit.ToggleSound }
-  PlaySound: Boolean = true;
   { How many tiles us the image sliced into? }
   SlicesX: Integer = 7;
   SlicesY: Integer = 6;

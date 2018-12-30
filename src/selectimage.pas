@@ -34,7 +34,7 @@ uses
   CastleGLUtils, CastleColors,
   //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
-  Game;
+  Game, SoundMusic;
 
 var
   { Sizes of each image in Image Selector }
@@ -101,11 +101,6 @@ begin
     ButtonCredits);
 end;
 
-procedure ClickSound;
-begin
-  PlaySound := not PlaySound;
-end;
-
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
 var
   ix, iy: Integer;
@@ -152,7 +147,7 @@ begin
         DisplayCredits
       else
       if Event.Position[1] < ButtonSpacer * 2 then
-        ClickSound
+        ToggleSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
         //ClickHintButton

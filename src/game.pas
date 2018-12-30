@@ -41,7 +41,7 @@ uses
   CastleRectangles, CastleImages, CastleGLImages,
   Global, GUI,
   StarFallUnit, DrawBatched3x3,
-  ImageList, WindowUnit, SelectImage, Settings,
+  ImageList, WindowUnit, SelectImage, Settings, SoundMusic,
   DecoLog;
 
 type
@@ -297,11 +297,6 @@ begin
   Window.Invalidate;
 end;
 
-procedure ClickSound;
-begin
-  PlaySound := not PlaySound;
-end;
-
 procedure ClickExit;
 begin
   if (IsGameOver) or (not GameStarted) or
@@ -345,7 +340,7 @@ begin
         ClickExit
       else
       if Event.Position[1] < ButtonSpacer * 2 then
-        ClickSound
+        ToggleSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
         ClickHintButton
