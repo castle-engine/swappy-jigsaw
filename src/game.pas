@@ -41,7 +41,7 @@ uses
   CastleRectangles, CastleImages, CastleGLImages,
   Global, GUI,
   StarFallUnit, DrawBatched3x3,
-  ImageList, WindowUnit, SelectImage,
+  ImageList, WindowUnit, SelectImage, Settings,
   DecoLog;
 
 type
@@ -112,7 +112,7 @@ procedure StartVictory;
 begin
   //increase image score
   inc(ImageDataList[CurrentImage].Hits);
-  SaveStatistics;
+  SaveConfig;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
   StarFall.Start;
