@@ -59,6 +59,8 @@ procedure ImageSelectorRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
 begin
+  CheckMusic; //check if the music has finished and load a new one
+
   RenderContext.Clear([cbColor], Black); //we need clear screen here to avoid bleeding pixels
 
   for ix := 0 to Pred(ImagesX) do

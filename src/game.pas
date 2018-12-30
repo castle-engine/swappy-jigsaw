@@ -194,6 +194,8 @@ var
 
   Count: Integer;
 begin
+  CheckMusic; //check if the music has finished and load a new one
+
   RenderContext.Clear([cbColor], Black);
 
   if ShowHint then

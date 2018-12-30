@@ -24,7 +24,7 @@ unit SoundMusic;
 interface
 
 var
-  {}
+  { Is the sound on/off? }
   FPlaySound: Boolean = true;
 
 { Should the sound be played? }
@@ -32,15 +32,18 @@ function PlaySound: Boolean;
 {$IFDEF AndroidVibrate}
 function DoVibrate: Boolean;
 {$ENDIF}
-{toggles sound on/off}
+{ Checks if the next track should be loaded
+  As far as we don't use autoredisplay=true it will wait until press event. No problem. }
+procedure CheckMusic;
+{ Toggles sound on/off }
 procedure ToggleSound;
-{}
+{ Initialize/free music classes }
 procedure InitMusic;
 procedure FreeMusic;
 implementation
 uses
   SysUtils,
-  CastleSoundEngine, CastleFilesUtils,
+  CastleSoundEngine, CastleFilesUtils, CastleTimeUtils,
   Settings, Global;
 
 var
@@ -48,6 +51,8 @@ var
   CurrentMusic: TSoundBuffer;
   {}
   CurrentMusicID: Integer = -1;
+  {}
+  MusicStartTimer: TTimerResult;
 
 function PlaySound: Boolean;
 begin
@@ -86,7 +91,17 @@ procedure StartMusic;
 begin
   FreeMusic;
   CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
+  MusicStartTimer := Timer;
   SoundEngine.PlaySound(CurrentMusic);
+end;
+
+procedure CheckMusic;
+begin
+  if FPlaySound then
+  begin
+    if MusicStartTimer.ElapsedTime > CurrentMusic.Duration then
+      StartMusic;
+  end;
 end;
 
 procedure StopMusic;
