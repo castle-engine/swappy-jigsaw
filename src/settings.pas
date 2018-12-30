@@ -31,7 +31,7 @@ procedure LoadConfig;
 implementation
 uses
   CastleConfig,
-  ImageList, DecoLog;
+  ImageList, DecoLog, SoundMusic;
 
 procedure SaveConfig;
 var
@@ -40,6 +40,7 @@ begin
   Log(CurrentRoutine, 'Saving configruation...');
   for I in ImageDataList do
     UserConfig.SetValue(I.URL, I.Hits);
+  UserConfig.SetValue('$SOUND_ON', PlaySound);
   UserConfig.Save;
 end;
 
@@ -51,6 +52,7 @@ begin
   UserConfig.Load;
   for i := 0 to Pred(ImageDataList.Count) do
     ImageDataList[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
+  PlaySound := UserConfig.GetValue('$SOUND_ON', true);
 end;
 
 end.
