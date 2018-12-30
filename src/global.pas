@@ -36,8 +36,6 @@ procedure InitGlobal;
 { Free random number generator }
 procedure FreeGlobal;
 implementation
-uses
-  DecoLog;
 
 procedure InitGlobal;
 begin

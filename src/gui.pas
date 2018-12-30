@@ -65,8 +65,7 @@ procedure FreeUI;
 implementation
 uses
   SysUtils, CastleFilesUtils, CastleVectors, CastleImages,
-  WindowUnit,
-  DecoLog;
+  WindowUnit;
 
 procedure InitUI;
 const

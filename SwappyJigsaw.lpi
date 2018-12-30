@@ -120,6 +120,7 @@
       <Unit5>
         <Filename Value="src/global.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Global"/>
       </Unit5>
       <Unit6>
         <Filename Value="src/windowunit.pas"/>

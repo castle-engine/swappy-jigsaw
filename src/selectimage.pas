@@ -54,6 +54,7 @@ const
   ImagesY = 4;
   ImagesPerPage = ImagesX * ImagesY;
 
+{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure ImageSelectorRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
@@ -156,6 +157,7 @@ begin
     end;
   end;
 end;
+{$POP}
 
 procedure ShowImageSelector;
 begin

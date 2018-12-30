@@ -39,6 +39,7 @@ var
   { Credits image }
   Credits: TGLImage;
 
+{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure CreditsRender(Container: TUIContainer);
 begin
   //normally we do this only once, as Window.AutoRedisplay = false
@@ -50,6 +51,7 @@ begin
   FreeAndNil(Credits); //we don't keep the image, as hardly anybody will use it twice :)
   ShowImageSelector;
 end;
+{$POP}
 
 procedure InitCredits;
 begin
