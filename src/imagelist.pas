@@ -232,7 +232,6 @@ begin
     Add(Img('nocni-svetla_CC0_by_Lubos_Houska_[crop,color].jpg'));
   end;
   Log(CurrentRoutine, 'Images information loaded: ' + IntToStr(ImageDataList.Count));
-  LoadConfig;
 end;
 
 {----------------------------------------------------------------------------}

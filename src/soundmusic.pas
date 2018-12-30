@@ -24,19 +24,61 @@ unit SoundMusic;
 interface
 
 var
-  { Should the sound be played?
-    TODO: replace with procedure MusicUnit.ToggleSound }
+  { Should the sound be played? }
   PlaySound: Boolean = true;
 
+{toggles sound on/off}
 procedure ToggleSound;
+{}
+procedure InitMusic;
 implementation
 uses
-  Settings;
+  SysUtils,
+  CastleSoundEngine, CastleFilesUtils,
+  Settings, Global;
+
+var
+  {}
+  CurrentMusic: TSoundBuffer;
+  {}
+  CurrentMusicID: Integer = -1;
 
 procedure ToggleSound;
 begin
   PlaySound := not PlaySound;
   SaveConfig;
+end;
+
+function GetMusicFile: String;
+var
+  NewMusic: Integer;
+begin
+  repeat
+    NewMusic := RND.Random(4);
+  until NewMusic <> CurrentMusicID;
+  CurrentMusicID := NewMusic;
+
+  case CurrentMusicID of
+    0: Result := 'Daniel_Veesey_-_01_-_Sonata_No_1_in_F_Minor_Op_2_No_1_-_I_Allegro.ogg';
+    1: Result := 'Daniel_Veesey_-_02_-_Sonata_No_1_in_F_Minor_Op_2_No_1_-_II_Adagio.ogg';
+    2: Result := 'Daniel_Veesey_-_03_-_Sonata_No_1_in_F_Minor_Op_2_No_1_-_III_Menuetto_Allegretto.ogg';
+    else
+      Result := 'Daniel_Veesey_-_04_-_Sonata_No_1_in_F_Minor_Op_2_No_1_-_IV_Prestissimo.ogg';
+  end;
+
+  Result := ApplicationData('music/' + Result);
+end;
+
+procedure StartMusic;
+begin
+  FreeAndNil(CurrentMusic);
+  CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
+  SoundEngine.PlaySound(CurrentMusic);
+end;
+
+procedure InitMusic;
+begin
+  StartMusic;
 end;
 
 end.
