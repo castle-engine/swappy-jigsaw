@@ -405,7 +405,7 @@ begin
   //NewImage := Pred(ImageDataList.Count);
 
   FreeAndNil(Image);
-  Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
+  Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riLanczos);
   Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
 
   JigCount := 0;
