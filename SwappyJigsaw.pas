@@ -21,6 +21,8 @@
 
 program SwappyJigsaw;
 
+{$IFDEF Windows}{$APPTYPE GUI}{$ENDIF}
+
 uses
   {$IFDEF Linux}CThreads,{$ENDIF}
   InitUnit, WindowUnit;
