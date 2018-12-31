@@ -104,9 +104,35 @@ begin
     ButtonCredits);
 end;
 
-procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
 var
-  ix, iy: Integer;
+  Swipe: Boolean;
+  SwipeStart: TVector2;
+
+procedure DecPage;
+begin
+  if Page >0 then
+    dec(Page)
+  else
+    Page := Pred(TotalPages);
+end;
+
+procedure IncPage;
+begin
+  if Page < Pred(TotalPages) then
+    inc(Page)
+  else
+    Page := 0;
+end;
+
+procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
+  procedure StartSwipe;
+  begin
+    if Event.FingerIndex = 0 then
+    begin
+      Swipe := true;
+      SwipeStart := Event.Position;
+    end;
+  end;
 begin
   if (Event.EventType = itMouseButton) then
   begin
@@ -114,36 +140,12 @@ begin
     if Event.Position[0] <= MenuBarLeft then
     begin
       if Event.Position[0] <= ImageStartLeft + RightLeftButtonWidth then
-      begin
-        //click "LEFT"
-        if Page >0 then
-          dec(Page)
-        else
-          Page := Pred(TotalPages);
-      end else
+        DecPage //click "LEFT"
+      else
       if Event.Position[0] >= ImageStartLeft + ImageWidth - RightLeftButtonWidth then
-      begin
-        //click "RIGHT"
-        if Page < Pred(TotalPages) then
-          inc(Page)
-        else
-          Page := 0;
-      end else
-      begin
-        ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
-        if ix < 0 then
-          ix := 0;
-        if ix >= ImagesX then
-          ix := Pred(ImagesX);
-        iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
-        if iy < 0 then
-          iy := 0;
-        if iy >= ImagesY then
-          iy := Pred(ImagesY);
-        iy := Pred(ImagesY) - iy;
-
-        NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
-      end;
+        IncPage //click "RIGHT"
+      else
+        StartSwipe;
     end else
     begin
       if Event.Position[1] < ButtonSpacer then
@@ -159,14 +161,51 @@ begin
     end;
   end;
 end;
+
+procedure ImageSelectorRelease(Container: TUIContainer; const Event: TInputPressRelease);
+var
+  ix, iy: Integer;
+begin
+  if (Swipe) and (Event.FingerIndex = 0) then
+  begin
+    Window.Invalidate;
+    if (Abs(Event.Position[0] - SwipeStart[0]) < SelectorScaleY) then
+    begin
+      //if finger didn't move too far away, start the image under finger
+      ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
+      if ix < 0 then
+        ix := 0;
+      if ix >= ImagesX then
+        ix := Pred(ImagesX);
+      iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
+      if iy < 0 then
+        iy := 0;
+      if iy >= ImagesY then
+        iy := Pred(ImagesY);
+      iy := Pred(ImagesY) - iy;
+
+      NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
+    end else
+    begin
+      //else do a swipe page change
+      if Event.Position[0] > SwipeStart[0] then
+        IncPage
+      else
+        DecPage;
+    end
+  end;
+end;
 {$POP}
 
 procedure ShowImageSelector;
 begin
   SortListCount; //not optimal
 
+  Swipe := false;
+
   Window.OnRender := @ImageSelectorRender;
   Window.OnPress := @ImageSelectorPress;
+  Window.OnRelease := @ImageSelectorRelease;
 
   Window.Invalidate;
 
