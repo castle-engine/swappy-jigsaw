@@ -114,8 +114,8 @@ begin
   if ButtonSize < 256 then
   begin
     //scale buttons down on loading if displayed size is smaller than button image size, to save memory and boost performance
-    Buttons := TGLImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBilinear);
-    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBilinear);
+    Buttons := TGLImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
+    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
   end else
   begin
     //otherwise don't scale buttons, to save memory
