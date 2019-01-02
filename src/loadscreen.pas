@@ -1,0 +1,61 @@
+{ Copyright (C) 2018 Yevhen Loza
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>. }
+
+{ --------------------------------------------------------------------------- }
+
+(* Just load and show an image before the game loads *)
+
+unit LoadScreen;
+{$INCLUDE compilerconfig.inc}
+
+interface
+
+uses
+  Classes, SysUtils;
+
+{initialize and show Load screen}
+procedure ShowLoadScreen;
+{free memory used by Load screen}
+procedure FreeLoadScreen;
+implementation
+uses
+  CastleWindow, CastleGLImages, CastleFilesUtils,
+  WindowUnit;
+
+var
+  LoadScreenImage: TGLImage;
+
+{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
+procedure RenderLoadScreen(Container: TUIContainer);
+begin
+  LoadScreenImage.Draw(0, 0, Window.Width, Window.Height);
+end;
+{$POP}
+
+procedure ShowLoadScreen;
+begin
+  LoadScreenImage := TGLImage.Create(ApplicationData('loadscreen.jpg'));
+  Window.OnRender := @RenderLoadScreen;
+  Window.Invalidate;
+  Application.ProcessAllMessages;
+end;
+
+procedure FreeLoadScreen;
+begin
+  LoadScreenImage.Free;
+end;
+
+end.
+

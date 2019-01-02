@@ -26,6 +26,7 @@ interface
 implementation
 uses
   SysUtils, CastleWindow, CastleApplicationProperties,
+  LoadScreen,
   Game, ImageList, GUI, SelectImage, CreditsScreen,
   WindowUnit, DecoLog, Global, SoundMusic, Settings;
 
@@ -37,12 +38,15 @@ end;
 procedure ApplicationInitialize;
 begin
   Log(CurrentRoutine, 'Init sequence started.');
+  ShowLoadScreen;
   LoadImageList;
   LoadConfig;
   InitUI;
   InitGame;
   InitImageSelector;
   InitMusic;
+  FreeLoadScreen;
+
   ShowImageSelector;
 
   Log(CurrentRoutine, 'Init sequence finished.');
