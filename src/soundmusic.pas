@@ -47,11 +47,11 @@ uses
   Settings, Global;
 
 var
-  {}
+  { Current music buffer playing }
   CurrentMusic: TSoundBuffer;
-  {}
+  { Current music number }
   CurrentMusicID: Integer = -1;
-  {}
+  { Timer result, when the music started (to determine duration) }
   MusicStartTimer: TTimerResult;
 
 function PlaySound: Boolean;
