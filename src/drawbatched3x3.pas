@@ -76,8 +76,8 @@ begin
 
   DrawAddCount := 0;
 
-  ScreenRects := nil;
-  ImageRects := nil;
+  Initialize(ScreenRects);
+  Initialize(ImageRects);
   SetLength(ScreenRects, Count * 9);
   SetLength(ImageRects, Count * 9);
 
