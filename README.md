@@ -4,13 +4,13 @@ Swappy Jigsaw is a simple jigsaw puzzle game, where you have to unravel an image
 
 The game is made in Castle Game Engine (Lazarus/FreePascal), is free, libre and open source.
 
-# Installation
-
 # Windows
 
 No installation is required, just extract all files into a single folder and play.
 
 # Linux
+
+No installation is required, just extract all files into a single folder and play. You may need to set "executable" permission for SwappyJigsaw.run.
 
 Libraries required for the game (Linux: Debian/Ubuntu package reference):
 
