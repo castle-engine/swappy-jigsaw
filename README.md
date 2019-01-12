@@ -30,4 +30,4 @@ Source code repository: https://gitlab.com/EugeneLoza/swappy-jigsaw
 
 Please, report any bugs, issues and ideas to: https://gitlab.com/EugeneLoza/swappy-jigsaw/issues
 
-Binaries can be found here: https://decoherence.itch.io/swappy-jigsaw
+Windows/Linux executables can be found here: https://decoherence.itch.io/swappy-jigsaw
