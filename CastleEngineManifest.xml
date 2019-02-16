@@ -3,6 +3,7 @@
   caption="Swappy Jigsaw"
   qualified_name="net.itch.io.swappyjigsaw"
   standalone_source="SwappyJigsaw.pas"
+  game_units="InitUnit"
   screen_orientation="landscape"
   fullscreen_immersive="true"
   author="Yevhen Loza">
