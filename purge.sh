@@ -18,3 +18,6 @@ rm heap.trc
 rm SwappyJigsaw
 rm SwappyJigsaw.exe
 
+# Clean user score (Careful!)
+
+rm -rf ~/.config/SwappyJigsaw
