@@ -30,9 +30,11 @@ procedure InitImageSelector;
 
 implementation
 uses
-  CastleWindow, CastleKeysMouse, CastleRectangles,
+  CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
+  CastleGLUtils, CastleColors,
+  //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
-  Game;
+  Game, SoundMusic;
 
 var
   { Sizes of each image in Image Selector }
@@ -52,18 +54,34 @@ const
   ImagesY = 4;
   ImagesPerPage = ImagesX * ImagesY;
 
+{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure ImageSelectorRender(Container: TUIContainer);
 var
   i, ix, iy: Integer;
 begin
+  CheckMusic; //check if the music has finished and load a new one
+
+  RenderContext.Clear([cbColor], Black); //we need clear screen here to avoid bleeding pixels
+
   for ix := 0 to Pred(ImagesX) do
     for iy := 0 to Pred(ImagesY) do
     begin
       i := Page * ImagesPerPage + ix + iy * 3;
       if i < ImageDataList.Count then
+      begin
         ImageDataList[i].Thumbnail.Draw(
           ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
-          ImageStartBottom + iy * SelectorScaleY, SelectorScaleX, SelectorScaleY);
+          ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY,
+          SelectorScaleX, SelectorScaleY);
+        BlackBorder.Draw3x3(ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
+          ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY, SelectorScaleX, SelectorScaleY,
+          Vector4Integer(5, 5, 5, 5));
+        if ImageDataList[i].Hits > 0 then
+          SolvedImage.Draw(
+            ImageStartLeft + RightLeftButtonWidth + (ix + 1) * SelectorScaleX - ButtonSize,
+            ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY,
+            ButtonSize, ButtonSize);
+      end;
     end;
 
   PagesArrow.Draw(ImageStartLeft + RightLeftButtonWidth,
@@ -86,14 +104,35 @@ begin
     ButtonCredits);
 end;
 
-procedure ClickSound;
+var
+  Swipe: Boolean;
+  SwipeStart: TVector2;
+
+procedure DecPage;
 begin
-  PlaySound := not PlaySound;
+  if Page >0 then
+    dec(Page)
+  else
+    Page := Pred(TotalPages);
+end;
+
+procedure IncPage;
+begin
+  if Page < Pred(TotalPages) then
+    inc(Page)
+  else
+    Page := 0;
 end;
 
 procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
-var
-  ix, iy: Integer;
+  procedure StartSwipe;
+  begin
+    if Event.FingerIndex = 0 then
+    begin
+      Swipe := true;
+      SwipeStart := Event.Position;
+    end;
+  end;
 begin
   if (Event.EventType = itMouseButton) then
   begin
@@ -101,42 +140,19 @@ begin
     if Event.Position[0] <= MenuBarLeft then
     begin
       if Event.Position[0] <= ImageStartLeft + RightLeftButtonWidth then
-      begin
-        //click "LEFT"
-        if Page < Pred(TotalPages) then
-          inc(Page)
-        else
-          Page := 0;
-      end else
+        DecPage //click "LEFT"
+      else
       if Event.Position[0] >= ImageStartLeft + ImageWidth - RightLeftButtonWidth then
-      begin
-        //click "RIGHT"
-        if Page >0 then
-          dec(Page)
-        else
-          Page := Pred(TotalPages);
-      end else
-      begin
-        ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
-        if ix < 0 then
-          ix := 0;
-        if ix >= ImagesX then
-          ix := Pred(ImagesX);
-        iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
-        if iy < 0 then
-          iy := 0;
-        if iy >= ImagesY then
-          iy := Pred(ImagesY);
-
-        NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
-      end;
+        IncPage //click "RIGHT"
+      else
+        StartSwipe;
     end else
     begin
       if Event.Position[1] < ButtonSpacer then
         DisplayCredits
       else
       if Event.Position[1] < ButtonSpacer * 2 then
-        ClickSound
+        ToggleSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
         //ClickHintButton
@@ -146,10 +162,50 @@ begin
   end;
 end;
 
+procedure ImageSelectorRelease(Container: TUIContainer; const Event: TInputPressRelease);
+var
+  ix, iy: Integer;
+begin
+  if (Swipe) and (Event.FingerIndex = 0) then
+  begin
+    Window.Invalidate;
+    if (Abs(Event.Position[0] - SwipeStart[0]) < SelectorScaleY) then
+    begin
+      //if finger didn't move too far away, start the image under finger
+      ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
+      if ix < 0 then
+        ix := 0;
+      if ix >= ImagesX then
+        ix := Pred(ImagesX);
+      iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
+      if iy < 0 then
+        iy := 0;
+      if iy >= ImagesY then
+        iy := Pred(ImagesY);
+      iy := Pred(ImagesY) - iy;
+
+      NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
+    end else
+    begin
+      //else do a swipe page change
+      if Event.Position[0] > SwipeStart[0] then
+        IncPage
+      else
+        DecPage;
+    end
+  end;
+end;
+{$POP}
+
 procedure ShowImageSelector;
 begin
+  SortListCount; //not optimal
+
+  Swipe := false;
+
   Window.OnRender := @ImageSelectorRender;
   Window.OnPress := @ImageSelectorPress;
+  Window.OnRelease := @ImageSelectorRelease;
 
   Window.Invalidate;
 

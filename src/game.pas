@@ -33,14 +33,16 @@ procedure FreeGame;
 {...........................................................................}
 implementation
 uses
-  SysUtils, Generics.Collections,
+  SysUtils,
   CastleFilesUtils, CastleWindow, CastleKeysMouse,
   CastleVectors,
+  CastleGLUtils, CastleColors,
   CastleMessages,
   CastleRectangles, CastleImages, CastleGLImages,
+  {$IFDEF AndroidVibrate}CastleOpenDocument,{$ENDIF}
   Global, GUI,
-  StarFallUnit,
-  ImageList, WindowUnit, SelectImage,
+  StarFallUnit, DrawBatched3x3,
+  ImageList, WindowUnit, SelectImage, Settings, SoundMusic,
   DecoLog;
 
 type
@@ -74,26 +76,6 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure SwapTiles(const A, B: TVector2Integer);
-var
-  R: TFloatRectangle;
-begin
-  R := ScreenRects[GetLinearCoord(A)];
-  ScreenRects[GetLinearCoord(A)] := ScreenRects[GetLinearCoord(B)];
-  ScreenRects[GetLinearCoord(B)] := R;
-end;
-
-procedure SwapTiles(const A, B: Integer);
-var
-  R: TFloatRectangle;
-begin
-  R := ScreenRects[A];
-  ScreenRects[A] := ScreenRects[B];
-  ScreenRects[B] := R;
-end;
-
-{----------------------------------------------------------------------------}
-
 function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
   Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom + ImageStartBottom) > ScaleY / 2) or
@@ -107,14 +89,48 @@ end;
 
 {----------------------------------------------------------------------------}
 
+procedure SwapTiles(const A, B: TVector2Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := ScreenRects[GetLinearCoord(A)];
+  ScreenRects[GetLinearCoord(A)] := ScreenRects[GetLinearCoord(B)];
+  ScreenRects[GetLinearCoord(B)] := R;
+  {$IFDEF AndroidVibrate}
+  if GameStarted and not Victory and DoVibrate and
+    ((not IsTileWrong(A)) or (not IsTileWrong(B))) then
+    Vibrate(100);
+  {$ENDIF}
+end;
+
+procedure SwapTiles(const A, B: Integer);
+var
+  R: TFloatRectangle;
+begin
+  R := ScreenRects[A];
+  ScreenRects[A] := ScreenRects[B];
+  ScreenRects[B] := R;
+  {$IFDEF AndroidVibrate}
+  if GameStarted and not Victory and DoVibrate and
+    ((not IsTileWrong(A)) or (not IsTileWrong(B))) then
+    Vibrate(100);
+  {$ENDIF}
+end;
+
+{----------------------------------------------------------------------------}
+
 procedure StartVictory;
 begin
   //increase image score
   inc(ImageDataList[CurrentImage].Hits);
-  SaveStatistics;
+  SaveConfig;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
   StarFall.Start;
+  {$IFDEF Android}
+  if DoVibrate then
+    Vibrate(500);
+  {$ENDIF}
 end;
 
 procedure EndVictory;
@@ -171,10 +187,6 @@ end;
 
 {----------------------------------------------------------------------------}
 
-{$INCLUDE GLImageHelper.inc}
-
-{----------------------------------------------------------------------------}
-
 {$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure GameRender(Container: TUIContainer);
 var
@@ -182,6 +194,10 @@ var
 
   Count: Integer;
 begin
+  CheckMusic; //check if the music has finished and load a new one
+
+  RenderContext.Clear([cbColor], Black);
+
   if ShowHint then
     Image.Draw(ImageStartLeft, ImageStartBottom, ImageWidth, ImageHeight)
   else begin
@@ -298,11 +314,6 @@ begin
   Window.Invalidate;
 end;
 
-procedure ClickSound;
-begin
-  PlaySound := not PlaySound;
-end;
-
 procedure ClickExit;
 begin
   if (IsGameOver) or (not GameStarted) or
@@ -346,7 +357,7 @@ begin
         ClickExit
       else
       if Event.Position[1] < ButtonSpacer * 2 then
-        ClickSound
+        ToggleSound
       else
       if Event.Position[1] < ButtonSpacer * 3 then
         ClickHintButton
@@ -394,7 +405,7 @@ begin
   //NewImage := Pred(ImageDataList.Count);
 
   FreeAndNil(Image);
-  Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riBilinear);
+  Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riLanczos);
   Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
 
   JigCount := 0;

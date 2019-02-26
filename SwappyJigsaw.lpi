@@ -84,7 +84,9 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="2">
       <Item1>
@@ -94,7 +96,7 @@
         <PackageName Value="castle_base"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="17">
       <Unit0>
         <Filename Value="SwappyJigsaw.pas"/>
         <IsPartOfProject Value="True"/>
@@ -114,57 +116,69 @@
         <UnitName Value="InitUnit"/>
       </Unit3>
       <Unit4>
-        <Filename Value="src/decotime.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="DecoTime"/>
-      </Unit4>
-      <Unit5>
         <Filename Value="src/macro.inc"/>
         <IsPartOfProject Value="True"/>
-      </Unit5>
-      <Unit6>
+      </Unit4>
+      <Unit5>
         <Filename Value="src/global.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
+        <UnitName Value="Global"/>
+      </Unit5>
+      <Unit6>
         <Filename Value="src/windowunit.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="WindowUnit"/>
-      </Unit7>
-      <Unit8>
+      </Unit6>
+      <Unit7>
         <Filename Value="src/game.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Game"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="src/glimagehelper.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
+      </Unit7>
+      <Unit8>
         <Filename Value="src/imagelist.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ImageList"/>
-      </Unit10>
-      <Unit11>
+      </Unit8>
+      <Unit9>
         <Filename Value="src/gui.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GUI"/>
-      </Unit11>
-      <Unit12>
+      </Unit9>
+      <Unit10>
         <Filename Value="src/starfallunit.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="StarFallUnit"/>
-      </Unit12>
-      <Unit13>
+      </Unit10>
+      <Unit11>
         <Filename Value="src/selectimage.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SelectImage"/>
-      </Unit13>
-      <Unit14>
+      </Unit11>
+      <Unit12>
         <Filename Value="src/creditsscreen.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CreditsScreen"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="src/drawbatched3x3.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DrawBatched3x3"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="src/settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Settings"/>
       </Unit14>
+      <Unit15>
+        <Filename Value="src/soundmusic.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SoundMusic"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="src/loadscreen.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="LoadScreen"/>
+      </Unit16>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

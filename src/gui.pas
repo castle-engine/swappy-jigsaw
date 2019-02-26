@@ -31,9 +31,6 @@ uses
   TButtonsFloatRectangleArray = packed array of TFloatRectangle;}
 
 var
-  { Should the sound be played?
-    TODO: replace with procedure MusicUnit.ToggleSound }
-  PlaySound: Boolean = true;
   { How many tiles us the image sliced into? }
   SlicesX: Integer = 7;
   SlicesY: Integer = 6;
@@ -68,8 +65,7 @@ procedure FreeUI;
 implementation
 uses
   SysUtils, CastleFilesUtils, CastleVectors, CastleImages,
-  WindowUnit,
-  DecoLog;
+  WindowUnit;
 
 procedure InitUI;
 const
@@ -118,8 +114,8 @@ begin
   if ButtonSize < 256 then
   begin
     //scale buttons down on loading if displayed size is smaller than button image size, to save memory and boost performance
-    Buttons := TGLImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBilinear);
-    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBilinear);
+    Buttons := TGLImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
+    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
   end else
   begin
     //otherwise don't scale buttons, to save memory

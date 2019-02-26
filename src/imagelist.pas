@@ -53,8 +53,6 @@ var
 procedure LoadImageList;
 { Free the image list }
 procedure FreeImageList;
-{ Save images solution statistics to disk }
-procedure SaveStatistics;
 { Sort image list and return quantity of the "most important" images for randomly choosing from
   Will make sure that "least shown/solved images" go first in the list
   To randomly pick a new image, that the player didn't yet solve, and/or didn't yet see in this session }
@@ -63,7 +61,7 @@ function SortListCount: Integer;
 implementation
 uses
   SysUtils, Generics.Defaults,
-  CastleConfig, CastleFilesUtils,
+  CastleFilesUtils,
   DecoLog;
 
 function CompareImageData(constref i1, i2: TImageData): integer;
@@ -98,28 +96,6 @@ begin
       Break;
   end;
   inc(Result); //Result is actually "count"
-end;
-
-{----------------------------------------------------------------------------}
-
-procedure SaveStatistics;
-var
-  I: TImageData;
-begin
-  Log(CurrentRoutine, 'Saving statistics...');
-  for I in ImageDataList do
-    UserConfig.SetValue(I.URL, I.Hits);
-  UserConfig.Save;
-end;
-
-procedure LoadStatistics;
-var
-  i: Integer;
-begin
-  Log(CurrentRoutine, 'Reading statistics...');
-  UserConfig.Load;
-  for i := 0 to Pred(ImageDataList.Count) do
-    ImageDataList[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
 end;
 
 {----------------------------------------------------------------------------}
@@ -256,7 +232,6 @@ begin
     Add(Img('nocni-svetla_CC0_by_Lubos_Houska_[crop,color].jpg'));
   end;
   Log(CurrentRoutine, 'Images information loaded: ' + IntToStr(ImageDataList.Count));
-  LoadStatistics;
 end;
 
 {----------------------------------------------------------------------------}

@@ -146,8 +146,8 @@ end;
 procedure TStarFallEffect.Stop;
 begin
   FStarList.Clear;
-  StarScreen := nil;
-  StarSource := nil;
+  Finalize(StarScreen);
+  Finalize(StarSource);
   FActive := false;
 end;
 

@@ -15,9 +15,13 @@
 
 {---------------------------------------------------------------------------}
 
-(* {} *)
+(* Swappy Jigsaw is a simple puzzle game for Linux, Windows and Android
+   See README.md for more details
+   See README_compile.md for compilation instructions *)
 
 program SwappyJigsaw;
+
+{$IFDEF Windows}{$APPTYPE GUI}{$ENDIF}
 
 uses
   {$IFDEF Linux}CThreads,{$ENDIF}

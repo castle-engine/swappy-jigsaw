@@ -1,0 +1,14 @@
+Index: packages/fcl-image/src/fpinterpolation.inc
+===================================================================
+--- packages/fcl-image/src/fpinterpolation.inc	(wersja 40746)
++++ packages/fcl-image/src/fpinterpolation.inc	(kopia robocza)
+@@ -223,7 +223,8 @@
+           NewCol.blue:=Min(NewCol.blue+round(Col.blue*f),$ffff);
+           NewCol.alpha:=Min(NewCol.alpha+round(Col.alpha*f),$ffff);
+         end;
+-        Canvas.Colors[x+dx,y+dy]:=AlphaBlend(Canvas.Colors[x+dx,y+dy], NewCol);
++        //Canvas.Colors[x+dx,y+dy]:=AlphaBlend(Canvas.Colors[x+dx,y+dy], NewCol);
++        Canvas.Colors[x+dx,y+dy]:=NewCol;
+       end;
+     end;
+   finally

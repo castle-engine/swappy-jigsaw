@@ -3,6 +3,7 @@
   caption="Swappy Jigsaw"
   qualified_name="net.itch.io.swappyjigsaw"
   standalone_source="SwappyJigsaw.pas"
+  game_units="InitUnit"
   screen_orientation="landscape"
   fullscreen_immersive="true"
   author="Yevhen Loza">
@@ -23,4 +24,9 @@
     <dependency name="Sound" />
     <dependency name="OggVorbis" />
   </dependencies>
+  <compiler_options>
+    <search_paths>
+      <path value="src/" />
+    </search_paths>
+  </compiler_options>
 </project>

@@ -1,9 +1,39 @@
+{ Copyright (c) 2018 Michalis Kamburelis, Yevhen Loza
+
+  This unit license is identical to that of Castle Game Engine.
+
+  "Castle Game Engine" is free software; see the file COPYING.txt,
+  included in this distribution, for details about the copyright.
+
+  "Castle Game Engine" is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+
+{----------------------------------------------------------------------------}
+
+(* Adds simple Draw3x3Batched function to TGLImage.Draw3x3 to perform batched drawing
+   Just include this unit in uses section
+   and new Draw3x3Batched function will be available.
+   Pay attention, it does not hornor the TGLImage rotation. *)
+
+unit DrawBatched3x3;
+
+//{$mode objfpc}{$H+}
+
+interface
+
+uses
+  CastleGLImages, CastleRectangles;
+
 type
+  { Helper for the TGLImage with a single added function - Draw3x3Batched }
   TGLImageHelper = class helper for TGLImage
     procedure Draw3x3Batched(const DrawRects: PFloatRectangleArray; const Count: Integer;
       const CornerTop, CornerRight, CornerBottom, CornerLeft: Single);
   end;
 
+implementation
 procedure TGLImageHelper.Draw3x3Batched(const DrawRects: PFloatRectangleArray; const Count: Integer;
    const CornerTop, CornerRight, CornerBottom, CornerLeft: Single);
 var
@@ -46,6 +76,8 @@ begin
 
   DrawAddCount := 0;
 
+  Initialize(ScreenRects);
+  Initialize(ImageRects);
   SetLength(ScreenRects, Count * 9);
   SetLength(ImageRects, Count * 9);
 
@@ -123,3 +155,6 @@ begin
 
   {UseScreenCenter := false;}
 end;
+
+end.
+
