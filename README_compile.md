@@ -44,6 +44,8 @@ You will also need dev version of OpenGL drivers for your video card. Usually it
 
 Note: the libraries versions may change and not every library has a meta-package.
 
+A soft GTK dependency (to get rid of a warning) is libatk-adaptor.
+
 ## Windows
 
 Specific DLL libraries (32 bit / 64 bit) are required in case of Windows. These may be downloaded here: http://castle-engine.sourceforge.net/engine.php.
