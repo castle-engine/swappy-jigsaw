@@ -46,7 +46,7 @@ var
     Drawn through Draw3x3 using TGLImageHelper }
   WhiteBorder, BlackBorder: TDrawableImage;
   { A set of buttons }
-  Buttons: TGLImage;
+  Buttons: TDrawableImage;
   { Image Rectangles, that determine which button is to be drawn }
   ButtonForward, ButtonHint, ButtonSoundOn, ButtonSoundOff, ButtonMenu, ButtonCredits: TFloatRectangle;
   { Size of buttons }
