@@ -68,7 +68,7 @@ type
   { UI element, that can display a burst of stars falling down if launched }
   TStarFallEffect = class(TCastleUserInterface)
   strict private
-    FImage: TGLImage;
+    FImage: TDrawableImage;
     FDefaultColor: Boolean;
     FColor: TCastleColor;
     FNumber: Integer;
@@ -200,7 +200,7 @@ begin
     FColor := White;
 
   FURL := AURL;
-  FImage := TGLImage.Create(FURL, [TRGBAlphaImage], true);
+  FImage := TDrawableImage.Create(FURL, [TRGBAlphaImage], true);
   FOwnsImage := true;
 end;
 
@@ -241,7 +241,7 @@ var
 begin
   WhitePixel := TGrayscaleImage.Create(1, 1);
   WhitePixel.Clear(Vector4(1,1,1,1));
-  FImage := TGLImage.Create(WhitePixel, false, true);
+  FImage := TDrawableImage.Create(WhitePixel, false, true);
   FOwnsImage := true;
   if FDefaultColor then
     FColor := Yellow;

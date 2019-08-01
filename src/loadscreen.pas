@@ -35,7 +35,7 @@ uses
   WindowUnit;
 
 var
-  LoadScreenImage: TGLImage;
+  LoadScreenImage: TDrawableImage;
 
 {$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure RenderLoadScreen(Container: TUIContainer);
@@ -46,7 +46,7 @@ end;
 
 procedure ShowLoadScreen;
 begin
-  LoadScreenImage := TGLImage.Create(ApplicationData('loadscreen.jpg'));
+  LoadScreenImage := TDrawableImage.Create(ApplicationData('loadscreen.jpg'));
   Window.OnRender := @RenderLoadScreen;
   Window.Invalidate;
   Application.ProcessAllMessages;

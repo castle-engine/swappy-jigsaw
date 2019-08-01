@@ -50,7 +50,7 @@ type
 
 var
   { Image, currently being solved }
-  Image: TGLImage;
+  Image: TDrawableImage;
   { Selected tile ID }
   Selected: Integer;
   { Is the Hint image currently being shown? }
@@ -405,7 +405,7 @@ begin
   //NewImage := Pred(ImageDataList.Count);
 
   FreeAndNil(Image);
-  Image := TGLImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riLanczos);
+  Image := TDrawableImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riLanczos);
   Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
 
   JigCount := 0;

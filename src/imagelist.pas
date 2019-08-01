@@ -37,7 +37,7 @@ type
     { How many times the image has been shown to player in this sesssion }
     Shows: Integer;
     { A small image to be used in ImageSelector }
-    Thumbnail: TGLImage;
+    Thumbnail: TDrawableImage;
     destructor Destroy; override;
   end;
 
@@ -106,7 +106,7 @@ procedure LoadImageList;
     Result := TImageData.Create;
     Result.URL := aString;
     Result.Shows := 0;
-    Result.Thumbnail := TGLImage.Create(ApplicationData('img/thumbnails/' + aString));
+    Result.Thumbnail := TDrawableImage.Create(ApplicationData('img/thumbnails/' + aString));
   end;
 begin
   ImageDataList := TImageDataList.Create(true);

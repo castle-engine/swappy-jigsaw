@@ -39,12 +39,12 @@ var
   { Size of a single tile }
   ScaleX, ScaleY: Integer;
   { Image frame, drawn on top of Image }
-  GameScreenRight, GameScreenLeft: TGLImage;
+  GameScreenRight, GameScreenLeft: TDrawableImage;
   { Coordinates to locate interface elements }
   MenuBarLeft, MenuBarWidth, GameWidth: Integer;
   { White border (for selected tiles) and black border (for wrongly placed tiles)
     Drawn through Draw3x3 using TGLImageHelper }
-  WhiteBorder, BlackBorder: TGlImage;
+  WhiteBorder, BlackBorder: TDrawableImage;
   { A set of buttons }
   Buttons: TGLImage;
   { Image Rectangles, that determine which button is to be drawn }
@@ -52,9 +52,9 @@ var
   { Size of buttons }
   ButtonSize, ButtonSpacer: Integer;
   { A tick symbol, denoting that the image has already been solved }
-  SolvedImage: TGLImage;
+  SolvedImage: TDrawableImage;
   { Arrows on the left and right of the ImageSelector to flip pages }
-  PagesArrow: TGLImage;
+  PagesArrow: TDrawableImage;
   { Global window width/height/position, always guaranteed to be of golden section }
   WindowWidth, WindowHeight, WindowLeft, WindowBottom: Integer;
 
@@ -72,13 +72,13 @@ const
   FrameWidth = 10; {not 19! as the frame is semi-tranparent with rounded corners}
 begin
   //load borders
-  BlackBorder := TGLImage.Create(ApplicationData('BlackBorder.png'), true);
+  BlackBorder := TDrawableImage.Create(ApplicationData('BlackBorder.png'), true);
   BlackBorder.Color := Vector4(1, 1, 1, 0.8);
-  WhiteBorder := TGLImage.Create(ApplicationData('WhiteBorder.png'), true);
+  WhiteBorder := TDrawableImage.Create(ApplicationData('WhiteBorder.png'), true);
   WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
 
-  GameScreenRight := TGLImage.Create(ApplicationData('GameScreenRight.png'), true);
-  GameScreenLeft := TGLImage.Create(ApplicationData('GameScreenLeft.png'), true);
+  GameScreenRight := TDrawableImage.Create(ApplicationData('GameScreenRight.png'), true);
+  GameScreenLeft := TDrawableImage.Create(ApplicationData('GameScreenLeft.png'), true);
   GameScreenLeft.Color := Vector4(1, 1, 1, 1);
 
   //set the aspect ratio always 1:1.61, as majority of mobile devices
@@ -114,13 +114,13 @@ begin
   if ButtonSize < 256 then
   begin
     //scale buttons down on loading if displayed size is smaller than button image size, to save memory and boost performance
-    Buttons := TGLImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
-    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
+    Buttons := TDrawableImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
+    SolvedImage := TDrawableImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
   end else
   begin
     //otherwise don't scale buttons, to save memory
-    Buttons := TGLImage.Create(ApplicationData('UI.png'), true);
-    SolvedImage := TGLImage.Create(ApplicationData('Solved.png'), true);
+    Buttons := TDrawableImage.Create(ApplicationData('UI.png'), true);
+    SolvedImage := TDrawableImage.Create(ApplicationData('Solved.png'), true);
   end;
   ButtonForward := FloatRectangle(0, 0, Buttons.Width div 6, Buttons.Height);
   ButtonHint := FloatRectangle(Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
@@ -129,7 +129,7 @@ begin
   ButtonMenu := FloatRectangle(4 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
   ButtonCredits := FloatRectangle(5 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
 
-  PagesArrow := TGLImage.Create(ApplicationData('PagesArrow.png'), true);
+  PagesArrow := TDrawableImage.Create(ApplicationData('PagesArrow.png'), true);
 end;
 
 { --------------------------------------------------------------------------- }

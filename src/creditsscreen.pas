@@ -37,7 +37,7 @@ uses
 
 var
   { Credits image }
-  Credits: TGLImage;
+  Credits: TDrawableImage;
 
 {$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure CreditsRender(Container: TUIContainer);
@@ -55,7 +55,7 @@ end;
 
 procedure InitCredits;
 begin
-  Credits := TGlImage.Create(ApplicationData('credits.jpg'), [TRGBImage], true);
+  Credits := TDrawableImage.Create(ApplicationData('credits.jpg'), [TRGBImage], true);
 
   Window.OnPress := @CreditsPress;
   Window.OnRender := @CreditsRender;
