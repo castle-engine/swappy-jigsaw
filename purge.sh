@@ -2,6 +2,7 @@
 
 find -type d -name 'backup' -prune -exec rm -rf {} \;
 find -type d -name 'lib' -prune -exec rm -rf {} \;
+find -type d -name 'castle-engine-output' -prune -exec rm -rf {} \;
 find . -name '*.dbg' -delete
 
 # Remove ugly Linux-related bug with NTFS filesystem
@@ -17,7 +18,6 @@ rm heap.trc
 
 rm SwappyJigsaw
 rm SwappyJigsaw.exe
+rm SwappyJigsaw*.apk
 
-# Clean user score (Careful!)
 
-rm -rf ~/.config/SwappyJigsaw
