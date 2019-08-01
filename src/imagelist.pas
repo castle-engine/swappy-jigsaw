@@ -61,7 +61,6 @@ function SortListCount: Integer;
 implementation
 uses
   SysUtils, Generics.Defaults,
-  CastleFilesUtils,
   DecoLog;
 
 function CompareImageData(constref i1, i2: TImageData): integer;
@@ -106,7 +105,7 @@ procedure LoadImageList;
     Result := TImageData.Create;
     Result.URL := aString;
     Result.Shows := 0;
-    Result.Thumbnail := TDrawableImage.Create(ApplicationData('img/thumbnails/' + aString));
+    Result.Thumbnail := TDrawableImage.Create('castle-data:/img/thumbnails/' + aString);
   end;
 begin
   ImageDataList := TImageDataList.Create(true);

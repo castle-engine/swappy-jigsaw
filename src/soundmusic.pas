@@ -43,7 +43,7 @@ procedure FreeMusic;
 implementation
 uses
   SysUtils,
-  CastleSoundEngine, CastleFilesUtils, CastleTimeUtils,
+  CastleSoundEngine, CastleTimeUtils,
   Settings, Global;
 
 var
@@ -84,7 +84,7 @@ begin
       Result := 'Daniel_Veesey_-_04_-_Sonata_No_1_in_F_Minor_Op_2_No_1_-_IV_Prestissimo.ogg';
   end;
 
-  Result := ApplicationData('music/' + Result);
+  Result := 'castle-data:/music/' + Result;
 end;
 
 procedure StartMusic;

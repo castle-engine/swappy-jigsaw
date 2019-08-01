@@ -31,7 +31,7 @@ procedure FreeCredits;
 implementation
 uses
   SysUtils,
-  CastleGLImages, CastleImages, CastleFilesUtils, CastleKeysMouse, CastleWindow,
+  CastleGLImages, CastleImages, CastleKeysMouse, CastleWindow,
   SelectImage,
   WindowUnit;
 
@@ -55,7 +55,7 @@ end;
 
 procedure InitCredits;
 begin
-  Credits := TDrawableImage.Create(ApplicationData('credits.jpg'), [TRGBImage], true);
+  Credits := TDrawableImage.Create('castle-data:/credits.jpg', [TRGBImage], true);
 
   Window.OnPress := @CreditsPress;
   Window.OnRender := @CreditsRender;

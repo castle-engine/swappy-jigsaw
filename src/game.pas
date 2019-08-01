@@ -34,7 +34,7 @@ procedure FreeGame;
 implementation
 uses
   SysUtils,
-  CastleFilesUtils, CastleWindow, CastleKeysMouse,
+  CastleWindow, CastleKeysMouse,
   CastleVectors,
   CastleGLUtils, CastleColors,
   CastleMessages,
@@ -380,7 +380,7 @@ end;
 procedure NewGame(const AImageID: Integer = -1);
   function Img(const aURL: String): String;
   begin
-    Result := ApplicationData('img/' + aURL);
+    Result := 'castle-data:/img/' + aURL;
   end;
 var
   Ix, Iy: Integer;
@@ -429,7 +429,7 @@ end;
 procedure InitGame;
 begin
   StarFall := TStarFallEffect.Create(nil);
-  StarFall.URL := ApplicationData('Star.png');
+  StarFall.URL := 'castle-data:/Star.png';
   StarFall.Duration := 1.5; //=default
   StarFall.Number := 250; //=default
   StarFall.Left := 0;

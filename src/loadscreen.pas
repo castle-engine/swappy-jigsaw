@@ -31,7 +31,7 @@ procedure ShowLoadScreen;
 procedure FreeLoadScreen;
 implementation
 uses
-  CastleWindow, CastleGLImages, CastleFilesUtils,
+  CastleWindow, CastleGLImages,
   WindowUnit;
 
 var
@@ -46,7 +46,7 @@ end;
 
 procedure ShowLoadScreen;
 begin
-  LoadScreenImage := TDrawableImage.Create(ApplicationData('loadscreen.jpg'));
+  LoadScreenImage := TDrawableImage.Create('castle-data:/loadscreen.jpg');
   Window.OnRender := @RenderLoadScreen;
   Window.Invalidate;
   Application.ProcessAllMessages;

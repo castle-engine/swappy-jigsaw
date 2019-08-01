@@ -64,7 +64,7 @@ procedure InitUI;
 procedure FreeUI;
 implementation
 uses
-  SysUtils, CastleFilesUtils, CastleVectors, CastleImages,
+  SysUtils, CastleVectors, CastleImages,
   WindowUnit;
 
 procedure InitUI;
@@ -72,13 +72,13 @@ const
   FrameWidth = 10; {not 19! as the frame is semi-tranparent with rounded corners}
 begin
   //load borders
-  BlackBorder := TDrawableImage.Create(ApplicationData('BlackBorder.png'), true);
+  BlackBorder := TDrawableImage.Create('castle-data:/BlackBorder.png', true);
   BlackBorder.Color := Vector4(1, 1, 1, 0.8);
-  WhiteBorder := TDrawableImage.Create(ApplicationData('WhiteBorder.png'), true);
+  WhiteBorder := TDrawableImage.Create('castle-data:/WhiteBorder.png', true);
   WhiteBorder.Color := Vector4(1, 1, 1, 0.8);
 
-  GameScreenRight := TDrawableImage.Create(ApplicationData('GameScreenRight.png'), true);
-  GameScreenLeft := TDrawableImage.Create(ApplicationData('GameScreenLeft.png'), true);
+  GameScreenRight := TDrawableImage.Create('castle-data:/GameScreenRight.png', true);
+  GameScreenLeft := TDrawableImage.Create('castle-data:/GameScreenLeft.png', true);
   GameScreenLeft.Color := Vector4(1, 1, 1, 1);
 
   //set the aspect ratio always 1:1.61, as majority of mobile devices
@@ -114,13 +114,13 @@ begin
   if ButtonSize < 256 then
   begin
     //scale buttons down on loading if displayed size is smaller than button image size, to save memory and boost performance
-    Buttons := TDrawableImage.Create(ApplicationData('UI.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
-    SolvedImage := TDrawableImage.Create(ApplicationData('Solved.png'), [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
+    Buttons := TDrawableImage.Create('castle-data:/UI.png', [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
+    SolvedImage := TDrawableImage.Create('castle-data:/Solved.png', [TRGBAlphaImage], ButtonSize * 6, ButtonSize, riBlackmanSinc);
   end else
   begin
     //otherwise don't scale buttons, to save memory
-    Buttons := TDrawableImage.Create(ApplicationData('UI.png'), true);
-    SolvedImage := TDrawableImage.Create(ApplicationData('Solved.png'), true);
+    Buttons := TDrawableImage.Create('castle-data:/UI.png', true);
+    SolvedImage := TDrawableImage.Create('castle-data:/Solved.png', true);
   end;
   ButtonForward := FloatRectangle(0, 0, Buttons.Width div 6, Buttons.Height);
   ButtonHint := FloatRectangle(Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
@@ -129,7 +129,7 @@ begin
   ButtonMenu := FloatRectangle(4 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
   ButtonCredits := FloatRectangle(5 * Buttons.Width div 6, 0, Buttons.Width div 6, Buttons.Height);
 
-  PagesArrow := TDrawableImage.Create(ApplicationData('PagesArrow.png'), true);
+  PagesArrow := TDrawableImage.Create('castle-data:/PagesArrow.png', true);
 end;
 
 { --------------------------------------------------------------------------- }
