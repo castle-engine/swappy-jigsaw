@@ -46,12 +46,12 @@ end;
 
 procedure LoadConfig;
 var
-  i: Integer;
+  I: Integer;
 begin
   Log(CurrentRoutine, 'Reading configruation...');
   UserConfig.Load;
-  for i := 0 to Pred(ImageDataList.Count) do
-    ImageDataList[i].Hits := UserConfig.GetValue(ImageDataList[i].URL, 0);
+  for I := 0 to Pred(ImageDataList.Count) do
+    ImageDataList[I].Hits := UserConfig.GetValue(ImageDataList[I].URL, 0);
   FPlaySound := UserConfig.GetValue('$SOUND_ON', true);
 end;
 

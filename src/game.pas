@@ -122,7 +122,7 @@ end;
 procedure StartVictory;
 begin
   //increase image score
-  inc(ImageDataList[CurrentImage].Hits);
+  Inc(ImageDataList[CurrentImage].Hits);
   SaveConfig;
   //prepare Window for rendering victory effect
   Window.AutoRedisplay := true;
@@ -162,21 +162,21 @@ end;
 
 function WrongTilesCount: Integer;
 var
-  i: Integer;
+  I: Integer;
 begin
   Result := 0;
-  for i := 0 to Pred(JigCount) do
-    if IsTileWrong(i) then
-      inc(Result);
+  for I := 0 to Pred(JigCount) do
+    if IsTileWrong(I) then
+      Inc(Result);
 end;
 
 function IsGameOver: Boolean;
 var
-  i: Integer;
+  I: Integer;
 begin
   Result := true;
-  for i := 0 to Pred(JigCount) do
-    Result := Result and (not IsTileWrong(i));
+  for I := 0 to Pred(JigCount) do
+    Result := Result and (not IsTileWrong(I));
 
   if (not Victory) and Result then
   begin
@@ -190,7 +190,7 @@ end;
 {$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure GameRender(Container: TUIContainer);
 var
-  i, ix, iy: Integer;
+  I, Ix, Iy: Integer;
 
   Count: Integer;
 begin
@@ -204,18 +204,18 @@ begin
 
     Image.Draw(@ScreenRects[0], @JigsawRects[0], JigCount);
 
-    i := 0;
+    I := 0;
 
     Count := 0;
-    for ix := 0 to Pred(SlicesX) do
-      for iy := 0 to Pred(SlicesY) do
+    for Ix := 0 to Pred(SlicesX) do
+      for Iy := 0 to Pred(SlicesY) do
       begin
-        if IsTileWrong(i) then
+        if IsTileWrong(I) then
         begin
-          WrongRects[Count] := ScreenRects[i];
-          inc(Count);
+          WrongRects[Count] := ScreenRects[I];
+          Inc(Count);
         end;
-        inc(i);
+        Inc(I);
       end;
     BlackBorder.Draw3x3Batched(@WrongRects[0], Count, 5, 5, 5, 5);
 
@@ -249,7 +249,7 @@ end;
 
 function GetScreenTile(X, Y: Single): Integer;
 var
-  i: Integer;
+  I: Integer;
 begin
   if X <= ImageStartLeft then
     X := ImageStartLeft + 1
@@ -263,10 +263,10 @@ begin
   if Y >= ImageStartBottom + ImageHeight then
     Y := ImageStartBottom + ImageHeight - 1;
 
-  for i := 0 to Pred(JigCount) do
-    if ScreenRects[i].Contains(X, Y) then
+  for I := 0 to Pred(JigCount) do
+    if ScreenRects[I].Contains(X, Y) then
     begin
-      Result := i;
+      Result := I;
       Exit;
     end;
 
@@ -279,12 +279,12 @@ end;
 
 procedure Shuffle;
 var
-  i: Integer;
+  I: Integer;
 begin
   //shuffle the jigsaw pieces
   repeat
-    for i := Pred(JigCount) downto 1 do
-      SwapTiles(i, RND.Random(i));
+    for I := Pred(JigCount) downto 1 do
+      SwapTiles(I, RND.Random(I));
   until WrongTilesCount > JigCount - 2; //only one tile is allowed to be in place after shuffle
 
   //prepare for game
@@ -383,7 +383,7 @@ procedure NewGame(const AImageID: Integer = -1);
     Result := ApplicationData('img/' + aURL);
   end;
 var
-  ix, iy: Integer;
+  Ix, Iy: Integer;
   NextImagesCount: Integer;
 begin
   Window.OnRender := @GameRender;
@@ -400,7 +400,7 @@ begin
     CurrentImage := AImageID;
 
   //increase image shows
-  inc(ImageDataList[CurrentImage].Shows);
+  Inc(ImageDataList[CurrentImage].Shows);
 
   //NewImage := Pred(ImageDataList.Count);
 
@@ -411,13 +411,13 @@ begin
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
   SetLength(ScreenRects, SlicesX * SlicesY);
-  for iy := 0 to Pred(SlicesY) do
-    for ix := 0 to Pred(SlicesX) do
+  for Iy := 0 to Pred(SlicesY) do
+    for Ix := 0 to Pred(SlicesX) do
     begin
-      JigsawRects[JigCount] := FloatRectangle(ix * ScaleX, iy * ScaleY, ScaleX, ScaleY);
-      ScreenRects[JigCount] := FloatRectangle(ImageStartLeft + ix * ScaleX,
-        ImageStartBottom + iy * ScaleY, ScaleX, ScaleY);
-      inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
+      JigsawRects[JigCount] := FloatRectangle(Ix * ScaleX, Iy * ScaleY, ScaleX, ScaleY);
+      ScreenRects[JigCount] := FloatRectangle(ImageStartLeft + Ix * ScaleX,
+        ImageStartBottom + Iy * ScaleY, ScaleX, ScaleY);
+      Inc(JigCount); //JigCount should be last index + 1, as it's meaning is "count"
     end;
   SetLength(WrongRects, JigCount); //we don't care about it's current length, Count will do its job
 

@@ -57,29 +57,29 @@ const
 {$PUSH}{$WARN 5024 off : Parameter "$1" not used}
 procedure ImageSelectorRender(Container: TUIContainer);
 var
-  i, ix, iy: Integer;
+  I, Ix, Iy: Integer;
 begin
   CheckMusic; //check if the music has finished and load a new one
 
   RenderContext.Clear([cbColor], Black); //we need clear screen here to avoid bleeding pixels
 
-  for ix := 0 to Pred(ImagesX) do
-    for iy := 0 to Pred(ImagesY) do
+  for Ix := 0 to Pred(ImagesX) do
+    for Iy := 0 to Pred(ImagesY) do
     begin
-      i := Page * ImagesPerPage + ix + iy * 3;
-      if i < ImageDataList.Count then
+      I := Page * ImagesPerPage + Ix + Iy * 3;
+      if I < ImageDataList.Count then
       begin
-        ImageDataList[i].Thumbnail.Draw(
-          ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
-          ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY,
+        ImageDataList[I].Thumbnail.Draw(
+          ImageStartLeft + RightLeftButtonWidth + Ix * SelectorScaleX,
+          ImageStartBottom + (Pred(ImagesY) - Iy) * SelectorScaleY,
           SelectorScaleX, SelectorScaleY);
-        BlackBorder.Draw3x3(ImageStartLeft + RightLeftButtonWidth + ix * SelectorScaleX,
-          ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY, SelectorScaleX, SelectorScaleY,
+        BlackBorder.Draw3x3(ImageStartLeft + RightLeftButtonWidth + Ix * SelectorScaleX,
+          ImageStartBottom + (Pred(ImagesY) - Iy) * SelectorScaleY, SelectorScaleX, SelectorScaleY,
           Vector4Integer(5, 5, 5, 5));
-        if ImageDataList[i].Hits > 0 then
+        if ImageDataList[I].Hits > 0 then
           SolvedImage.Draw(
-            ImageStartLeft + RightLeftButtonWidth + (ix + 1) * SelectorScaleX - ButtonSize,
-            ImageStartBottom + (Pred(ImagesY) - iy) * SelectorScaleY,
+            ImageStartLeft + RightLeftButtonWidth + (Ix + 1) * SelectorScaleX - ButtonSize,
+            ImageStartBottom + (Pred(ImagesY) - Iy) * SelectorScaleY,
             ButtonSize, ButtonSize);
       end;
     end;
@@ -111,7 +111,7 @@ var
 procedure DecPage;
 begin
   if Page >0 then
-    dec(Page)
+    Dec(Page)
   else
     Page := Pred(TotalPages);
 end;
@@ -119,7 +119,7 @@ end;
 procedure IncPage;
 begin
   if Page < Pred(TotalPages) then
-    inc(Page)
+    Inc(Page)
   else
     Page := 0;
 end;
@@ -164,7 +164,7 @@ end;
 
 procedure ImageSelectorRelease(Container: TUIContainer; const Event: TInputPressRelease);
 var
-  ix, iy: Integer;
+  Ix, Iy: Integer;
 begin
   if (Swipe) and (Event.FingerIndex = 0) then
   begin
@@ -172,19 +172,19 @@ begin
     if (Abs(Event.Position[0] - SwipeStart[0]) < SelectorScaleY) then
     begin
       //if finger didn't move too far away, start the image under finger
-      ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
-      if ix < 0 then
-        ix := 0;
-      if ix >= ImagesX then
-        ix := Pred(ImagesX);
-      iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
-      if iy < 0 then
-        iy := 0;
-      if iy >= ImagesY then
-        iy := Pred(ImagesY);
-      iy := Pred(ImagesY) - iy;
+      Ix := Trunc((Event.Position[0] - (ImageStartLeft + RightLeftButtonWidth)) / SelectorScaleX);
+      if Ix < 0 then
+        Ix := 0;
+      if Ix >= ImagesX then
+        Ix := Pred(ImagesX);
+      Iy := Trunc((Event.Position[1] - ImageStartBottom) / SelectorScaleY);
+      if Iy < 0 then
+        Iy := 0;
+      if Iy >= ImagesY then
+        Iy := Pred(ImagesY);
+      Iy := Pred(ImagesY) - Iy;
 
-      NewGame(ix + iy * ImagesX + Page * ImagesPerPage);
+      NewGame(Ix + Iy * ImagesX + Page * ImagesPerPage);
     end else
     begin
       //else do a swipe page change

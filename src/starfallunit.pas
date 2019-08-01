@@ -163,7 +163,7 @@ end;
 procedure TStarFallEffect.Update(const SecondsPassed: Single; var HandleInput: boolean);
 var
   Star: TStar;
-  i: Integer;
+  I: Integer;
   CurrentColor: TCastleColor;
 begin
   inherited Update(SecondsPassed, HandleInput);
@@ -172,7 +172,7 @@ begin
 
   //Add stars if necessary
   if (TimerSeconds(Timer, FStartTime) < FDuration / 3) then
-    for i := 0 to Round(FRemainingNumber * TimerSeconds(Timer, FStartTime) / (FDuration / 3)) do
+    for I := 0 to Round(FRemainingNumber * TimerSeconds(Timer, FStartTime) / (FDuration / 3)) do
       AddStar;
 
   //Reset StarScreen to current values
@@ -182,7 +182,7 @@ begin
     begin
       Star.Update;
       StarScreen[FRenderStars] := Star.Rect;
-      inc(FRenderStars);
+      Inc(FRenderStars);
     end;
 
   //fade out image after half of requested time
