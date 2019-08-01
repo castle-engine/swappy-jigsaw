@@ -63,11 +63,11 @@ uses
   SysUtils, Generics.Defaults,
   DecoLog;
 
-function CompareImageData(constref i1, i2: TImageData): integer;
+function CompareImageData(constref I1, I2: TImageData): Integer;
 begin
-  Result := i1.Hits - i2.Hits;
+  Result := I1.Hits - I2.Hits;
   if Result = 0 then
-    Result := i1.Shows - i2.Shows;
+    Result := I1.Shows - I2.Shows;
 end;
 type
   { Sorter for TImageDataList }
