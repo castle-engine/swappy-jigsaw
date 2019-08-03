@@ -56,6 +56,10 @@ The DLLs must be placed in the exe folder.
 
 You can compile the game without Lazarus IDE using Castle Game Engine build-tool https://github.com/castle-engine/castle-engine/wiki/Build-Tool.
 
+# Building with Castle Game Engine docker images.
+
+Please, follow instructions here: https://github.com/castle-engine/castle-engine/wiki/Docker
+
 # Known issues
 
 If the buttons background is not transparent, apply a FPC patch from `fpc-patch` folder, see `readme.txt` for more details.
