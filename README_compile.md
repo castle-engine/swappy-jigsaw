@@ -2,6 +2,8 @@
 
 You can compile the source simply by opening *.lpi in Lazarus IDE (version 1.9 and above) and pushing F9 to compile&run.
 
+Compiles to: Linux, Windows, Android.
+
 # Requirements
 
 This version requires at least 6.5 Castle Game Engine version to compile (at least 20.11.2018 GIT version). You can download it here https://github.com/castle-engine/castle-engine and follow installation instructions here https://castle-engine.io/documentation.php#section_installation
@@ -51,6 +53,12 @@ A soft GTK dependency (to get rid of a warning) is libatk-adaptor.
 Specific DLL libraries (32 bit / 64 bit) are required in case of Windows. These may be downloaded here: http://castle-engine.sourceforge.net/engine.php.
 
 The DLLs must be placed in the exe folder.
+
+# Android
+
+Please, follow instructions here: https://github.com/castle-engine/castle-engine/wiki/Android
+
+Or use **Docker**-style compilation, it's much easier.
 
 # Command-line compilation
 
