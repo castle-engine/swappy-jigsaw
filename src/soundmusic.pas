@@ -43,8 +43,8 @@ procedure FreeMusic;
 implementation
 uses
   SysUtils,
-  CastleSoundEngine, CastleTimeUtils, CastleWindow,
-  WindowUnit, Settings, Global;
+  CastleSoundEngine, CastleTimeUtils,
+  Settings, Global;
 
 var
   { Current music buffer playing }
@@ -87,25 +87,12 @@ begin
   Result := 'castle-data:/music/' + Result;
 end;
 
-procedure StartMusic; forward;
-
-procedure UpdateMusic(Container: TUIContainer);
-begin
-  if FPlaySound and not SoundEngine.IsContextOpen then
-  begin
-    SoundEngine.ContextOpen;
-    StartMusic;
-  end;
-end;
-
 procedure StartMusic;
 begin
-  Window.OnUpdate := @UpdateMusic; //only Sound uses OnUpdate now
   FreeMusic;
   CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
   MusicStartTimer := Timer;
   SoundEngine.PlaySound(CurrentMusic);
-  //SoundEngine.LoopingChannel[0] := SoundEngine.SoundFromName;
 end;
 
 procedure CheckMusic;
@@ -119,7 +106,6 @@ end;
 
 procedure StopMusic;
 begin
-  Window.OnUpdate := nil; //only Sound uses OnUpdate now
   FreeMusic;
 end;
 
