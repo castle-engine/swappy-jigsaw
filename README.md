@@ -19,7 +19,6 @@ Libraries required for the game (Linux: Debian/Ubuntu package reference):
 * zlib1g
 * libvorbis
 * libfreetype6
-* libgtkglext1
 * libatk-adaptor (soft dependency of GTK2)
 * You'll also need OpenGL drivers for your videocard. Usually it is libgl1-mesa-dev.
 * You also need X-system and GTK at least version 2, however, you are very likely to have those already installed :)
