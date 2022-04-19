@@ -47,12 +47,12 @@ uses
   Settings, Global;
 
 var
-  { Current music buffer playing }
-  CurrentMusic: TSoundBuffer;
+  { Current music buffer }
+  CurrentMusic: TCastleSound;
+  { Current music - control playback }
+  CurrentMusicPlaying: TCastlePlayingSound;
   { Current music number }
   CurrentMusicID: Integer = -1;
-  { Timer result, when the music started (to determine duration) }
-  MusicStartTimer: TTimerResult;
 
 function PlaySound: Boolean;
 begin
@@ -90,16 +90,19 @@ end;
 procedure StartMusic;
 begin
   FreeMusic;
-  CurrentMusic := SoundEngine.LoadBuffer(GetMusicFile);
-  MusicStartTimer := Timer;
-  SoundEngine.PlaySound(CurrentMusic);
+  CurrentMusic := TCastleSound.Create(nil);
+  CurrentMusic.Stream := true; // recommended for longer sound files
+  CurrentMusic.Url := GetMusicFile;
+  CurrentMusicPlaying := TCastlePlayingSound.Create(nil);
+  CurrentMusicPlaying.Sound := CurrentMusic;
+  SoundEngine.Play(CurrentMusicPlaying);
 end;
 
 procedure CheckMusic;
 begin
   if FPlaySound then
   begin
-    if MusicStartTimer.ElapsedTime > CurrentMusic.Duration then
+    if not CurrentMusicPlaying.Playing then
       StartMusic;
   end;
 end;
@@ -127,8 +130,8 @@ end;
 
 procedure FreeMusic;
 begin
-  SoundEngine.FreeBuffer(CurrentMusic);
-  SoundEngine.ContextClose;
+  FreeAndNil(CurrentMusicPlaying);
+  FreeAndNil(CurrentMusic);
 end;
 
 end.
