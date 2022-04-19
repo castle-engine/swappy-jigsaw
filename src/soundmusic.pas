@@ -127,8 +127,8 @@ end;
 
 procedure FreeMusic;
 begin
-  SoundEngine.StopAllSources;
   SoundEngine.FreeBuffer(CurrentMusic);
+  SoundEngine.ContextClose;
 end;
 
 end.
