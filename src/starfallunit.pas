@@ -83,7 +83,7 @@ type
     StarScreen, StarSource: TStarsFloatRectangleArray;
     procedure AddStar;
     procedure CreatePixel;
-    procedure SetImage(const AImage: TGLImage);
+    procedure SetImage(const AImage: TDrawableImage);
     procedure SetURL(const AURL: String);
     procedure SetColor(const AColor: TCastleColor);
     procedure SetDuration(const ADuration: Single);
@@ -121,9 +121,9 @@ type
       1/3 of it the stars will spawn
       after 1/2 of the duration, the remaining stars will fade }
     property Duration: Single read FDuration write SetDuration default DefaultDuration;
-    { The image of star to fall down can be set either by providing a TGLImage
+    { The image of star to fall down can be set either by providing a TDrawableImage
       to Image property or a valid image URL to URL property }
-    property Image: TGLImage read FImage write SetImage;
+    property Image: TDrawableImage read FImage write SetImage;
     property URL: String read FURL write SetURL;
 
     { Free the @link(Image) instance automatically. }
@@ -186,9 +186,9 @@ begin
     end;
 
   //fade out image after half of requested time
-  CurrentColor := FColor; //can't assign to FColor directly as TGLImage.Color is a property
+  CurrentColor := FColor; //can't assign to FColor directly as TDrawableImage.Color is a property
   if (TimerSeconds(Timer, FStartTime) > FDuration / 2) then
-    CurrentColor.Data[3] := CurrentColor.Data[3] * (1 - (TimerSeconds(Timer, FStartTime) - FDuration / 2) / (FDuration / 2) );
+    CurrentColor.W := CurrentColor.W * (1 - (TimerSeconds(Timer, FStartTime) - FDuration / 2) / (FDuration / 2) );
   FImage.Color := CurrentColor;
 end;
 
@@ -204,7 +204,7 @@ begin
   FOwnsImage := true;
 end;
 
-procedure TStarFallEffect.SetImage(const AImage: TGLImage);
+procedure TStarFallEffect.SetImage(const AImage: TDrawableImage);
 begin
   if FOwnsImage then
     FreeAndNil(FImage);
