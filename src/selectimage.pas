@@ -31,7 +31,7 @@ procedure InitImageSelector;
 implementation
 uses
   CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
-  CastleGLUtils, CastleColors,
+  CastleGLUtils, CastleColors, CastleRenderContext,
   //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
   Game, SoundMusic;

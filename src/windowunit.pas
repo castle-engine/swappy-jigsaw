@@ -29,7 +29,7 @@ uses
 var
   { Game window - everything happens here
     We use the lowest type of Window - Base }
-  Window: TCastleWindowBase;
+  Window: TCastleWindow;
 
 { Create and nitialize game Window
   at Desktop, Window is created with golden section proportions }
@@ -41,7 +41,7 @@ uses
 procedure InitWindow;
 begin
   Log(CurrentRoutine, 'Initializing window');
-  Window := TCastleWindowBase.Create(Application);
+  Window := TCastleWindow.Create(Application);
   Window.ResizeAllowed := raOnlyAtOpen;
   Window.AutoRedisplay := false;
 

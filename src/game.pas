@@ -38,7 +38,7 @@ uses
   CastleVectors,
   CastleGLUtils, CastleColors,
   CastleMessages,
-  CastleRectangles, CastleImages, CastleGLImages,
+  CastleRectangles, CastleImages, CastleGLImages, CastleRenderContext,
   {$IFDEF AndroidVibrate}CastleOpenDocument,{$ENDIF}
   Global, GUI,
   StarFallUnit, DrawBatched3x3,
