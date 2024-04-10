@@ -63,7 +63,7 @@ uses
   SysUtils, Generics.Defaults,
   DecoLog;
 
-function CompareImageData(constref I1, I2: TImageData): Integer;
+function CompareImageData(const I1, I2: TImageData): Integer;
 begin
   Result := I1.Hits - I2.Hits;
   if Result = 0 then
