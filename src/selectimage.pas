@@ -30,6 +30,7 @@ procedure InitImageSelector;
 
 implementation
 uses
+  Math,
   CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
   CastleGLUtils, CastleColors, CastleRenderContext,
   //DrawBatched3x3,
@@ -110,7 +111,7 @@ var
 
 procedure DecPage;
 begin
-  if Page >0 then
+  if Page > 0 then
     Dec(Page)
   else
     Page := Pred(TotalPages);
@@ -210,7 +211,7 @@ begin
   Window.Invalidate;
 
   Page := 0;
-  TotalPages := ImageDataList.Count div ImagesPerPage;
+  TotalPages := Ceil(Single(ImageDataList.Count) / Single(ImagesPerPage));
 end;
 
 procedure InitImageSelector;
