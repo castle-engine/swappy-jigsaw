@@ -60,7 +60,8 @@ function SortListCount: Integer;
 {...........................................................................}
 implementation
 uses
-  SysUtils, Generics.Defaults,
+  SysUtils, Classes, Generics.Defaults,
+  CastleFindFiles,
   DecoLog;
 
 function CompareImageData(const I1, I2: TImageData): Integer;
@@ -99,7 +100,15 @@ end;
 
 {----------------------------------------------------------------------------}
 
+var
+  FilesList: TStringList;
+procedure FileFound(const FileInfo: TFileInfo; Data: Pointer; var StopSearch: Boolean);
+begin
+  FilesList.Add(FileInfo.Name);
+end;
+
 procedure LoadImageList;
+
   function Img(const aString: String): TImageData;
   begin
     Result := TImageData.Create;
@@ -107,7 +116,22 @@ procedure LoadImageList;
     Result.Shows := 0;
     Result.Thumbnail := TDrawableImage.Create('castle-data:/img/thumbnails/' + aString);
   end;
+
+var
+  S: String;
+
 begin
+  FilesList := TStringList.Create;
+  FindFiles('castle-data:/img/*.jpg', false, @FileFound, nil, []);
+
+  ImageDataList := TImageDataList.Create(true);
+  for S in FilesList do
+    ImageDataList.Add(Img(S));
+
+  FreeAndNil(FilesList);
+
+  {
+
   ImageDataList := TImageDataList.Create(true);
   With ImageDataList do
   begin
@@ -230,6 +254,8 @@ begin
     //Lubos Houska
     Add(Img('nocni-svetla_CC0_by_Lubos_Houska_[crop,color].jpg'));
   end;
+
+  }
   Log(CurrentRoutine, 'Images information loaded: ' + IntToStr(ImageDataList.Count));
 end;
 
