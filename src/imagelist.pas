@@ -60,7 +60,7 @@ function SortListCount: Integer;
 {...........................................................................}
 implementation
 uses
-  SysUtils, Classes, Generics.Defaults,
+  SysUtils, Generics.Defaults,
   CastleFindFiles,
   DecoLog;
 
@@ -100,35 +100,21 @@ end;
 
 {----------------------------------------------------------------------------}
 
-var
-  FilesList: TStringList;
 procedure FileFound(const FileInfo: TFileInfo; Data: Pointer; var StopSearch: Boolean);
+var
+  ImageData: TImageData;
 begin
-  FilesList.Add(FileInfo.Name);
+  ImageData := TImageData.Create;
+  ImageData.URL := FileInfo.Name;
+  ImageData.Shows := 0;
+  ImageData.Thumbnail := TDrawableImage.Create('castle-data:/img/thumbnails/' + FileInfo.Name);
+  ImageDataList.Add(ImageData);
 end;
 
 procedure LoadImageList;
-
-  function Img(const aString: String): TImageData;
-  begin
-    Result := TImageData.Create;
-    Result.URL := aString;
-    Result.Shows := 0;
-    Result.Thumbnail := TDrawableImage.Create('castle-data:/img/thumbnails/' + aString);
-  end;
-
-var
-  S: String;
-
 begin
-  FilesList := TStringList.Create;
-  FindFiles('castle-data:/img/*.jpg', false, @FileFound, nil, []);
-
   ImageDataList := TImageDataList.Create(true);
-  for S in FilesList do
-    ImageDataList.Add(Img(S));
-
-  FreeAndNil(FilesList);
+  FindFiles('castle-data:/img/*.jpg', false, @FileFound, nil, []);
 
   {
 
