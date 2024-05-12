@@ -62,7 +62,29 @@ implementation
 uses
   SysUtils, Generics.Defaults,
   CastleFindFiles,
-  DecoLog;
+  DecoLog, Global;
+
+type
+  TObjectListHelper = class helper for TImageDataList
+  public
+    procedure Shuffle;
+  end;
+
+procedure TObjectListHelper.Shuffle;
+var
+  I, J: Integer;
+  Temp: TImageData;
+begin
+  OwnsObjects := false;
+  for I := 0 to Pred(Count) do
+  begin
+    J := RND.Random(Count);
+    Temp := Self[J];
+    Self[J] := Self[I];
+    Self[I] :=  Temp;
+  end;
+  OwnsObjects := true;
+end;
 
 function CompareImageData(const I1, I2: TImageData): Integer;
 begin
@@ -115,6 +137,7 @@ procedure LoadImageList;
 begin
   ImageDataList := TImageDataList.Create(true);
   FindFiles('castle-data:/img/*.jpg', false, @FileFound, nil, []);
+  ImageDataList.Shuffle;
 
   {
 
