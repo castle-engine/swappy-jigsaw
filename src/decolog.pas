@@ -60,7 +60,7 @@ begin
   InitializeLog(LogStream, ltTime);
   {$ELSE}
   //ApplicationProperties.Version := Version;
-  InitializeLog(nil, ltTime);
+  InitializeLog;
   {$ENDIF}
   {$IFDEF LogShaders}
   LogShaders := true;

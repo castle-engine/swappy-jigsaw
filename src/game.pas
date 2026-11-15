@@ -432,8 +432,6 @@ begin
   StarFall.URL := 'castle-data:/Star.png';
   StarFall.Duration := 1.5; //=default
   StarFall.Number := 250; //=default
-  StarFall.Left := 0;
-  StarFall.Bottom := 0;
   StarFall.Width := Window.Width;
   StarFall.Height := Window.Height;
 end;

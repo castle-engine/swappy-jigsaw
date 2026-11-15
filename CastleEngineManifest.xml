@@ -11,9 +11,7 @@
     <icon path="SwappyJigsawIcon.ico" />
     <icon path="SwappyJigsawIcon.png" />
   </icons>
-  <android
-    project_type="integrated"
-  >
+  <android>
     <services>
       <service name="ogg_vorbis" />
       <service name="sound" />

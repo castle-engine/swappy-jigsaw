@@ -86,7 +86,8 @@ begin
   OwnsObjects := true;
 end;
 
-function CompareImageData(const I1, I2: TImageData): Integer;
+function CompareImageData(
+  {$ifdef GENERICS_CONSTREF}constref{$else}const{$endif} I1, I2: TImageData): Integer;
 begin
   Result := I1.Hits - I2.Hits;
   if Result = 0 then
