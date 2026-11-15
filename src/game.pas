@@ -1,4 +1,4 @@
-{ Copyright (C) 2018 Yevhen Loza
+{ Copyright (C) 2018-2026 Yevhen Loza, Michalis Kamburelis
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,9 +35,7 @@ implementation
 uses
   SysUtils,
   CastleWindow, CastleKeysMouse,
-  CastleVectors,
-  CastleGLUtils, CastleColors,
-  CastleMessages,
+  CastleVectors, CastleGLUtils, CastleColors, CastleMessages, CastleUiControls,
   CastleRectangles, CastleImages, CastleGLImages, CastleRenderContext,
   {$IFDEF AndroidVibrate}CastleOpenDocument,{$ENDIF}
   Global, GUI,
@@ -143,7 +141,7 @@ end;
 
 {----------------------------------------------------------------------------}
 
-{this procedure happens inside Window.onRender event, so rendering can be done here
+{this procedure happens inside Render event, so rendering can be done here
  Moreover, it renders the last, i.e. on top of all other elements.}
 procedure DoVictory;
 var
@@ -187,13 +185,24 @@ end;
 
 {----------------------------------------------------------------------------}
 
-{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
-procedure GameRender(Container: TUIContainer);
+type
+  TViewGame = class(TCastleView)
+  public
+    procedure Render; override;
+    function Press(const Event: TInputPressRelease): Boolean; override;
+    function Release(const Event: TInputPressRelease): Boolean; override;
+  end;
+var
+  ViewGame: TViewGame;
+
+procedure TViewGame.Render;
 var
   I, Ix, Iy: Integer;
 
   Count: Integer;
 begin
+  inherited;
+
   CheckMusic; //check if the music has finished and load a new one
 
   RenderContext.Clear([cbColor], Black);
@@ -323,10 +332,13 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
+function TViewGame.Press(const Event: TInputPressRelease): Boolean;
 var
   Pos: Integer;
 begin
+  Result := inherited;
+  if Result then Exit;
+
   if (Event.EventType = itMouseButton) then
   begin
     Window.Invalidate;
@@ -348,7 +360,7 @@ begin
           GameStarted := true;
           Selected := -1;
           if isGameOver then
-            Log(CurrentRoutine, 'Image solved!');
+            DecoLog.Log(CurrentRoutine, 'Image solved!');
         end;
       end;
     end else
@@ -367,13 +379,18 @@ begin
   end;
 end;
 
-procedure GameRelease(Container: TUIContainer; const Event: TInputPressRelease);
+function TViewGame.Release(const Event: TInputPressRelease): Boolean;
 begin
+  Result := inherited;
+  if Result then Exit;
+
   //now the only release event we catch is after ShowHint
   if ShowHint and (Event.EventType = itMouseButton) then
+  begin
     ReleaseHintButton;
+    Result := true;
+  end;
 end;
-{$POP}
 
 {----------------------------------------------------------------------------}
 
@@ -386,9 +403,7 @@ var
   Ix, Iy: Integer;
   NextImagesCount: Integer;
 begin
-  Window.OnRender := @GameRender;
-  Window.OnPress := @GamePress;
-  Window.OnRelease := @GameRelease;
+  Application.MainWindow.Container.View := ViewGame;
 
   EndVictory;
 
@@ -441,14 +456,13 @@ end;
 procedure FreeGame;
 begin
   EndVictory;
-
-  Window.OnRender := nil;
-  Window.OnPress := nil;
-  Window.OnRelease := nil;
-
   FreeAndNil(Image);
   StarFall.Free;
+
+  Application.MainWindow.Container.View := nil;
 end;
 
+initialization
+  ViewGame := TViewGame.Create(Application);
 end.
 

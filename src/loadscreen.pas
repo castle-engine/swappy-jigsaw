@@ -1,4 +1,4 @@
-{ Copyright (C) 2018 Yevhen Loza
+{ Copyright (C) 2018-2026 Yevhen Loza, Michalis Kamburelis
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,23 +31,31 @@ procedure ShowLoadScreen;
 procedure FreeLoadScreen;
 implementation
 uses
-  CastleWindow, CastleGLImages,
+  CastleWindow, CastleGLImages, CastleUiControls,
   WindowUnit;
 
 var
   LoadScreenImage: TDrawableImage;
 
-{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
-procedure RenderLoadScreen(Container: TUIContainer);
+type
+  TViewLoad = class(TCastleView)
+  public
+    procedure Render; override;
+  end;
+var
+  ViewLoad: TViewLoad;
+
+procedure TViewLoad.Render;
 begin
+  inherited;
   LoadScreenImage.Draw(0, 0, Window.Width, Window.Height);
 end;
-{$POP}
 
 procedure ShowLoadScreen;
 begin
   LoadScreenImage := TDrawableImage.Create('castle-data:/loadscreen.jpg');
-  Window.OnRender := @RenderLoadScreen;
+
+  Application.MainWindow.Container.View := ViewLoad;
   Window.Invalidate;
   Application.ProcessAllMessages;
 end;
@@ -57,5 +65,7 @@ begin
   LoadScreenImage.Free;
 end;
 
+initialization
+  ViewLoad := TViewLoad.Create(Application);
 end.
 

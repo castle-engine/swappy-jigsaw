@@ -1,4 +1,4 @@
-{ Copyright (C) 2018 Yevhen Loza
+{ Copyright (C) 2018-2026 Yevhen Loza, Michalis Kamburelis
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,11 +32,12 @@ implementation
 uses
   Math,
   CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
-  CastleGLUtils, CastleColors, CastleRenderContext,
+  CastleGLUtils, CastleColors, CastleRenderContext, CastleUiControls,
   //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
   Game, SoundMusic;
 
+{ TODO: Move these variables and constants to TViewImageSelector }
 var
   { Sizes of each image in Image Selector }
   SelectorScaleX, SelectorScaleY: Integer;
@@ -55,11 +56,22 @@ const
   ImagesY = 4;
   ImagesPerPage = ImagesX * ImagesY;
 
-{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
-procedure ImageSelectorRender(Container: TUIContainer);
+type
+  TViewImageSelector = class(TCastleView)
+  public
+    procedure Render; override;
+    function Press(const Event: TInputPressRelease): Boolean; override;
+    function Release(const Event: TInputPressRelease): Boolean; override;
+  end;
+var
+  ViewImageSelector: TViewImageSelector;
+
+procedure TViewImageSelector.Render;
 var
   I, Ix, Iy: Integer;
 begin
+  inherited;
+
   CheckMusic; //check if the music has finished and load a new one
 
   RenderContext.Clear([cbColor], Black); //we need clear screen here to avoid bleeding pixels
@@ -125,7 +137,8 @@ begin
     Page := 0;
 end;
 
-procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRelease);
+function TViewImageSelector.Press(const Event: TInputPressRelease): Boolean;
+
   procedure StartSwipe;
   begin
     if Event.FingerIndex = 0 then
@@ -134,7 +147,11 @@ procedure ImageSelectorPress(Container: TUIContainer; const Event: TInputPressRe
       SwipeStart := Event.Position;
     end;
   end;
+
 begin
+  Result := inherited;
+  if Result then Exit;
+
   if (Event.EventType = itMouseButton) then
   begin
     Window.Invalidate;
@@ -163,10 +180,13 @@ begin
   end;
 end;
 
-procedure ImageSelectorRelease(Container: TUIContainer; const Event: TInputPressRelease);
+function TViewImageSelector.Release(const Event: TInputPressRelease): Boolean;
 var
   Ix, Iy: Integer;
 begin
+  Result := inherited;
+  if Result then Exit;
+
   if (Swipe) and (Event.FingerIndex = 0) then
   begin
     Window.Invalidate;
@@ -196,17 +216,16 @@ begin
     end
   end;
 end;
-{$POP}
 
+{ TODO: move this to Start method }
 procedure ShowImageSelector;
 begin
   SortListCount; //not optimal
 
   Swipe := false;
 
-  Window.OnRender := @ImageSelectorRender;
-  Window.OnPress := @ImageSelectorPress;
-  Window.OnRelease := @ImageSelectorRelease;
+  { TODO: pass around Container }
+  Application.MainWindow.Container.View := ViewImageSelector;
 
   Window.Invalidate;
 
@@ -222,5 +241,7 @@ begin
   SelectorScaleY := ImageHeight div 4;
 end;
 
+{ TODO: create views from ApplicationInitialize }
+initialization
+  ViewImageSelector := TViewImageSelector.Create(Application);
 end.
-

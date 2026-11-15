@@ -1,4 +1,4 @@
-{ Copyright (C) 2018 Yevhen Loza
+{ Copyright (C) 2018-2026 Yevhen Loza, Michalis Kamburelis
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ procedure FreeCredits;
 implementation
 uses
   SysUtils,
-  CastleGLImages, CastleImages, CastleKeysMouse, CastleWindow,
+  CastleGLImages, CastleImages, CastleKeysMouse, CastleWindow, CastleUiControls,
   SelectImage,
   WindowUnit;
 
@@ -39,26 +39,37 @@ var
   { Credits image }
   Credits: TDrawableImage;
 
-{$PUSH}{$WARN 5024 off : Parameter "$1" not used}
-procedure CreditsRender(Container: TUIContainer);
+type
+  TViewCredits = class(TCastleView)
+  public
+    procedure Render; override;
+    function Press(const Event: TInputPressRelease): Boolean; override;
+  end;
+var
+  ViewCredits: TViewCredits;
+
+procedure TViewCredits.Render;
 begin
+  inherited;
   //normally we do this only once, as Window.AutoRedisplay = false
   Credits.Draw(0, 0, Window.Width, Window.Height);
 end;
 
-procedure CreditsPress(Container: TUIContainer; const Event: TInputPressRelease);
+function TViewCredits.Press(const Event: TInputPressRelease): Boolean;
 begin
+  Result := inherited;
+  if Result then Exit;
+
   FreeAndNil(Credits); //we don't keep the image, as hardly anybody will use it twice :)
   ShowImageSelector;
+  Result := true;
 end;
-{$POP}
 
 procedure InitCredits;
 begin
   Credits := TDrawableImage.Create('castle-data:/credits.jpg', [TRGBImage], true);
 
-  Window.OnPress := @CreditsPress;
-  Window.OnRender := @CreditsRender;
+  Application.MainWindow.Container.View := ViewCredits;
 end;
 
 procedure DisplayCredits;
@@ -72,4 +83,6 @@ begin
   FreeAndNil(Credits);
 end;
 
+initialization
+  ViewCredits := TViewCredits.Create(Application);
 end.
