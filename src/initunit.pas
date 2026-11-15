@@ -43,11 +43,11 @@ begin
   LoadConfig;
   InitUI;
   InitGame;
-  InitImageSelector;
+  ViewImageSelector := TViewImageSelector.Create(Application);
   InitMusic;
   FreeLoadScreen;
 
-  ShowImageSelector;
+  Window.Container.View := ViewImageSelector;
 
   Log(CurrentRoutine, 'Init sequence finished.');
 end;

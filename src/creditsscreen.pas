@@ -61,7 +61,7 @@ begin
   if Result then Exit;
 
   FreeAndNil(Credits); //we don't keep the image, as hardly anybody will use it twice :)
-  ShowImageSelector;
+  Container.View := ViewImageSelector;
   Result := true;
 end;
 

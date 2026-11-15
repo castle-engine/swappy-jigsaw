@@ -327,7 +327,7 @@ procedure ClickExit;
 begin
   if (IsGameOver) or (not GameStarted) or
      (MessageYesNo(Window, 'Current progress will be lost, exit to menu?')) then
-    ShowImageSelector;
+    Window.Container.View := ViewImageSelector;
 end;
 
 {----------------------------------------------------------------------------}

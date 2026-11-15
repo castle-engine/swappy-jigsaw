@@ -22,49 +22,52 @@ unit SelectImage;
 
 interface
 
-{ Show Image selector on screen (and stop all other game modes) }
-procedure ShowImageSelector;
-{ Init Image-selector specific data }
-procedure InitImageSelector;
-//procedure FreeImageSelector;
-
-implementation
 uses
-  Math,
+  Math, Classes,
   CastleWindow, CastleKeysMouse, CastleRectangles, CastleVectors,
   CastleGLUtils, CastleColors, CastleRenderContext, CastleUiControls,
   //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
   Game, SoundMusic;
 
-{ TODO: Move these variables and constants to TViewImageSelector }
-var
-  { Sizes of each image in Image Selector }
-  SelectorScaleX, SelectorScaleY: Integer;
-  { Total width of the Image Selector }
-  SelectorWidth: Integer;
-  { Width of arrow buttons, that filp pages left and right }
-  RightLeftButtonWidth: Integer;
-  { Current page }
-  Page: Integer;
-  { Total pages }
-  TotalPages: Integer;
-
-const
-  { Quantity of images per page }
-  ImagesX = 3;
-  ImagesY = 4;
-  ImagesPerPage = ImagesX * ImagesY;
-
 type
   TViewImageSelector = class(TCastleView)
+  private
+    var
+      { Sizes of each image in Image Selector }
+      SelectorScaleX, SelectorScaleY: Integer;
+      { Total width of the Image Selector }
+      SelectorWidth: Integer;
+      { Width of arrow buttons, that filp pages left and right }
+      RightLeftButtonWidth: Integer;
+      { Current page }
+      Page: Integer;
+      { Total pages }
+      TotalPages: Integer;
+
+      Swipe: Boolean;
+      SwipeStart: TVector2;
+
+    const
+      { Quantity of images per page }
+      ImagesX = 3;
+      ImagesY = 4;
+      ImagesPerPage = ImagesX * ImagesY;
+
+    procedure IncPage;
+    procedure DecPage;
   public
+    constructor Create(AOwner: TComponent); override;
+    procedure Start; override;
     procedure Render; override;
     function Press(const Event: TInputPressRelease): Boolean; override;
     function Release(const Event: TInputPressRelease): Boolean; override;
   end;
+
 var
   ViewImageSelector: TViewImageSelector;
+
+implementation
 
 procedure TViewImageSelector.Render;
 var
@@ -117,11 +120,7 @@ begin
     ButtonCredits);
 end;
 
-var
-  Swipe: Boolean;
-  SwipeStart: TVector2;
-
-procedure DecPage;
+procedure TViewImageSelector.DecPage;
 begin
   if Page > 0 then
     Dec(Page)
@@ -129,7 +128,7 @@ begin
     Page := Pred(TotalPages);
 end;
 
-procedure IncPage;
+procedure TViewImageSelector.IncPage;
 begin
   if Page < Pred(TotalPages) then
     Inc(Page)
@@ -217,15 +216,13 @@ begin
   end;
 end;
 
-{ TODO: move this to Start method }
-procedure ShowImageSelector;
+procedure TViewImageSelector.Start;
 begin
+  inherited;
+
   SortListCount; //not optimal
 
   Swipe := false;
-
-  { TODO: pass around Container }
-  Application.MainWindow.Container.View := ViewImageSelector;
 
   Window.Invalidate;
 
@@ -233,15 +230,14 @@ begin
   TotalPages := Ceil(Single(ImageDataList.Count) / Single(ImagesPerPage));
 end;
 
-procedure InitImageSelector;
+constructor TViewImageSelector.Create(AOwner: TComponent);
 begin
+  inherited;
+
   RightLeftButtonWidth := ImageWidth div 20;
   SelectorWidth := ImageWidth - 2 * RightLeftButtonWidth;
   SelectorScaleX := SelectorWidth div 3;
   SelectorScaleY := ImageHeight div 4;
 end;
 
-{ TODO: create views from ApplicationInitialize }
-initialization
-  ViewImageSelector := TViewImageSelector.Create(Application);
 end.
