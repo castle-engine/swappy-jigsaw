@@ -2,31 +2,29 @@
 
 Swappy Jigsaw is a simple jigsaw puzzle game, where you have to unravel an image split into many tiles. Click to pick a tile and click another tile to swap them. There are 84 images total.
 
-The game is made in Castle Game Engine (Lazarus/FreePascal), is free, libre and open source.
+The game is made in [Castle Game Engine](https://castle-engine.io/) (build with [FreePascal](https://www.freepascal.org/)), is free, libre and open source.
+
+# Links
+
+Source code repository: https://github.com/castle-engine/swappy-jigsaw
+
+Please, report any bugs, issues and ideas to: https://github.com/castle-engine/swappy-jigsaw/issues
+
+Releases (Windows, Linux, macOS, Android) can be found here: https://github.com/castle-engine/swappy-jigsaw/releases/tag/snapshot
 
 # Windows
 
 No installation is required, just extract all files into a single folder and play.
 
-# Linux
+# Linux, FreeBSD
 
-No installation is required, just extract all files into a single folder and play. You may need to set "executable" permission for SwappyJigsaw.run.
+No installation is required, just extract all files into a single folder and play.
 
-Libraries required for the game (Linux: Debian/Ubuntu package reference):
+Libraries required for the game: See [Castle Game Engine requirements on Linux/FreeBSD](https://castle-engine.io/download#packages).
 
-* libopenal1
-* libpng
-* zlib1g
-* libvorbis
-* libfreetype6
-* libatk-adaptor (soft dependency of GTK2)
-* You'll also need OpenGL drivers for your videocard. Usually it is libgl1-mesa-dev.
-* You also need X-system and GTK at least version 2, however, you are very likely to have those already installed :)
 
-# Links
+## Authors
 
-Source code repository: https://gitlab.com/EugeneLoza/swappy-jigsaw
+Originally made by the late Yevhen (Eugene) Loza. Original version [on GitLab](https://gitlab.com/EugeneLoza/swappy-jigsaw).
 
-Please, report any bugs, issues and ideas to: https://gitlab.com/EugeneLoza/swappy-jigsaw/issues
-
-Windows/Linux executables can be found here: https://decoherence.itch.io/swappy-jigsaw
+This is a minimal fork by Michalis Kamburelis to keep it working with latest Castle Game Engine and FPC.
