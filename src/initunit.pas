@@ -45,11 +45,12 @@ begin
   LoadImageList;
   LoadConfig;
   InitUI;
-  InitGame;
 
+  { create views (except ViewLoad, created earlier) }
   ViewImageSelector := TViewImageSelector.Create(Application);
   ViewCredits := TViewCredits.Create(Application);
   ViewLoad := TViewLoad.Create(Application);
+  ViewGame := TViewGame.Create(Application);
 
   InitMusic;
 
@@ -72,7 +73,6 @@ ApplicationProperties.ApplicationName := 'SwappyJigsaw';
 Window.Caption := 'Swappy Jigsaw';
 
 finalization
-FreeGame;
 FreeMusic; //redundant
 FreeUI;
 FreeImageList;

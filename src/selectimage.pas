@@ -28,7 +28,7 @@ uses
   CastleGLUtils, CastleColors, CastleRenderContext, CastleUiControls,
   //DrawBatched3x3,
   WindowUnit, ImageList, GUI, CreditsScreen,
-  Game, SoundMusic;
+  SoundMusic;
 
 type
   TViewImageSelector = class(TCastleView)
@@ -68,6 +68,8 @@ var
   ViewImageSelector: TViewImageSelector;
 
 implementation
+
+uses Game;
 
 procedure TViewImageSelector.Render;
 var
@@ -174,7 +176,10 @@ begin
       if Event.Position[1] < ButtonSpacer * 3 then
         //ClickHintButton
       else
-        NewGame(-1);
+      begin
+        ViewGame.AImageId := -1;
+        Container.View := ViewGame;
+      end;
     end;
   end;
 end;
@@ -204,7 +209,8 @@ begin
         Iy := Pred(ImagesY);
       Iy := Pred(ImagesY) - Iy;
 
-      NewGame(Ix + Iy * ImagesX + Page * ImagesPerPage);
+      ViewGame.AImageId := Ix + Iy * ImagesX + Page * ImagesPerPage;
+      Container.View := ViewGame;
     end else
     begin
       //else do a swipe page change

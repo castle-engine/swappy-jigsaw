@@ -24,16 +24,8 @@ unit Game;
 
 interface
 
-{ Start a new game with a specified ImageID
-  (Pay attention, ImageID is changed after every NewGame as image list is sorted) }
-procedure NewGame(const AImageID: Integer = -1);
-{ Init/release game events and game-specific objects }
-procedure InitGame;
-procedure FreeGame;
-{...........................................................................}
-implementation
 uses
-  SysUtils,
+  SysUtils, Classes,
   CastleWindow, CastleKeysMouse,
   CastleVectors, CastleGLUtils, CastleColors, CastleMessages, CastleUiControls,
   CastleRectangles, CastleImages, CastleGLImages, CastleRenderContext,
@@ -44,50 +36,88 @@ uses
   DecoLog;
 
 type
-  TMyFloatRectangleArray = packed array of TFloatRectangle;
+  TViewGame = class(TCastleView)
+  private
+    type
+      TMyFloatRectangleArray = packed array of TFloatRectangle;
+    var
+      { Image, currently being solved }
+      Image: TDrawableImage;
+      { Selected tile ID }
+      Selected: Integer;
+      { Is the Hint image currently being shown? }
+      ShowHint: Boolean;
+      { Has the game been started? Is it over with victory? }
+      GameStarted, Victory: Boolean;
+      { Rectangles of shuffled and unshuffled images }
+      JigCount: Integer;
+      JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
+      { Rectangles of wronly placed image tiles }
+      WrongRects: TMyFloatRectangleArray;
+      { Victory effect - stars falling down }
+      StarFall: TStarFallEffect;
+      { Last image (i.e. current image) loaded. }
+      CurrentImage: Integer;
+
+    function GetLinearCoord(const A: TVector2Integer): Integer;
+    function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
+    function IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
+    procedure SwapTiles(const A, B: TVector2Integer);
+    procedure SwapTiles(const A, B: Integer);
+    procedure StartVictory;
+    procedure EndVictory;
+    procedure DoVictory;
+    function WrongTilesCount: Integer;
+    function IsGameOver: Boolean;
+    procedure Shuffle;
+    procedure ClickForwardButton;
+    procedure ClickHintButton;
+    procedure ReleaseHintButton;
+    procedure ClickExit;
+    function GetScreenTile(X, Y: Single): Integer;
+    procedure NewGame;
+  public
+    { Start a new game with a specified ImageID. -1 for random image.
+      Set this before Start.
+      Pay attention, ImageID meaning is changed every time image list is sorted. }
+    AImageID: Integer;
+
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure Start; override;
+    procedure Render; override;
+    function Press(const Event: TInputPressRelease): Boolean; override;
+    function Release(const Event: TInputPressRelease): Boolean; override;
+  end;
 
 var
-  { Image, currently being solved }
-  Image: TDrawableImage;
-  { Selected tile ID }
-  Selected: Integer;
-  { Is the Hint image currently being shown? }
-  ShowHint: Boolean;
-  { Has the game been started? Is it over with victory? }
-  GameStarted, Victory: Boolean;
-  { Rectangles of shuffled and unshuffled images }
-  JigCount: Integer;
-  JigsawRects, ScreenRects: TMyFloatRectangleArray; //TFloatRectangleArray;
-  { Rectangles of wronly placed image tiles }
-  WrongRects: TMyFloatRectangleArray;
-  { Victory effect - stars falling down }
-  StarFall: TStarFallEffect;
-  { Last image (i.e. current image) loaded. }
-  CurrentImage: Integer = -1;
+  ViewGame: TViewGame;
+
+implementation
 
 {----------------------------------------------------------------------------}
 
-function GetLinearCoord(const A: TVector2Integer): Integer;
+function TViewGame.GetLinearCoord(const A: TVector2Integer): Integer;
 begin
   Result := A[0] + A[1] * SlicesX;
 end;
 
 {----------------------------------------------------------------------------}
 
-function IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
+function TViewGame.IsTileWrong(const ScreenLinearCoordinates: Integer): Boolean;
 begin
   Result := (Abs(JigsawRects[ScreenLinearCoordinates].Bottom - ScreenRects[ScreenLinearCoordinates].Bottom + ImageStartBottom) > ScaleY / 2) or
             (Abs(JigsawRects[ScreenLinearCoordinates].Left - ScreenRects[ScreenLinearCoordinates].Left + ImageStartLeft) > ScaleX / 2);
 end;
 
-function IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
+function TViewGame.IsTileWrong(const ScreenCoordinates: TVector2Integer): Boolean;
 begin
   Result := IsTileWrong(GetLinearCoord(ScreenCoordinates));
 end;
 
 {----------------------------------------------------------------------------}
 
-procedure SwapTiles(const A, B: TVector2Integer);
+procedure TViewGame.SwapTiles(const A, B: TVector2Integer);
 var
   R: TFloatRectangle;
 begin
@@ -101,7 +131,7 @@ begin
   {$ENDIF}
 end;
 
-procedure SwapTiles(const A, B: Integer);
+procedure TViewGame.SwapTiles(const A, B: Integer);
 var
   R: TFloatRectangle;
 begin
@@ -117,7 +147,7 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure StartVictory;
+procedure TViewGame.StartVictory;
 begin
   //increase image score
   Inc(ImageDataList[CurrentImage].Hits);
@@ -131,7 +161,7 @@ begin
   {$ENDIF}
 end;
 
-procedure EndVictory;
+procedure TViewGame.EndVictory;
 begin
   StarFall.Stop;
   //return window in low-resources mode
@@ -143,7 +173,7 @@ end;
 
 {this procedure happens inside Render event, so rendering can be done here
  Moreover, it renders the last, i.e. on top of all other elements.}
-procedure DoVictory;
+procedure TViewGame.DoVictory;
 var
   h: Boolean;
 begin
@@ -158,7 +188,7 @@ end;
 
 {----------------------------------------------------------------------------}
 
-function WrongTilesCount: Integer;
+function TViewGame.WrongTilesCount: Integer;
 var
   I: Integer;
 begin
@@ -168,7 +198,7 @@ begin
       Inc(Result);
 end;
 
-function IsGameOver: Boolean;
+function TViewGame.IsGameOver: Boolean;
 var
   I: Integer;
 begin
@@ -184,16 +214,6 @@ begin
 end;
 
 {----------------------------------------------------------------------------}
-
-type
-  TViewGame = class(TCastleView)
-  public
-    procedure Render; override;
-    function Press(const Event: TInputPressRelease): Boolean; override;
-    function Release(const Event: TInputPressRelease): Boolean; override;
-  end;
-var
-  ViewGame: TViewGame;
 
 procedure TViewGame.Render;
 var
@@ -256,7 +276,7 @@ end;
 
 {----------------------------------------------------------------------------}
 
-function GetScreenTile(X, Y: Single): Integer;
+function TViewGame.GetScreenTile(X, Y: Single): Integer;
 var
   I: Integer;
 begin
@@ -280,13 +300,13 @@ begin
     end;
 
   //error, can't find sreen tile
-  Log(CurrentRoutine, 'Error: Can''t find sreen tile at (' + FloatToStr(X) + ',' + FloatToStr(Y) + ') in ' + IntToStr(ImageStartLeft) + '..' + IntToStr(ImageStartLeft + ImageWidth) + ',' + IntToStr(ImageStartBottom) + '..' + IntToStr(ImageStartBottom + ImageHeight));
+  DecoLog.Log(CurrentRoutine, 'Error: Can''t find sreen tile at (' + FloatToStr(X) + ',' + FloatToStr(Y) + ') in ' + IntToStr(ImageStartLeft) + '..' + IntToStr(ImageStartLeft + ImageWidth) + ',' + IntToStr(ImageStartBottom) + '..' + IntToStr(ImageStartBottom + ImageHeight));
   Result := -1; //so that result is always defined
 end;
 
 {----------------------------------------------------------------------------}
 
-procedure Shuffle;
+procedure TViewGame.Shuffle;
 var
   I: Integer;
 begin
@@ -305,29 +325,32 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure ClickForwardButton;
+procedure TViewGame.ClickForwardButton;
 begin
   if (IsGameOver) or (not GameStarted) or
      (MessageYesNo(Window, 'Current progress will be lost, load next image?')) then
+  begin
+    AImageId := -1;
     NewGame;
+  end;
 end;
 
-procedure ClickHintButton;
+procedure TViewGame.ClickHintButton;
 begin
   ShowHint := true;
 end;
 
-procedure ReleaseHintButton;
+procedure TViewGame.ReleaseHintButton;
 begin
   ShowHint := false;
   Window.Invalidate;
 end;
 
-procedure ClickExit;
+procedure TViewGame.ClickExit;
 begin
   if (IsGameOver) or (not GameStarted) or
      (MessageYesNo(Window, 'Current progress will be lost, exit to menu?')) then
-    Window.Container.View := ViewImageSelector;
+    Container.View := ViewImageSelector;
 end;
 
 {----------------------------------------------------------------------------}
@@ -394,16 +417,24 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure NewGame(const AImageID: Integer = -1);
+procedure TViewGame.Start;
+begin
+  inherited;
+  NewGame;
+end;
+
+procedure TViewGame.NewGame;
+
   function Img(const aURL: String): String;
   begin
     Result := 'castle-data:/img/' + aURL;
   end;
+
 var
   Ix, Iy: Integer;
   NextImagesCount: Integer;
 begin
-  Application.MainWindow.Container.View := ViewGame;
+  inherited;
 
   EndVictory;
 
@@ -421,7 +452,7 @@ begin
 
   FreeAndNil(Image);
   Image := TDrawableImage.Create(Img(ImageDataList[CurrentImage].URL), [TRGBImage], ImageWidth, ImageHeight, riLanczos);
-  Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
+  DecoLog.Log(CurrentRoutine, 'New image: ' + ImageDataList[CurrentImage].URL);
 
   JigCount := 0;
   SetLength(JigsawRects, SlicesX * SlicesY);
@@ -441,28 +472,28 @@ end;
 
 {----------------------------------------------------------------------------}
 
-procedure InitGame;
+constructor TViewGame.Create(AOwner: TComponent);
 begin
+  inherited;
   StarFall := TStarFallEffect.Create(nil);
   StarFall.URL := 'castle-data:/Star.png';
   StarFall.Duration := 1.5; //=default
   StarFall.Number := 250; //=default
   StarFall.Width := Window.Width;
   StarFall.Height := Window.Height;
+
+  CurrentImage := -1;
 end;
 
 {----------------------------------------------------------------------------}
 
-procedure FreeGame;
+destructor TViewGame.Destroy;
 begin
   EndVictory;
   FreeAndNil(Image);
   StarFall.Free;
-
-  Application.MainWindow.Container.View := nil;
+  inherited;
 end;
 
-initialization
-  ViewGame := TViewGame.Create(Application);
 end.
 
