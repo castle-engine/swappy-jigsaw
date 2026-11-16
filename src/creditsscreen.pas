@@ -23,30 +23,39 @@ unit CreditsScreen;
 
 interface
 
-{ Stops the game and shows credits until press event }
-procedure DisplayCredits;
-{ Free up memory, used by Credits image
-  in case Player exits when in Credits, to avoid memory leak}
-procedure FreeCredits;
-implementation
 uses
-  SysUtils,
+  SysUtils, Classes,
   CastleGLImages, CastleImages, CastleKeysMouse, CastleWindow, CastleUiControls,
-  SelectImage,
   WindowUnit;
-
-var
-  { Credits image }
-  Credits: TDrawableImage;
 
 type
   TViewCredits = class(TCastleView)
+  private
+    Credits: TDrawableImage;
   public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     procedure Render; override;
     function Press(const Event: TInputPressRelease): Boolean; override;
   end;
 var
   ViewCredits: TViewCredits;
+
+implementation
+
+uses SelectImage;
+
+constructor TViewCredits.Create(AOwner: TComponent);
+begin
+  inherited;
+  Credits := TDrawableImage.Create('castle-data:/credits.jpg', [TRGBImage], true);
+end;
+
+destructor TViewCredits.Destroy;
+begin
+  FreeAndNil(Credits);
+  inherited;
+end;
 
 procedure TViewCredits.Render;
 begin
@@ -60,29 +69,8 @@ begin
   Result := inherited;
   if Result then Exit;
 
-  FreeAndNil(Credits); //we don't keep the image, as hardly anybody will use it twice :)
   Container.View := ViewImageSelector;
   Result := true;
 end;
 
-procedure InitCredits;
-begin
-  Credits := TDrawableImage.Create('castle-data:/credits.jpg', [TRGBImage], true);
-
-  Application.MainWindow.Container.View := ViewCredits;
-end;
-
-procedure DisplayCredits;
-begin
-  InitCredits; //we init it every time, as "credits" is a seldomly used thing, so no need to waste RAM on preloading
-  Window.Invalidate;
-end;
-
-procedure FreeCredits;
-begin
-  FreeAndNil(Credits);
-end;
-
-initialization
-  ViewCredits := TViewCredits.Create(Application);
 end.

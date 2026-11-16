@@ -23,27 +23,36 @@ unit LoadScreen;
 interface
 
 uses
-  Classes, SysUtils;
-
-{initialize and show Load screen}
-procedure ShowLoadScreen;
-{free memory used by Load screen}
-procedure FreeLoadScreen;
-implementation
-uses
+  Classes, SysUtils,
   CastleWindow, CastleGLImages, CastleUiControls,
   WindowUnit;
 
-var
-  LoadScreenImage: TDrawableImage;
-
 type
   TViewLoad = class(TCastleView)
+  private
+    LoadScreenImage: TDrawableImage;
   public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     procedure Render; override;
   end;
+
 var
   ViewLoad: TViewLoad;
+
+implementation
+
+constructor TViewLoad.Create(AOwner: TComponent);
+begin
+  inherited;
+  LoadScreenImage := TDrawableImage.Create('castle-data:/loadscreen.jpg');
+end;
+
+destructor TViewLoad.Destroy;
+begin
+  LoadScreenImage.Free;
+  inherited;
+end;
 
 procedure TViewLoad.Render;
 begin
@@ -51,21 +60,5 @@ begin
   LoadScreenImage.Draw(0, 0, Window.Width, Window.Height);
 end;
 
-procedure ShowLoadScreen;
-begin
-  LoadScreenImage := TDrawableImage.Create('castle-data:/loadscreen.jpg');
-
-  Application.MainWindow.Container.View := ViewLoad;
-  Window.Invalidate;
-  Application.ProcessAllMessages;
-end;
-
-procedure FreeLoadScreen;
-begin
-  LoadScreenImage.Free;
-end;
-
-initialization
-  ViewLoad := TViewLoad.Create(Application);
 end.
 

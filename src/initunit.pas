@@ -30,22 +30,28 @@ uses
   Game, ImageList, GUI, SelectImage, CreditsScreen,
   WindowUnit, DecoLog, Global, SoundMusic, Settings;
 
-function GetApplicationName: String;
-begin
-  Result := 'SwappyJigsaw';
-end;
-
 procedure ApplicationInitialize;
 begin
   Log(CurrentRoutine, 'Init sequence started.');
-  ShowLoadScreen;
+
+  ViewLoad := TViewLoad.Create(Application);
+  Application.MainWindow.Container.View := ViewLoad;
+  { Make sure to render load screen now.
+    This is a hack to force it -- not guaranteed to work on all platforms,
+    and processing messages now assumes that ViewLoad handles no input. }
+  Window.Invalidate;
+  Application.ProcessAllMessages;
+
   LoadImageList;
   LoadConfig;
   InitUI;
   InitGame;
+
   ViewImageSelector := TViewImageSelector.Create(Application);
+  ViewCredits := TViewCredits.Create(Application);
+  ViewLoad := TViewLoad.Create(Application);
+
   InitMusic;
-  FreeLoadScreen;
 
   Window.Container.View := ViewImageSelector;
 
@@ -61,9 +67,8 @@ InitWindow;
 Application.MainWindow := Window;
 Application.OnInitialize := @ApplicationInitialize;
 
-//set application name (three copies)
-SysUtils.OnGetApplicationName := @GetApplicationName;
-ApplicationProperties(true).ApplicationName := GetApplicationName;
+ApplicationProperties.ApplicationName := 'SwappyJigsaw';
+
 Window.Caption := 'Swappy Jigsaw';
 
 finalization
@@ -73,7 +78,6 @@ FreeUI;
 FreeImageList;
 FreeLog;
 FreeGlobal;
-FreeCredits;
 
 end.
 

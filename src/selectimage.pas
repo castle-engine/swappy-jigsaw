@@ -166,7 +166,7 @@ begin
     end else
     begin
       if Event.Position[1] < ButtonSpacer then
-        DisplayCredits
+        Container.View := ViewCredits
       else
       if Event.Position[1] < ButtonSpacer * 2 then
         ToggleSound
